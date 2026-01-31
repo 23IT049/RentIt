@@ -18,6 +18,7 @@ import ItemDetail from './pages/ItemDetail';
 import CreateItem from './pages/CreateItem';
 import MyBookings from './pages/MyBookings';
 import MyItems from './pages/MyItems';
+import VendorCustomers from './pages/VendorCustomers';
 
 const theme = createTheme({
     palette: {
@@ -81,6 +82,14 @@ function App() {
                             element={
                                 <RoleProtectedRoute requiredRole="vendor">
                                     <MyItems />
+                                </RoleProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/vendor-customers"
+                            element={
+                                <RoleProtectedRoute requiredRole="vendor">
+                                    <VendorCustomers />
                                 </RoleProtectedRoute>
                             }
                         />

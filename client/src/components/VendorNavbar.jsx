@@ -26,7 +26,8 @@ import {
     Assessment,
     Add,
     AccountCircle,
-    ExitToApp
+    ExitToApp,
+    People
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
@@ -56,6 +57,7 @@ const VendorNavbar = () => {
         { text: 'Dashboard', icon: <Dashboard />, path: '/vendor-dashboard' },
         { text: 'Products', icon: <Store />, path: '/vendor-dashboard?tab=products' },
         { text: 'Orders', icon: <ShoppingCart />, path: '/vendor-dashboard?tab=orders' },
+        { text: 'Customers', icon: <People />, path: '/vendor-customers' },
         { text: 'Analytics', icon: <Assessment />, path: '/vendor-dashboard?tab=analytics' },
         { text: 'Create Item', icon: <Add />, path: '/create-item' },
     ];
@@ -102,7 +104,7 @@ const VendorNavbar = () => {
                             <MenuIcon />
                         </IconButton>
                     )}
-                    
+
                     <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
                         Vendor Dashboard
                     </Typography>
