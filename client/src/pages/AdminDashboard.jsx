@@ -55,7 +55,8 @@ import {
     Assessment,
     Gavel,
     Search,
-    Refresh
+    Refresh,
+    Logout
 } from '@mui/icons-material';
 import adminAPI from '../services/adminApi';
 
@@ -379,6 +380,15 @@ const AdminDashboard = () => {
         setSnackbar({ ...snackbar, open: false });
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        showSnackbar('Logged out successfully', 'success');
+        setTimeout(() => {
+            navigate('/login');
+        }, 1000);
+    };
+
     const getRoleColor = (role) => {
         switch (role) {
             case 'admin': return 'error';
@@ -438,14 +448,24 @@ const AdminDashboard = () => {
                 <Typography variant="h4" sx={{ color: 'white' }}>
                     Admin Dashboard
                 </Typography>
-                <Button
-                    variant="outlined"
-                    startIcon={<Refresh />}
-                    onClick={fetchDashboardData}
-                    sx={{ color: 'white', borderColor: 'white' }}
-                >
-                    Refresh
-                </Button>
+                <Box display="flex" gap={2}>
+                    <Button
+                        variant="outlined"
+                        startIcon={<Refresh />}
+                        onClick={fetchDashboardData}
+                        sx={{ color: 'white', borderColor: 'white' }}
+                    >
+                        Refresh
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<Logout />}
+                        onClick={handleLogout}
+                        sx={{ backgroundColor: '#f44336', '&:hover': { backgroundColor: '#d32f2f' } }}
+                    >
+                        Logout
+                    </Button>
+                </Box>
             </Box>
 
             {error && (
