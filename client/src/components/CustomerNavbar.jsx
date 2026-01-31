@@ -16,15 +16,15 @@ import {
     ListItemIcon,
     ListItemText,
     useTheme,
-    useMediaQuery
+    useMediaQuery,
+    Badge,
+    Divider
 } from '@mui/material';
 import {
     Menu as MenuIcon,
     ShoppingCart,
     Search,
     Favorite,
-    History,
-    Assessment,
     Person,
     AccountCircle,
     ExitToApp,
@@ -71,36 +71,48 @@ const CustomerNavbar = ({ cart = [], onCartClick }) => {
     };
 
     const menuItems = [
-        { 
-            text: 'My Bookings', 
-            icon: <ShoppingCart />, 
+        {
+            text: 'My Bookings',
+            icon: <ShoppingCart />,
             action: () => handleDashboardTab(0)
         },
-        { 
-            text: 'Browse Items', 
-            icon: <Search />, 
+        {
+            text: 'Browse Items',
+            icon: <Search />,
             action: () => handleDashboardTab(1)
         },
-        { 
-            text: 'Wishlist', 
-            icon: <Favorite />, 
+        {
+            text: 'Wishlist',
+            icon: <Favorite />,
             action: () => handleDashboardTab(2)
         },
-        { 
-            text: 'Profile', 
-            icon: <Person />, 
+        {
+            text: 'Profile',
+            icon: <Person />,
             action: () => handleDashboardTab(3)
         },
     ];
 
     const drawerContent = (
-        <Box sx={{ width: 280, backgroundColor: '#2a2a2a', height: '100%' }}>
-            <Box sx={{ p: 2, borderBottom: '1px solid #444' }}>
-                <Typography variant="h6" sx={{ color: 'white', display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Store sx={{ color: '#9333ea' }} />
-                    RentHub Customer
+        <Box sx={{ width: 280, backgroundColor: '#FFFFFF', height: '100%' }}>
+            <Box sx={{ p: 3, borderBottom: '1px solid #E2E8F0' }}>
+                <Typography
+                    variant="h6"
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        fontWeight: 800,
+                        background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                    }}
+                >
+                    <Store sx={{ color: '#0EA5E9' }} />
+                    RentHub
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#ccc' }}>
+                <Typography variant="caption" sx={{ color: '#64748B' }}>
                     {user?.email}
                 </Typography>
             </Box>
@@ -110,39 +122,52 @@ const CustomerNavbar = ({ cart = [], onCartClick }) => {
                         button
                         key={item.text}
                         onClick={item.action}
-                        sx={{ 
-                            color: '#ccc', 
-                            '&:hover': { 
-                                backgroundColor: '#333',
-                                color: 'white'
-                            },
-                            '&.active': {
-                                backgroundColor: '#9333ea',
-                                color: 'white'
+                        sx={{
+                            color: '#64748B',
+                            mx: 1,
+                            borderRadius: '0.5rem',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                                backgroundColor: '#F0F9FF',
+                                color: '#0EA5E9',
                             }
                         }}
                     >
-                        <ListItemIcon sx={{ color: '#9333ea' }}>
+                        <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>
                             {item.icon}
                         </ListItemIcon>
-                        <ListItemText primary={item.text} />
+                        <ListItemText
+                            primary={item.text}
+                            primaryTypographyProps={{ fontWeight: 600 }}
+                        />
                     </ListItem>
                 ))}
                 <ListItem
                     button
-                    onClick={onCartClick}
-                    sx={{ 
-                        color: '#ccc', 
-                        '&:hover': { 
-                            backgroundColor: '#333',
-                            color: 'white'
+                    onClick={() => {
+                        onCartClick();
+                        setMobileDrawerOpen(false);
+                    }}
+                    sx={{
+                        color: '#64748B',
+                        mx: 1,
+                        borderRadius: '0.5rem',
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                            backgroundColor: '#F0F9FF',
+                            color: '#0EA5E9',
                         }
                     }}
                 >
-                    <ListItemIcon sx={{ color: '#9333ea' }}>
-                        <ShoppingCart />
+                    <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>
+                        <Badge badgeContent={cart.length} color="error">
+                            <ShoppingCart />
+                        </Badge>
                     </ListItemIcon>
-                    <ListItemText primary={`Shopping Cart (${cart.length})`} />
+                    <ListItemText
+                        primary="Shopping Cart"
+                        primaryTypographyProps={{ fontWeight: 600 }}
+                    />
                 </ListItem>
             </List>
         </Box>
@@ -150,27 +175,63 @@ const CustomerNavbar = ({ cart = [], onCartClick }) => {
 
     return (
         <>
-            <AppBar position="static" sx={{ backgroundColor: '#1a1a1a', boxShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
-                <Toolbar>
+            <AppBar
+                position="sticky"
+                elevation={0}
+                sx={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(10px)',
+                    borderBottom: '1px solid #E2E8F0',
+                    color: '#0F172A',
+                }}
+            >
+                <Toolbar sx={{ py: 1 }}>
                     {isMobile && (
                         <IconButton
                             color="inherit"
                             edge="start"
                             onClick={() => setMobileDrawerOpen(true)}
-                            sx={{ mr: 2 }}
+                            sx={{
+                                mr: 2,
+                                color: '#64748B',
+                                '&:hover': {
+                                    backgroundColor: '#F1F5F9',
+                                    color: '#0EA5E9',
+                                }
+                            }}
                         >
                             <MenuIcon />
                         </IconButton>
                     )}
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-                        <Store sx={{ mr: 1, color: '#9333ea', fontSize: '1.5rem' }} />
-                        <Typography variant="h6" sx={{ color: 'white' }}>
+                        <Store sx={{ mr: 1, color: '#0EA5E9', fontSize: '1.75rem' }} />
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                fontWeight: 800,
+                                background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                            }}
+                        >
                             RentHub
                         </Typography>
                         {isDashboardPage && (
-                            <Typography variant="caption" sx={{ ml: 2, color: '#ccc' }}>
-                                Customer Dashboard
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    ml: 2,
+                                    color: '#64748B',
+                                    fontWeight: 600,
+                                    px: 2,
+                                    py: 0.5,
+                                    backgroundColor: '#F0F9FF',
+                                    borderRadius: '9999px',
+                                }}
+                            >
+                                Dashboard
                             </Typography>
                         )}
                     </Box>
@@ -181,12 +242,17 @@ const CustomerNavbar = ({ cart = [], onCartClick }) => {
                                 color="inherit"
                                 startIcon={<ShoppingCart />}
                                 onClick={() => handleDashboardTab(0)}
-                                sx={{ 
-                                    color: '#ccc', 
-                                    '&:hover': { 
-                                        color: 'white',
-                                        backgroundColor: 'rgba(255,255,255,0.1)'
-                                    } 
+                                sx={{
+                                    color: '#64748B',
+                                    fontWeight: 600,
+                                    px: 2,
+                                    borderRadius: '0.5rem',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        backgroundColor: '#F1F5F9',
+                                        color: '#0EA5E9',
+                                        transform: 'translateY(-2px)',
+                                    }
                                 }}
                             >
                                 My Bookings
@@ -195,76 +261,65 @@ const CustomerNavbar = ({ cart = [], onCartClick }) => {
                                 color="inherit"
                                 startIcon={<Search />}
                                 onClick={() => handleDashboardTab(1)}
-                                sx={{ 
-                                    color: '#ccc', 
-                                    '&:hover': { 
-                                        color: 'white',
-                                        backgroundColor: 'rgba(255,255,255,0.1)'
-                                    } 
+                                sx={{
+                                    color: '#64748B',
+                                    fontWeight: 600,
+                                    px: 2,
+                                    borderRadius: '0.5rem',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        backgroundColor: '#F1F5F9',
+                                        color: '#0EA5E9',
+                                        transform: 'translateY(-2px)',
+                                    }
                                 }}
                             >
-                                Browse Items
+                                Browse
                             </Button>
                             <Button
                                 color="inherit"
                                 startIcon={<Favorite />}
                                 onClick={() => handleDashboardTab(2)}
-                                sx={{ 
-                                    color: '#ccc', 
-                                    '&:hover': { 
-                                        color: 'white',
-                                        backgroundColor: 'rgba(255,255,255,0.1)'
-                                    } 
+                                sx={{
+                                    color: '#64748B',
+                                    fontWeight: 600,
+                                    px: 2,
+                                    borderRadius: '0.5rem',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        backgroundColor: '#F1F5F9',
+                                        color: '#0EA5E9',
+                                        transform: 'translateY(-2px)',
+                                    }
                                 }}
                             >
                                 Wishlist
                             </Button>
-                            <Button
-                                color="inherit"
-                                startIcon={<Person />}
-                                onClick={() => handleDashboardTab(3)}
-                                sx={{ 
-                                    color: '#ccc', 
-                                    '&:hover': { 
-                                        color: 'white',
-                                        backgroundColor: 'rgba(255,255,255,0.1)'
-                                    } 
-                                }}
-                            >
-                                Profile
-                            </Button>
                             <IconButton
                                 color="inherit"
                                 onClick={onCartClick}
-                                sx={{ 
-                                    color: '#ccc', 
-                                    '&:hover': { 
-                                        color: 'white',
-                                        backgroundColor: 'rgba(255,255,255,0.1)'
-                                    } 
+                                sx={{
+                                    color: '#64748B',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        backgroundColor: '#F1F5F9',
+                                        color: '#0EA5E9',
+                                        transform: 'translateY(-2px)',
+                                    }
                                 }}
                             >
-                                <ShoppingCart />
-                                {cart.length > 0 && (
-                                    <Box
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 8,
-                                            right: 8,
-                                            backgroundColor: '#f44336',
+                                <Badge
+                                    badgeContent={cart.length}
+                                    sx={{
+                                        '& .MuiBadge-badge': {
+                                            backgroundColor: '#EF4444',
                                             color: 'white',
-                                            borderRadius: '50%',
-                                            width: 16,
-                                            height: 16,
-                                            fontSize: '0.75rem',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}
-                                    >
-                                        {cart.length}
-                                    </Box>
-                                )}
+                                            fontWeight: 700,
+                                        }
+                                    }}
+                                >
+                                    <ShoppingCart />
+                                </Badge>
                             </IconButton>
                         </Box>
                     )}
@@ -273,14 +328,22 @@ const CustomerNavbar = ({ cart = [], onCartClick }) => {
                         <IconButton
                             color="inherit"
                             onClick={handleMenuOpen}
-                            sx={{ 
-                                color: '#ccc',
-                                '&:hover': { 
-                                    backgroundColor: 'rgba(255,255,255,0.1)'
+                            sx={{
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    transform: 'scale(1.1)',
                                 }
                             }}
                         >
-                            <Avatar sx={{ width: 32, height: 32, bgcolor: '#9333ea' }}>
+                            <Avatar
+                                sx={{
+                                    width: 40,
+                                    height: 40,
+                                    background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
+                                    fontWeight: 700,
+                                    boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.3)',
+                                }}
+                            >
                                 {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                             </Avatar>
                         </IconButton>
@@ -289,39 +352,65 @@ const CustomerNavbar = ({ cart = [], onCartClick }) => {
                             open={Boolean(anchorEl)}
                             onClose={handleMenuClose}
                             PaperProps={{
-                                sx: { 
-                                    backgroundColor: '#2a2a2a', 
-                                    color: 'white',
-                                    minWidth: '200px'
+                                sx: {
+                                    backgroundColor: '#FFFFFF',
+                                    border: '1px solid #E2E8F0',
+                                    borderRadius: '0.75rem',
+                                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                                    minWidth: '220px',
+                                    mt: 1,
                                 }
                             }}
                         >
-                            <MenuItem sx={{ '&:hover': { backgroundColor: '#333' } }}>
+                            <MenuItem sx={{ '&:hover': { backgroundColor: '#F8FAFC' }, pointerEvents: 'none' }}>
                                 <ListItemIcon>
-                                    <AccountCircle sx={{ color: '#9333ea' }} />
+                                    <AccountCircle sx={{ color: '#0EA5E9' }} />
                                 </ListItemIcon>
-                                <ListItemText primary={user?.name || 'User'} secondary={user?.email} />
+                                <ListItemText
+                                    primary={user?.name || 'User'}
+                                    secondary={user?.email}
+                                    primaryTypographyProps={{
+                                        fontWeight: 600,
+                                        color: '#0F172A'
+                                    }}
+                                    secondaryTypographyProps={{
+                                        fontSize: '0.75rem',
+                                        color: '#64748B'
+                                    }}
+                                />
                             </MenuItem>
-                            <MenuItem 
+                            <Divider sx={{ my: 1 }} />
+                            <MenuItem
                                 onClick={() => {
                                     handleMenuClose();
-                                    handleDashboardTab(5);
+                                    handleDashboardTab(3);
                                 }}
-                                sx={{ '&:hover': { backgroundColor: '#333' } }}
+                                sx={{ '&:hover': { backgroundColor: '#F8FAFC' } }}
                             >
                                 <ListItemIcon>
-                                    <Person sx={{ color: '#9333ea' }} />
+                                    <Person sx={{ color: '#0EA5E9' }} />
                                 </ListItemIcon>
-                                <ListItemText primary="Profile" />
+                                <ListItemText
+                                    primary="Profile"
+                                    primaryTypographyProps={{ fontWeight: 600 }}
+                                />
                             </MenuItem>
-                            <MenuItem 
+                            <MenuItem
                                 onClick={handleLogout}
-                                sx={{ '&:hover': { backgroundColor: '#333' } }}
+                                sx={{
+                                    color: '#EF4444',
+                                    '&:hover': {
+                                        backgroundColor: '#FEE2E2',
+                                    }
+                                }}
                             >
                                 <ListItemIcon>
-                                    <ExitToApp sx={{ color: '#f44336' }} />
+                                    <ExitToApp sx={{ color: '#EF4444' }} />
                                 </ListItemIcon>
-                                <ListItemText primary="Logout" />
+                                <ListItemText
+                                    primary="Logout"
+                                    primaryTypographyProps={{ fontWeight: 600 }}
+                                />
                             </MenuItem>
                         </Menu>
                     </Box>
@@ -334,7 +423,7 @@ const CustomerNavbar = ({ cart = [], onCartClick }) => {
                 onClose={() => setMobileDrawerOpen(false)}
                 sx={{
                     '& .MuiDrawer-paper': {
-                        backgroundColor: '#2a2a2a',
+                        backgroundColor: '#FFFFFF',
                     }
                 }}
             >
