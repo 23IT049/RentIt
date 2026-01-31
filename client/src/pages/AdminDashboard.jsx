@@ -944,7 +944,7 @@ const AdminDashboard = () => {
                                 <TableBody>
                                     {products.map((product) => (
                                         <TableRow key={product._id}>
-                                            <TableCell sx={{ color: '#ccc' }}>{product.name}</TableCell>
+                                            <TableCell sx={{ color: '#ccc' }}>{product.title}</TableCell>
                                             <TableCell sx={{ color: '#ccc' }}>
                                                 {product.vendor?.companyName || product.vendor?.name}
                                             </TableCell>
@@ -952,7 +952,7 @@ const AdminDashboard = () => {
                                                 <Chip label={product.category} size="small" />
                                             </TableCell>
                                             <TableCell sx={{ color: '#ccc' }}>
-                                                ${product.pricing?.daily || 'N/A'}
+                                                ${product.price || 'N/A'}
                                             </TableCell>
                                             <TableCell>
                                                 <Chip
