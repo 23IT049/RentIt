@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Item = require('../models/Item');
 const { protect, authorize } = require('../middleware/auth');
+const { isVendor } = require('../middleware/roleAuth');
 
 // @route   GET /api/items
 // @desc    Get all items with search and filters
@@ -80,8 +81,8 @@ router.get('/:id', async (req, res) => {
 
 // @route   POST /api/items
 // @desc    Create new item
-// @access  Private (Owner/Admin)
-router.post('/', protect, async (req, res) => {
+// @access  Private (Vendor/Admin)
+router.post('/', protect, isVendor, async (req, res) => {
     try {
         const itemData = {
             ...req.body,

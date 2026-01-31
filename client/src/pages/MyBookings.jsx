@@ -88,13 +88,27 @@ const MyBookings = () => {
     return (
         <>
             <Navbar />
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Typography variant="h4" gutterBottom fontWeight="bold">
+            <Container maxWidth="lg" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+                <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
                     My Bookings
                 </Typography>
 
-                <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-                    <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
+                <Box sx={{ borderBottom: 1, borderColor: '#555', mb: 3 }}>
+                    <Tabs 
+                        value={activeTab} 
+                        onChange={(e, v) => setActiveTab(v)}
+                        sx={{
+                            '& .MuiTab-root': {
+                                color: '#ccc',
+                                '&.Mui-selected': {
+                                    color: '#9333ea'
+                                }
+                            },
+                            '& .MuiTabs-indicator': {
+                                backgroundColor: '#9333ea'
+                            }
+                        }}
+                    >
                         <Tab label="As Customer" />
                         <Tab label="As Vendor" />
                     </Tabs>
@@ -102,13 +116,13 @@ const MyBookings = () => {
 
                 {loading ? (
                     <Box display="flex" justifyContent="center" py={8}>
-                        <CircularProgress />
+                        <CircularProgress sx={{ color: '#9333ea' }} />
                     </Box>
                 ) : error ? (
                     <Alert severity="error">{error}</Alert>
                 ) : bookings.length === 0 ? (
-                    <Paper elevation={2} sx={{ p: 6, textAlign: 'center' }}>
-                        <Typography variant="h6" color="text.secondary">
+                    <Paper elevation={2} sx={{ p: 6, textAlign: 'center', backgroundColor: '#2a2a2a' }}>
+                        <Typography variant="h6" color="text.secondary" sx={{ color: '#ccc' }}>
                             No bookings found
                         </Typography>
                     </Paper>
@@ -116,7 +130,7 @@ const MyBookings = () => {
                     <Grid container spacing={3}>
                         {bookings.map((booking) => (
                             <Grid item key={booking._id} xs={12} md={6}>
-                                <Card>
+                                <Card sx={{ backgroundColor: '#2a2a2a' }}>
                                     <Grid container>
                                         <Grid item xs={4}>
                                             <CardMedia
@@ -128,7 +142,7 @@ const MyBookings = () => {
                                         </Grid>
                                         <Grid item xs={8}>
                                             <CardContent>
-                                                <Typography variant="h6" gutterBottom>
+                                                <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
                                                     {booking.item.title}
                                                 </Typography>
 
@@ -146,24 +160,24 @@ const MyBookings = () => {
                                                     />
                                                 </Box>
 
-                                                <Typography variant="body2" color="text.secondary" gutterBottom>
+                                                <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#ccc' }}>
                                                     <strong>Start:</strong> {format(new Date(booking.startDate), 'PPp')}
                                                 </Typography>
-                                                <Typography variant="body2" color="text.secondary" gutterBottom>
+                                                <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#ccc' }}>
                                                     <strong>End:</strong> {format(new Date(booking.endDate), 'PPp')}
                                                 </Typography>
-                                                <Typography variant="body2" color="text.secondary" gutterBottom>
+                                                <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#ccc' }}>
                                                     <strong>Total:</strong> ₹{booking.totalAmount}
                                                 </Typography>
 
                                                 {activeTab === 0 && (
-                                                    <Typography variant="body2" color="text.secondary">
+                                                    <Typography variant="body2" color="text.secondary" sx={{ color: '#ccc' }}>
                                                         <strong>Vendor:</strong> {booking.vendor.name}
                                                     </Typography>
                                                 )}
 
                                                 {activeTab === 1 && (
-                                                    <Typography variant="body2" color="text.secondary">
+                                                    <Typography variant="body2" color="text.secondary" sx={{ color: '#ccc' }}>
                                                         <strong>Renter:</strong> {booking.renter.name}
                                                     </Typography>
                                                 )}
@@ -176,6 +190,7 @@ const MyBookings = () => {
                                                                     size="small"
                                                                     variant="contained"
                                                                     onClick={() => handleConfirm(booking._id)}
+                                                                    sx={{ backgroundColor: '#9333ea' }}
                                                                 >
                                                                     Confirm
                                                                 </Button>
@@ -185,6 +200,7 @@ const MyBookings = () => {
                                                                 variant="outlined"
                                                                 color="error"
                                                                 onClick={() => handleCancel(booking._id)}
+                                                                sx={{ borderColor: '#f44336', color: '#f44336' }}
                                                             >
                                                                 Cancel
                                                             </Button>
@@ -197,6 +213,7 @@ const MyBookings = () => {
                                                             variant="contained"
                                                             color="success"
                                                             onClick={() => handleComplete(booking._id)}
+                                                            sx={{ backgroundColor: '#4caf50' }}
                                                         >
                                                             Mark Complete
                                                         </Button>

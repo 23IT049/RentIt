@@ -8,7 +8,10 @@ import {
     Grid,
     Card,
     CardContent,
+    CardMedia,
     Button,
+    Tabs,
+    Tab,
     Table,
     TableBody,
     TableCell,
@@ -16,25 +19,29 @@ import {
     TableHead,
     TableRow,
     Chip,
-    IconButton,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Tab,
-    Tabs,
-    Alert,
-    LinearProgress,
     CircularProgress,
+    Alert,
     Avatar,
     List,
     ListItem,
     ListItemText,
     ListItemSecondaryAction,
-    Divider
+    Divider,
+    TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    LinearProgress,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    IconButton
 } from '@mui/material';
 import {
     ShoppingCart,
+    Search,
     Favorite,
     History,
     Assessment,
@@ -50,7 +57,7 @@ import {
     Payment
 } from '@mui/icons-material';
 import CustomerNavbar from '../components/CustomerNavbar';
-import { bookingsAPI } from '../services/api';
+import { bookingsAPI, itemsAPI } from '../services/api';
 
 const CustomerDashboard = () => {
     const navigate = useNavigate();
@@ -69,18 +76,121 @@ const CustomerDashboard = () => {
     const [myBookings, setMyBookings] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [rentalHistory, setRentalHistory] = useState([]);
+    
+    // Browse Items state
+    const [items, setItems] = useState([]);
+    const [itemsLoading, setItemsLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedItem, setSelectedItem] = useState(null);
+    
+    // Booking state
+    const [bookingDialog, setBookingDialog] = useState(false);
+    const [bookingData, setBookingData] = useState({
+        startDate: '',
+        endDate: '',
+        notes: ''
+    });
 
     useEffect(() => {
         fetchDashboardData();
+        
+        // Add timeout to prevent infinite loading
+        const timeout = setTimeout(() => {
+            if (loading) {
+                setLoading(false);
+                setError('Dashboard loading timed out. Please refresh the page.');
+            }
+        }, 10000); // 10 seconds timeout
+
+        return () => clearTimeout(timeout);
     }, []);
+
+    useEffect(() => {
+        if (tabValue === 1) {
+            fetchItems();
+        }
+    }, [tabValue, searchTerm, selectedCategory]);
+
+    const handleViewItem = async (item) => {
+        try {
+            // Fetch full item details
+            const response = await itemsAPI.getOne(item._id);
+            setSelectedItem(response.data.item);
+            setTabValue(5); // Navigate to item details tab
+        } catch (error) {
+            console.error('Error fetching item details:', error);
+        }
+    };
+
+    const handleBooking = () => {
+        setBookingDialog(true);
+    };
+
+    const handleBookingSubmit = async () => {
+        try {
+            const bookingPayload = {
+                item: selectedItem._id,
+                startDate: bookingData.startDate,
+                endDate: bookingData.endDate,
+                notes: bookingData.notes,
+                totalAmount: calculateTotalAmount()
+            };
+
+            const response = await bookingsAPI.create(bookingPayload);
+            
+            if (response.data.success) {
+                alert('Booking created successfully! Check your bookings.');
+                setBookingDialog(false);
+                setBookingData({ startDate: '', endDate: '', notes: '' });
+                setTabValue(0); // Go to My Bookings tab
+                fetchDashboardData(); // Refresh bookings
+            }
+        } catch (error) {
+            console.error('Error creating booking:', error);
+            alert('Failed to create booking. Please try again.');
+        }
+    };
+
+    const calculateTotalAmount = () => {
+        if (!selectedItem || !bookingData.startDate || !bookingData.endDate) return 0;
+        
+        const start = new Date(bookingData.startDate);
+        const end = new Date(bookingData.endDate);
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        
+        return days * selectedItem.price;
+    };
+
+    const fetchItems = async () => {
+        try {
+            setItemsLoading(true);
+            const params = {};
+            if (searchTerm) params.search = searchTerm;
+            if (selectedCategory) params.category = selectedCategory;
+            
+            console.log('Fetching items with params:', params);
+            const response = await itemsAPI.getAll(params);
+            console.log('Items response:', response);
+            setItems(response.data.items || []);
+        } catch (error) {
+            console.error('Error fetching items:', error);
+            setError('Failed to load items. Please try again.');
+        } finally {
+            setItemsLoading(false);
+        }
+    };
 
     const fetchDashboardData = async () => {
         try {
             setLoading(true);
             setError('');
             
+            console.log('Fetching dashboard data...');
+            
             // Fetch customer's data
             const bookingsResponse = await bookingsAPI.getAll({ role: 'customer' });
+            console.log('Bookings response:', bookingsResponse);
             const bookings = bookingsResponse.data.bookings || [];
 
             setMyBookings(bookings);
@@ -122,7 +232,7 @@ const CustomerDashboard = () => {
 
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
-            setError('Failed to load dashboard data');
+            setError('Failed to load dashboard data. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -174,7 +284,27 @@ const CustomerDashboard = () => {
                 <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
                     <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
                         <CircularProgress sx={{ color: '#9333ea' }} />
+                        <Typography variant="h6" sx={{ ml: 2, color: '#ccc' }}>
+                            Loading dashboard...
+                        </Typography>
                     </Box>
+                </Container>
+            </>
+        );
+    }
+
+    // Fallback if there's an error but no error message
+    if (!loading && !error && myBookings.length === 0 && items.length === 0) {
+        return (
+            <>
+                <CustomerNavbar />
+                <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+                    <Typography variant="h4" gutterBottom sx={{ color: 'white', mb: 4 }}>
+                        Customer Dashboard
+                    </Typography>
+                    <Alert severity="info" sx={{ mb: 3 }}>
+                        Dashboard is loading. If this persists, please refresh the page.
+                    </Alert>
                 </Container>
             </>
         );
@@ -243,6 +373,7 @@ const CustomerDashboard = () => {
                     }}
                 >
                     <Tab icon={<ShoppingCart />} label="My Bookings" />
+                    <Tab icon={<Search />} label="Browse Items" />
                     <Tab icon={<Favorite />} label="Wishlist" />
                     <Tab icon={<History />} label="Rental History" />
                     <Tab icon={<Assessment />} label="Analytics" />
@@ -255,8 +386,8 @@ const CustomerDashboard = () => {
                             <Typography variant="h6">My Current Bookings</Typography>
                             <Button
                                 variant="contained"
-                                startIcon={<Add />}
-                                onClick={() => navigate('/')}
+                                startIcon={<Search />}
+                                onClick={() => setTabValue(1)}
                                 sx={{ backgroundColor: '#9333ea' }}
                             >
                                 Browse Items
@@ -327,8 +458,128 @@ const CustomerDashboard = () => {
                     </Box>
                 )}
 
-                {/* Wishlist Tab */}
+                {/* Browse Items Tab */}
                 {tabValue === 1 && (
+                    <Box sx={{ p: 3 }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                            <Typography variant="h6">Browse Available Items</Typography>
+                        </Box>
+
+                        {/* Search and Filter */}
+                        <Grid container spacing={2} sx={{ mb: 3 }}>
+                            <Grid item xs={12} md={6}>
+                                <TextField
+                                    fullWidth
+                                    placeholder="Search items..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: <Search sx={{ color: '#ccc', mr: 1 }} />,
+                                        style: { color: 'white' }
+                                    }}
+                                    InputLabelProps={{ style: { color: '#ccc' } }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            '& fieldset': { borderColor: '#555' },
+                                            '&:hover fieldset': { borderColor: '#9333ea' },
+                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                        }
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <FormControl fullWidth>
+                                    <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
+                                    <Select
+                                        value={selectedCategory}
+                                        onChange={(e) => setSelectedCategory(e.target.value)}
+                                        label="Category"
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            },
+                                            '& .MuiSelect-select': { color: 'white' }
+                                        }}
+                                    >
+                                        <MenuItem value="">All Categories</MenuItem>
+                                        <MenuItem value="Electronics">Electronics</MenuItem>
+                                        <MenuItem value="Vehicles">Vehicles</MenuItem>
+                                        <MenuItem value="Equipment">Equipment</MenuItem>
+                                        <MenuItem value="Sports">Sports</MenuItem>
+                                        <MenuItem value="Tools">Tools</MenuItem>
+                                        <MenuItem value="Other">Other</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12} md={2}>
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    onClick={() => { setSearchTerm(''); setSelectedCategory(''); }}
+                                    sx={{ backgroundColor: '#9333ea', height: '56px' }}
+                                >
+                                    Clear
+                                </Button>
+                            </Grid>
+                        </Grid>
+
+                        {itemsLoading ? (
+                            <Box display="flex" justifyContent="center" py={4}>
+                                <CircularProgress sx={{ color: '#9333ea' }} />
+                            </Box>
+                        ) : items.length === 0 ? (
+                            <Alert severity="info">
+                                No items found. Try adjusting your search or filters.
+                            </Alert>
+                        ) : (
+                            <Grid container spacing={3}>
+                                {items.map((item) => (
+                                    <Grid item xs={12} sm={6} md={4} key={item._id}>
+                                        <Card sx={{ backgroundColor: '#2a2a2a', color: 'white', cursor: 'pointer' }}>
+                                            <CardMedia
+                                                component="img"
+                                                height="200"
+                                                image={item.image || 'https://via.placeholder.com/300x200'}
+                                                alt={item.title}
+                                            />
+                                            <CardContent>
+                                                <Typography variant="h6" gutterBottom>
+                                                    {item.title}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1, color: '#ccc' }}>
+                                                    {item.description?.substring(0, 100)}...
+                                                </Typography>
+                                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                                                    <Typography variant="h6" color="primary" sx={{ color: '#9333ea' }}>
+                                                        ₹{item.price}/day
+                                                    </Typography>
+                                                    <Chip 
+                                                        label={item.category} 
+                                                        size="small" 
+                                                        sx={{ backgroundColor: '#9333ea', color: 'white' }}
+                                                    />
+                                                </Box>
+                                                <Button
+                                                    fullWidth
+                                                    variant="contained"
+                                                    onClick={() => handleViewItem(item)}
+                                                    sx={{ backgroundColor: '#9333ea' }}
+                                                >
+                                                    View Details
+                                                </Button>
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        )}
+                    </Box>
+                )}
+
+                {/* Wishlist Tab */}
+                {tabValue === 2 && (
                     <Box sx={{ p: 3 }}>
                         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                             <Typography variant="h6">My Wishlist</Typography>
@@ -404,7 +655,7 @@ const CustomerDashboard = () => {
                 )}
 
                 {/* Rental History Tab */}
-                {tabValue === 2 && (
+                {tabValue === 3 && (
                     <Box sx={{ p: 3 }}>
                         <Typography variant="h6" gutterBottom>
                             Rental History & Reviews
@@ -452,7 +703,7 @@ const CustomerDashboard = () => {
                 )}
 
                 {/* Analytics Tab */}
-                {tabValue === 3 && (
+                {tabValue === 4 && (
                     <Box sx={{ p: 3 }}>
                         <Typography variant="h6" gutterBottom>
                             Your Rental Analytics
@@ -495,7 +746,195 @@ const CustomerDashboard = () => {
                         </Grid>
                     </Box>
                 )}
+
+                {/* Item Details Tab */}
+                {tabValue === 5 && selectedItem && (
+                    <Box sx={{ p: 3 }}>
+                        <Box display="flex" alignItems="center" mb={3}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => setTabValue(1)}
+                                sx={{ mr: 2, borderColor: '#9333ea', color: '#9333ea' }}
+                            >
+                                ← Back to Browse
+                            </Button>
+                            <Typography variant="h6">Item Details</Typography>
+                        </Box>
+
+                        <Grid container spacing={4}>
+                            <Grid item xs={12} md={6}>
+                                <Paper elevation={3} sx={{ backgroundColor: '#2a2a2a' }}>
+                                    <img
+                                        src={selectedItem.image || 'https://via.placeholder.com/400x300'}
+                                        alt={selectedItem.title}
+                                        style={{ width: '100%', height: 'auto', display: 'block' }}
+                                    />
+                                </Paper>
+                            </Grid>
+
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
+                                    {selectedItem.title}
+                                </Typography>
+                                <Typography variant="body1" sx={{ mb: 2, color: '#ccc' }}>
+                                    {selectedItem.description}
+                                </Typography>
+                                <Box sx={{ mb: 2 }}>
+                                    <Chip 
+                                        label={selectedItem.category} 
+                                        size="small" 
+                                        sx={{ backgroundColor: '#9333ea', color: 'white' }}
+                                    />
+                                </Box>
+                                <Typography variant="h5" sx={{ mb: 2, color: '#9333ea' }}>
+                                    ₹{selectedItem.price} / day
+                                </Typography>
+                                {selectedItem.deposit > 0 && (
+                                    <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                        Security Deposit: ₹{selectedItem.deposit}
+                                    </Typography>
+                                )}
+                                <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                    <strong>Location:</strong> {selectedItem.location}
+                                </Typography>
+                                <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                    <strong>Condition:</strong> {selectedItem.condition}
+                                </Typography>
+                                {selectedItem.features && selectedItem.features.length > 0 && (
+                                    <Box sx={{ mb: 2 }}>
+                                        <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
+                                            <strong>Features:</strong>
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                            {selectedItem.features.map((feature, index) => (
+                                                <Chip key={index} label={feature} variant="outlined" size="small" 
+                                                    sx={{ borderColor: '#9333ea', color: '#9333ea' }} />
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                )}
+
+                                <Paper elevation={2} sx={{ p: 2, mt: 3, bgcolor: '#333' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                        <Typography variant="h6" sx={{ color: 'white' }}>Vendor</Typography>
+                                    </Box>
+                                    <Typography variant="body1" sx={{ color: '#ccc' }}>
+                                        {selectedItem.vendor?.name || 'Vendor'}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: '#888' }}>
+                                        {selectedItem.vendor?.email || 'vendor@example.com'}
+                                    </Typography>
+                                </Paper>
+
+                                <Button
+                                    variant="contained"
+                                    size="large"
+                                    fullWidth
+                                    sx={{ mt: 3, backgroundColor: '#9333ea' }}
+                                    onClick={handleBooking}
+                                >
+                                    Book This Item
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                )}
             </Paper>
+
+            {/* Booking Dialog */}
+            <Dialog open={bookingDialog} onClose={() => setBookingDialog(false)} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    Book Item: {selectedItem?.title}
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: '#2a2a2a' }}>
+                    <Box sx={{ pt: 2 }}>
+                        <TextField
+                            fullWidth
+                            label="Start Date"
+                            type="date"
+                            value={bookingData.startDate}
+                            onChange={(e) => setBookingData({ ...bookingData, startDate: e.target.value })}
+                            InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
+                            InputProps={{ style: { color: 'white' } }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#555' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
+                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                }
+                            }}
+                        />
+                        <TextField
+                            fullWidth
+                            label="End Date"
+                            type="date"
+                            value={bookingData.endDate}
+                            onChange={(e) => setBookingData({ ...bookingData, endDate: e.target.value })}
+                            InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
+                            InputProps={{ style: { color: 'white' } }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#555' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
+                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                }
+                            }}
+                        />
+                        <TextField
+                            fullWidth
+                            label="Notes (Optional)"
+                            multiline
+                            rows={3}
+                            value={bookingData.notes}
+                            onChange={(e) => setBookingData({ ...bookingData, notes: e.target.value })}
+                            InputLabelProps={{ style: { color: '#ccc' } }}
+                            InputProps={{ style: { color: 'white' } }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#555' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
+                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                }
+                            }}
+                        />
+                        {bookingData.startDate && bookingData.endDate && (
+                            <Paper sx={{ p: 2, backgroundColor: '#333', color: 'white' }}>
+                                <Typography variant="h6" gutterBottom>
+                                    Booking Summary
+                                </Typography>
+                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                    <strong>Item:</strong> {selectedItem?.title}
+                                </Typography>
+                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                    <strong>Period:</strong> {bookingData.startDate} to {bookingData.endDate}
+                                </Typography>
+                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                    <strong>Daily Rate:</strong> ₹{selectedItem?.price}
+                                </Typography>
+                                <Typography variant="h6" sx={{ color: '#9333ea' }}>
+                                    <strong>Total Amount:</strong> ₹{calculateTotalAmount()}
+                                </Typography>
+                            </Paper>
+                        )}
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                    <Button onClick={() => setBookingDialog(false)} sx={{ color: '#ccc' }}>
+                        Cancel
+                    </Button>
+                    <Button 
+                        onClick={handleBookingSubmit} 
+                        variant="contained"
+                        sx={{ backgroundColor: '#9333ea' }}
+                        disabled={!bookingData.startDate || !bookingData.endDate}
+                    >
+                        Confirm Booking
+                    </Button>
+                </DialogActions>
+            </Dialog>
             </Container>
         </>
     );

@@ -12,7 +12,10 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Email is required'],
         unique: true,
         lowercase: true,
-        trim: true
+        trim: true,
+        set: function(email) {
+            return email.toLowerCase().trim();
+        }
     },
     password: {
         type: String,
@@ -91,6 +94,28 @@ userSchema.pre('save', async function (next) {
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Check for duplicate email before saving
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('email')) return next();
+
+    try {
+        const existingUser = await this.constructor.findOne({ 
+            email: this.email.toLowerCase().trim(),
+            _id: { $ne: this._id }
+        });
+        
+        if (existingUser) {
+            const error = new Error('Email already exists');
+            error.code = 11000;
+            return next(error);
+        }
+        
         next();
     } catch (error) {
         next(error);

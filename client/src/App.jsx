@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import RoleProtectedRoute from './components/RoleProtectedRoute';
 import RoleBasedRedirect from './components/RoleBasedRedirect';
 
 // Pages
@@ -52,17 +53,17 @@ function App() {
                         <Route
                             path="/vendor-dashboard"
                             element={
-                                <ProtectedRoute>
+                                <RoleProtectedRoute requiredRole="vendor">
                                     <VendorDashboard />
-                                </ProtectedRoute>
+                                </RoleProtectedRoute>
                             }
                         />
                         <Route
                             path="/admin-dashboard"
                             element={
-                                <ProtectedRoute>
+                                <RoleProtectedRoute requiredRole="admin">
                                     <AdminDashboard />
-                                </ProtectedRoute>
+                                </RoleProtectedRoute>
                             }
                         />
                         <Route path="/" element={<Home />} />
@@ -70,17 +71,17 @@ function App() {
                         <Route
                             path="/create-item"
                             element={
-                                <ProtectedRoute>
+                                <RoleProtectedRoute requiredRole="vendor">
                                     <CreateItem />
-                                </ProtectedRoute>
+                                </RoleProtectedRoute>
                             }
                         />
                         <Route
                             path="/my-items"
                             element={
-                                <ProtectedRoute>
+                                <RoleProtectedRoute requiredRole="vendor">
                                     <MyItems />
-                                </ProtectedRoute>
+                                </RoleProtectedRoute>
                             }
                         />
                         <Route

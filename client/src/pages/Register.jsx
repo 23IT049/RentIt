@@ -25,7 +25,7 @@ const Register = () => {
         email: '',
         password: '',
         confirmPassword: '',
-        role: 'renter',
+        role: 'customer',
         phone: ''
     });
     const [error, setError] = useState('');
@@ -85,9 +85,9 @@ const Register = () => {
     };
 
     return (
-        <Container maxWidth="sm">
-            <Box sx={{ mt: 8, mb: 4 }}>
-                <Paper elevation={3} sx={{ p: 4, backgroundColor: '#1a1a1a', color: 'white' }}>
+        <Container maxWidth="sm" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+            <Box sx={{ mt: 4, mb: 4 }}>
+                <Paper elevation={3} sx={{ p: 4, backgroundColor: '#2a2a2a', color: 'white' }}>
                     <Typography variant="h4" align="center" gutterBottom sx={{ color: 'white' }}>
                         Sign-up
                     </Typography>
