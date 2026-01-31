@@ -78,31 +78,31 @@ const VendorCustomers = () => {
     };
 
     const CustomerCard = ({ customer }) => (
-        <Card sx={{ backgroundColor: '#2a2a2a', color: 'white', height: '100%' }}>
+        <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', height: '100%', border: '1px solid #BAE6FD' }}>
             <CardContent>
                 <Box display="flex" flexDirection="column" alignItems="center" textAlign="center">
                     <Avatar
                         src={customer.avatar}
-                        sx={{ width: 80, height: 80, mb: 2, bgcolor: '#9333ea' }}
+                        sx={{ width: 80, height: 80, mb: 2, bgcolor: '#0284C7' }}
                     >
                         <Person sx={{ fontSize: 40 }} />
                     </Avatar>
 
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" gutterBottom sx={{ color: '#0284C7' }}>
                         {customer.name}
                     </Typography>
 
                     <Box display="flex" alignItems="center" gap={0.5} mb={1}>
-                        <Email sx={{ fontSize: 16, color: '#ccc' }} />
-                        <Typography variant="body2" color="textSecondary">
+                        <Email sx={{ fontSize: 16, color: '#0284C7' }} />
+                        <Typography variant="body2" sx={{ color: '#0284C7' }}>
                             {customer.email}
                         </Typography>
                     </Box>
 
                     {customer.phone && (
                         <Box display="flex" alignItems="center" gap={0.5} mb={2}>
-                            <Phone sx={{ fontSize: 16, color: '#ccc' }} />
-                            <Typography variant="body2" color="textSecondary">
+                            <Phone sx={{ fontSize: 16, color: '#0284C7' }} />
+                            <Typography variant="body2" sx={{ color: '#0284C7' }}>
                                 {customer.phone}
                             </Typography>
                         </Box>
@@ -110,16 +110,16 @@ const VendorCustomers = () => {
 
                     <Box display="flex" gap={2} mt={2}>
                         <Chip
-                            icon={<ShoppingCart />}
+                            icon={<ShoppingCart style={{ color: '#FFFFFF' }} />}
                             label={`${customer.totalOrders} orders`}
                             size="small"
-                            sx={{ bgcolor: '#333', color: 'white' }}
+                            sx={{ bgcolor: '#0284C7', color: '#FFFFFF' }}
                         />
                         <Chip
-                            icon={<AttachMoney />}
+                            icon={<AttachMoney style={{ color: '#FFFFFF' }} />}
                             label={`$${customer.totalSpent.toFixed(2)}`}
                             size="small"
-                            sx={{ bgcolor: '#333', color: 'white' }}
+                            sx={{ bgcolor: '#0284C7', color: '#FFFFFF' }}
                         />
                     </Box>
                 </Box>
@@ -128,31 +128,31 @@ const VendorCustomers = () => {
     );
 
     const CustomerListItem = ({ customer }) => (
-        <Card sx={{ backgroundColor: '#2a2a2a', color: 'white', mb: 2 }}>
+        <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', mb: 2, border: '1px solid #BAE6FD' }}>
             <CardContent>
                 <Box display="flex" alignItems="center" gap={3}>
                     <Avatar
                         src={customer.avatar}
-                        sx={{ width: 60, height: 60, bgcolor: '#9333ea' }}
+                        sx={{ width: 60, height: 60, bgcolor: '#0284C7' }}
                     >
                         <Person sx={{ fontSize: 30 }} />
                     </Avatar>
 
                     <Box flex={1}>
-                        <Typography variant="h6" gutterBottom>
+                        <Typography variant="h6" gutterBottom sx={{ color: '#0284C7' }}>
                             {customer.name}
                         </Typography>
                         <Box display="flex" gap={3}>
                             <Box display="flex" alignItems="center" gap={0.5}>
-                                <Email sx={{ fontSize: 16, color: '#ccc' }} />
-                                <Typography variant="body2" color="textSecondary">
+                                <Email sx={{ fontSize: 16, color: '#0284C7' }} />
+                                <Typography variant="body2" sx={{ color: '#0284C7' }}>
                                     {customer.email}
                                 </Typography>
                             </Box>
                             {customer.phone && (
                                 <Box display="flex" alignItems="center" gap={0.5}>
-                                    <Phone sx={{ fontSize: 16, color: '#ccc' }} />
-                                    <Typography variant="body2" color="textSecondary">
+                                    <Phone sx={{ fontSize: 16, color: '#0284C7' }} />
+                                    <Typography variant="body2" sx={{ color: '#0284C7' }}>
                                         {customer.phone}
                                     </Typography>
                                 </Box>
@@ -162,16 +162,16 @@ const VendorCustomers = () => {
 
                     <Box display="flex" gap={2}>
                         <Chip
-                            icon={<ShoppingCart />}
+                            icon={<ShoppingCart style={{ color: '#FFFFFF' }} />}
                             label={`${customer.totalOrders} orders`}
                             size="small"
-                            sx={{ bgcolor: '#333', color: 'white' }}
+                            sx={{ bgcolor: '#0284C7', color: '#FFFFFF' }}
                         />
                         <Chip
-                            icon={<AttachMoney />}
+                            icon={<AttachMoney style={{ color: '#FFFFFF' }} />}
                             label={`$${customer.totalSpent.toFixed(2)}`}
                             size="small"
-                            sx={{ bgcolor: '#333', color: 'white' }}
+                            sx={{ bgcolor: '#0284C7', color: '#FFFFFF' }}
                         />
                     </Box>
                 </Box>
@@ -182,11 +182,11 @@ const VendorCustomers = () => {
     return (
         <>
             <VendorNavbar />
-            <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
-                <Paper sx={{ backgroundColor: '#2a2a2a', color: 'white', p: 3 }}>
+            <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
+                <Paper sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', p: 3, boxShadow: 'none' }}>
                     {/* Header */}
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                        <Typography variant="h5">
+                        <Typography variant="h5" sx={{ color: '#0284C7' }}>
                             Customers
                         </Typography>
 
@@ -200,19 +200,19 @@ const VendorCustomers = () => {
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <Search sx={{ color: '#ccc' }} />
+                                            <Search sx={{ color: '#0284C7' }} />
                                         </InputAdornment>
                                     ),
-                                    style: { color: 'white' }
+                                    style: { color: '#0284C7' }
                                 }}
                                 sx={{
                                     width: 300,
-                                    backgroundColor: '#333',
+                                    backgroundColor: '#FFFFFF',
                                     borderRadius: 1,
                                     '& .MuiOutlinedInput-root': {
-                                        '& fieldset': { borderColor: '#555' },
-                                        '&:hover fieldset': { borderColor: '#9333ea' },
-                                        '&.Mui-focused fieldset': { borderColor: '#9333ea' }
+                                        '& fieldset': { borderColor: '#BAE6FD' },
+                                        '&:hover fieldset': { borderColor: '#0284C7' },
+                                        '&.Mui-focused fieldset': { borderColor: '#0284C7' }
                                     }
                                 }}
                             />
@@ -225,13 +225,13 @@ const VendorCustomers = () => {
                                 size="small"
                                 sx={{
                                     '& .MuiToggleButton-root': {
-                                        color: '#ccc',
-                                        borderColor: '#555',
+                                        color: '#0284C7',
+                                        borderColor: '#BAE6FD',
                                         '&.Mui-selected': {
-                                            backgroundColor: '#9333ea',
-                                            color: 'white',
+                                            backgroundColor: '#0284C7',
+                                            color: '#FFFFFF',
                                             '&:hover': {
-                                                backgroundColor: '#7c2ac9'
+                                                backgroundColor: '#026aa1'
                                             }
                                         }
                                     }
@@ -250,7 +250,7 @@ const VendorCustomers = () => {
                     {/* Loading State */}
                     {loading && (
                         <Box display="flex" justifyContent="center" py={8}>
-                            <CircularProgress sx={{ color: '#9333ea' }} />
+                            <CircularProgress sx={{ color: '#0284C7' }} />
                         </Box>
                     )}
 
@@ -297,12 +297,13 @@ const VendorCustomers = () => {
                                 onChange={(e, value) => setPage(value)}
                                 sx={{
                                     '& .MuiPaginationItem-root': {
-                                        color: 'white',
-                                        borderColor: '#555',
+                                        color: '#0284C7',
+                                        borderColor: '#BAE6FD',
                                         '&.Mui-selected': {
-                                            backgroundColor: '#9333ea',
+                                            backgroundColor: '#0284C7',
+                                            color: '#FFFFFF',
                                             '&:hover': {
-                                                backgroundColor: '#7c2ac9'
+                                                backgroundColor: '#026aa1'
                                             }
                                         }
                                     }

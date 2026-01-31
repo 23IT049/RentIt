@@ -485,7 +485,7 @@ const AdminDashboard = () => {
     };
 
     const StatCard = ({ title, value, icon, color, subtitle }) => (
-        <Card sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+        <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
             <CardContent>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                     <Box>
@@ -511,16 +511,16 @@ const AdminDashboard = () => {
 
     if (loading && !stats.totalUsers) {
         return (
-            <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#FFFFFF', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <CircularProgress />
             </Container>
         );
     }
 
     return (
-        <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+        <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-                <Typography variant="h4" sx={{ color: 'white' }}>
+                <Typography variant="h4" sx={{ color: '#0284C7' }}>
                     Admin Dashboard
                 </Typography>
                 <Box display="flex" gap={2}>
@@ -528,7 +528,7 @@ const AdminDashboard = () => {
                         variant="outlined"
                         startIcon={<Refresh />}
                         onClick={fetchDashboardData}
-                        sx={{ color: 'white', borderColor: 'white' }}
+                        sx={{ color: '#0284C7', borderColor: '#BAE6FD' }}
                     >
                         Refresh
                     </Button>
@@ -536,7 +536,7 @@ const AdminDashboard = () => {
                         variant="contained"
                         startIcon={<Logout />}
                         onClick={handleLogout}
-                        sx={{ backgroundColor: '#f44336', '&:hover': { backgroundColor: '#d32f2f' } }}
+                        sx={{ backgroundColor: '#0284C7', '&:hover': { backgroundColor: '#026aa1' } }}
                     >
                         Logout
                     </Button>
@@ -556,7 +556,7 @@ const AdminDashboard = () => {
                         title="Total Users"
                         value={stats.totalUsers}
                         icon={<People />}
-                        color="#9333ea"
+                        color="#0284C7"
                     />
                 </Grid>
                 <Grid item xs={12} sm={6} md={2}>
@@ -565,7 +565,7 @@ const AdminDashboard = () => {
                         value={stats.totalVendors}
                         subtitle={`${stats.pendingVendors} pending`}
                         icon={<Store />}
-                        color="#ff9800"
+                        color="#0284C7"
                     />
                 </Grid>
                 <Grid item xs={12} sm={6} md={2}>
@@ -573,7 +573,7 @@ const AdminDashboard = () => {
                         title="Orders"
                         value={stats.totalOrders}
                         icon={<ShoppingCart />}
-                        color="#4caf50"
+                        color="#0284C7"
                     />
                 </Grid>
                 <Grid item xs={12} sm={6} md={2}>
@@ -581,7 +581,7 @@ const AdminDashboard = () => {
                         title="Revenue"
                         value={`$${stats.totalRevenue.toLocaleString()}`}
                         icon={<AttachMoney />}
-                        color="#2196f3"
+                        color="#0284C7"
                     />
                 </Grid>
                 <Grid item xs={12} sm={6} md={2}>
@@ -589,7 +589,7 @@ const AdminDashboard = () => {
                         title="Active Rentals"
                         value={stats.activeRentals}
                         icon={<TrendingUp />}
-                        color="#9c27b0"
+                        color="#0284C7"
                     />
                 </Grid>
                 <Grid item xs={12} sm={6} md={2}>
@@ -597,7 +597,7 @@ const AdminDashboard = () => {
                         title="Pending Vendors"
                         value={stats.pendingVendors}
                         icon={<Gavel />}
-                        color="#f44336"
+                        color="#0284C7"
                     />
                 </Grid>
                 <Grid item xs={12} sm={6} md={2}>
@@ -605,21 +605,21 @@ const AdminDashboard = () => {
                         title="Pending Products"
                         value={stats.pendingProducts}
                         icon={<Store />}
-                        color="#ff9800"
+                        color="#0284C7"
                     />
                 </Grid>
             </Grid>
 
             {/* Tabs */}
-            <Paper sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+            <Paper sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                 <Tabs
                     value={tabValue}
                     onChange={handleTabChange}
                     sx={{
                         borderBottom: 1,
-                        borderColor: '#444',
-                        '& .MuiTab-root': { color: '#ccc' },
-                        '& .Mui-selected': { color: 'white' }
+                        borderColor: '#BAE6FD',
+                        '& .MuiTab-root': { color: '#0284C7' },
+                        '& .Mui-selected': { color: '#0284C7' }
                     }}
                 >
                     <Tab label="Users" />
@@ -646,19 +646,19 @@ const AdminDashboard = () => {
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                <Search sx={{ color: '#ccc' }} />
+                                                <Search sx={{ color: '#0284C7' }} />
                                             </InputAdornment>
                                         ),
-                                        style: { color: 'white' }
+                                        style: { color: '#0284C7' }
                                     }}
-                                    sx={{ backgroundColor: '#333', borderRadius: 1 }}
+                                    sx={{ backgroundColor: '#FFFFFF', borderRadius: 1 }}
                                 />
                                 <FormControl size="small" sx={{ minWidth: 120 }}>
-                                    <InputLabel sx={{ color: '#ccc' }}>Role</InputLabel>
+                                    <InputLabel sx={{ color: '#0284C7' }}>Role</InputLabel>
                                     <Select
                                         value={roleFilter}
                                         onChange={(e) => setRoleFilter(e.target.value)}
-                                        sx={{ color: 'white', backgroundColor: '#333' }}
+                                        sx={{ color: '#0284C7', backgroundColor: '#FFFFFF' }}
                                     >
                                         <MenuItem value="">All</MenuItem>
                                         <MenuItem value="customer">Customer</MenuItem>
@@ -669,7 +669,7 @@ const AdminDashboard = () => {
                                 <Button
                                     variant="contained"
                                     startIcon={<People />}
-                                    sx={{ backgroundColor: '#9333ea' }}
+                                    sx={{ backgroundColor: '#0284C7' }}
                                     onClick={() => adminAPI.exportUsers()}
                                 >
                                     Export Users
@@ -681,26 +681,26 @@ const AdminDashboard = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ color: 'white' }}>User</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Role</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Status</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Registered</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Last Login</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Orders/Spent</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Actions</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>User</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Role</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Status</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Registered</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Last Login</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Orders/Spent</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {users.map((user) => (
                                         <TableRow key={user._id}>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 <Box display="flex" alignItems="center">
-                                                    <Avatar sx={{ mr: 2, bgcolor: '#9333ea' }}>
+                                                    <Avatar sx={{ mr: 2, bgcolor: '#0284C7' }}>
                                                         {user.name.charAt(0)}
                                                     </Avatar>
                                                     <Box>
                                                         <Typography variant="body2">{user.name}</Typography>
-                                                        <Typography variant="caption" sx={{ color: '#888' }}>
+                                                        <Typography variant="caption" sx={{ color: '#0284C7' }}>
                                                             {user.email}
                                                         </Typography>
                                                     </Box>
@@ -720,23 +720,23 @@ const AdminDashboard = () => {
                                                     size="small"
                                                 />
                                             </TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 <Typography variant="body2">
                                                     {new Date(user.createdAt).toLocaleDateString()}
                                                 </Typography>
                                             </TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 <Typography variant="body2">
                                                     {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
                                                 </Typography>
                                             </TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 {user.totalOrders || 0} / ${user.totalSpent || 0}
                                             </TableCell>
                                             <TableCell>
                                                 <IconButton
                                                     onClick={(e) => handleMenuClick(e, user)}
-                                                    sx={{ color: '#ccc' }}
+                                                    sx={{ color: '#0284C7' }}
                                                 >
                                                     <MoreVert />
                                                 </IconButton>
@@ -752,7 +752,7 @@ const AdminDashboard = () => {
                                 count={Math.ceil(userTotal / 10)}
                                 page={userPage}
                                 onChange={(e, page) => setUserPage(page)}
-                                sx={{ '& .MuiPaginationItem-root': { color: 'white' } }}
+                                sx={{ '& .MuiPaginationItem-root': { color: '#0284C7' } }}
                             />
                         </Box>
                     </Box>
@@ -774,32 +774,32 @@ const AdminDashboard = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ color: 'white' }}>Vendor</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Company</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>GSTIN</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Status</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Products</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Actions</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Vendor</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Company</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>GSTIN</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Status</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Products</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {vendors.map((vendor) => (
                                         <TableRow key={vendor._id}>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 <Box display="flex" alignItems="center">
-                                                    <Avatar sx={{ mr: 2, bgcolor: '#ff9800' }}>
+                                                    <Avatar sx={{ mr: 2, bgcolor: '#0284C7' }}>
                                                         {vendor.name.charAt(0)}
                                                     </Avatar>
                                                     <Box>
                                                         <Typography variant="body2">{vendor.name}</Typography>
-                                                        <Typography variant="caption" sx={{ color: '#888' }}>
+                                                        <Typography variant="caption" sx={{ color: '#0284C7' }}>
                                                             {vendor.email}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
                                             </TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>{vendor.companyName}</TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>{vendor.gstNo}</TableCell>
+                                            <TableCell sx={{ color: '#0284C7' }}>{vendor.companyName}</TableCell>
+                                            <TableCell sx={{ color: '#0284C7' }}>{vendor.gstNo}</TableCell>
                                             <TableCell>
                                                 <Chip
                                                     label={vendor.isApproved ? 'Approved' : 'Pending'}
@@ -807,13 +807,13 @@ const AdminDashboard = () => {
                                                     size="small"
                                                 />
                                             </TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 {vendor.totalProducts || 0}
                                             </TableCell>
                                             <TableCell>
                                                 <IconButton
                                                     onClick={(e) => handleMenuClick(e, vendor)}
-                                                    sx={{ color: '#ccc' }}
+                                                    sx={{ color: '#0284C7' }}
                                                 >
                                                     <MoreVert />
                                                 </IconButton>
@@ -829,7 +829,7 @@ const AdminDashboard = () => {
                                 count={Math.ceil(vendorTotal / 10)}
                                 page={vendorPage}
                                 onChange={(e, page) => setVendorPage(page)}
-                                sx={{ '& .MuiPaginationItem-root': { color: 'white' } }}
+                                sx={{ '& .MuiPaginationItem-root': { color: '#0284C7' } }}
                             />
                         </Box>
                     </Box>
@@ -843,7 +843,7 @@ const AdminDashboard = () => {
                             <Button
                                 variant="contained"
                                 startIcon={<ShoppingCart />}
-                                sx={{ backgroundColor: '#9333ea' }}
+                                sx={{ backgroundColor: '#0284C7' }}
                                 onClick={() => adminAPI.exportOrders()}
                             >
                                 Export Orders
@@ -854,20 +854,20 @@ const AdminDashboard = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ color: 'white' }}>Order #</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Customer</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Vendor</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Status</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Total</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Date</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Order #</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Customer</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Vendor</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Status</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Total</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Date</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {orders.map((order) => (
                                         <TableRow key={order._id}>
-                                            <TableCell sx={{ color: '#ccc' }}>{order.orderNumber}</TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>{order.customer?.name}</TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>{order.vendor?.companyName || order.vendor?.name}</TableCell>
+                                            <TableCell sx={{ color: '#0284C7' }}>{order.orderNumber}</TableCell>
+                                            <TableCell sx={{ color: '#0284C7' }}>{order.customer?.name}</TableCell>
+                                            <TableCell sx={{ color: '#0284C7' }}>{order.vendor?.companyName || order.vendor?.name}</TableCell>
                                             <TableCell>
                                                 <Chip
                                                     label={order.status}
@@ -875,8 +875,8 @@ const AdminDashboard = () => {
                                                     size="small"
                                                 />
                                             </TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>${order.pricing.totalAmount}</TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>${order.pricing.totalAmount}</TableCell>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 {new Date(order.createdAt).toLocaleDateString()}
                                             </TableCell>
                                         </TableRow>
@@ -890,7 +890,7 @@ const AdminDashboard = () => {
                                 count={Math.ceil(orderTotal / 10)}
                                 page={orderPage}
                                 onChange={(e, page) => setOrderPage(page)}
-                                sx={{ '& .MuiPaginationItem-root': { color: 'white' } }}
+                                sx={{ '& .MuiPaginationItem-root': { color: '#0284C7' } }}
                             />
                         </Box>
                     </Box>
@@ -908,17 +908,17 @@ const AdminDashboard = () => {
                                     onChange={(e) => setProductSearch(e.target.value)}
                                     size="small"
                                     InputProps={{
-                                        startAdornment: <Search sx={{ color: '#ccc', mr: 1 }} />,
-                                        style: { color: 'white' }
+                                        startAdornment: <Search sx={{ color: '#0284C7', mr: 1 }} />,
+                                        style: { color: '#0284C7' }
                                     }}
-                                    sx={{ backgroundColor: '#333', borderRadius: 1 }}
+                                    sx={{ backgroundColor: '#FFFFFF', borderRadius: 1 }}
                                 />
                                 <FormControl size="small" sx={{ minWidth: 150 }}>
-                                    <InputLabel sx={{ color: '#ccc' }}>Status</InputLabel>
+                                    <InputLabel sx={{ color: '#0284C7' }}>Status</InputLabel>
                                     <Select
                                         value={productStatusFilter}
                                         onChange={(e) => setProductStatusFilter(e.target.value)}
-                                        sx={{ color: 'white', backgroundColor: '#333' }}
+                                        sx={{ color: '#0284C7', backgroundColor: '#FFFFFF' }}
                                     >
                                         <MenuItem value="">All</MenuItem>
                                         <MenuItem value="pending">Pending</MenuItem>
@@ -933,25 +933,25 @@ const AdminDashboard = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ color: 'white' }}>Product Name</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Vendor</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Category</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Price (Daily)</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Status</TableCell>
-                                        <TableCell sx={{ color: 'white' }}>Actions</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Product Name</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Vendor</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Category</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Price (Daily)</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Status</TableCell>
+                                        <TableCell sx={{ color: '#0284C7' }}>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {products.map((product) => (
                                         <TableRow key={product._id}>
-                                            <TableCell sx={{ color: '#ccc' }}>{product.title}</TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>{product.title}</TableCell>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 {product.vendor?.companyName || product.vendor?.name}
                                             </TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 <Chip label={product.category} size="small" />
                                             </TableCell>
-                                            <TableCell sx={{ color: '#ccc' }}>
+                                            <TableCell sx={{ color: '#0284C7' }}>
                                                 ${product.price || 'N/A'}
                                             </TableCell>
                                             <TableCell>
@@ -972,7 +972,7 @@ const AdminDashboard = () => {
                                                             <IconButton
                                                                 size="small"
                                                                 onClick={() => handleApproveProduct(product._id)}
-                                                                sx={{ color: '#4caf50' }}
+                                                                sx={{ color: '#0284C7' }}
                                                                 title="Approve"
                                                             >
                                                                 <CheckCircle />
@@ -983,7 +983,7 @@ const AdminDashboard = () => {
                                                                     setSelectedUser(product);
                                                                     setRejectDialogOpen(true);
                                                                 }}
-                                                                sx={{ color: '#f44336' }}
+                                                                sx={{ color: '#0284C7' }}
                                                                 title="Reject"
                                                             >
                                                                 <Cancel />
@@ -993,7 +993,7 @@ const AdminDashboard = () => {
                                                     <IconButton
                                                         size="small"
                                                         onClick={() => handleDeleteProduct(product._id)}
-                                                        sx={{ color: '#ff9800' }}
+                                                        sx={{ color: '#0284C7' }}
                                                         title="Delete"
                                                     >
                                                         <Delete />
@@ -1011,7 +1011,7 @@ const AdminDashboard = () => {
                                 count={Math.ceil(productTotal / 10)}
                                 page={productPage}
                                 onChange={(e, page) => setProductPage(page)}
-                                sx={{ '& .MuiPaginationItem-root': { color: 'white' } }}
+                                sx={{ '& .MuiPaginationItem-root': { color: '#0284C7' } }}
                             />
                         </Box>
                     </Box>
@@ -1025,7 +1025,7 @@ const AdminDashboard = () => {
                         </Typography>
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={6}>
-                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3 }}>
+                                <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', p: 3 }}>
                                     <Typography variant="subtitle1" gutterBottom>
                                         Registration Settings
                                     </Typography>
@@ -1034,7 +1034,7 @@ const AdminDashboard = () => {
                                             <Switch
                                                 checked={systemSettings.registration?.allowVendorRegistration}
                                                 onChange={(e) => handleSettingsChange('registration', 'allowVendorRegistration', e.target.checked)}
-                                                sx={{ color: '#9333ea' }}
+                                                sx={{ color: '#0284C7' }}
                                             />
                                         }
                                         label="Allow Vendor Registration"
@@ -1044,7 +1044,7 @@ const AdminDashboard = () => {
                                             <Switch
                                                 checked={systemSettings.registration?.requireGstinForVendors}
                                                 onChange={(e) => handleSettingsChange('registration', 'requireGstinForVendors', e.target.checked)}
-                                                sx={{ color: '#9333ea' }}
+                                                sx={{ color: '#0284C7' }}
                                             />
                                         }
                                         label="Require GSTIN for Vendors"
@@ -1054,7 +1054,7 @@ const AdminDashboard = () => {
                                             <Switch
                                                 checked={systemSettings.registration?.autoApproveVendors}
                                                 onChange={(e) => handleSettingsChange('registration', 'autoApproveVendors', e.target.checked)}
-                                                sx={{ color: '#9333ea' }}
+                                                sx={{ color: '#0284C7' }}
                                             />
                                         }
                                         label="Auto-approve Vendors"
@@ -1062,7 +1062,7 @@ const AdminDashboard = () => {
                                 </Card>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3 }}>
+                                <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', p: 3 }}>
                                     <Typography variant="subtitle1" gutterBottom>
                                         Rental Settings
                                     </Typography>
@@ -1073,8 +1073,8 @@ const AdminDashboard = () => {
                                         value={systemSettings.rental?.maxRentalDays}
                                         onChange={(e) => handleSettingsChange('rental', 'maxRentalDays', parseInt(e.target.value))}
                                         sx={{ mb: 2 }}
-                                        InputProps={{ style: { color: 'white' } }}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
                                     />
                                     <TextField
                                         fullWidth
@@ -1083,15 +1083,15 @@ const AdminDashboard = () => {
                                         value={systemSettings.rental?.lateFeePerHour}
                                         onChange={(e) => handleSettingsChange('rental', 'lateFeePerHour', parseInt(e.target.value))}
                                         sx={{ mb: 2 }}
-                                        InputProps={{ style: { color: 'white' } }}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
                                     />
                                     <FormControlLabel
                                         control={
                                             <Switch
                                                 checked={systemSettings.rental?.securityDepositRequired}
                                                 onChange={(e) => handleSettingsChange('rental', 'securityDepositRequired', e.target.checked)}
-                                                sx={{ color: '#9333ea' }}
+                                                sx={{ color: '#0284C7' }}
                                             />
                                         }
                                         label="Require Security Deposit"
@@ -1102,7 +1102,7 @@ const AdminDashboard = () => {
                         <Box mt={3}>
                             <Button
                                 variant="contained"
-                                sx={{ backgroundColor: '#9333ea' }}
+                                sx={{ backgroundColor: '#0284C7' }}
                                 onClick={handleSaveSettings}
                             >
                                 Save Settings
@@ -1125,18 +1125,18 @@ const AdminDashboard = () => {
                                 type="date"
                                 value={dateRange.startDate}
                                 onChange={(e) => setDateRange({ ...dateRange, startDate: e.target.value })}
-                                InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
-                                InputProps={{ style: { color: 'white' } }}
-                                sx={{ backgroundColor: '#333', borderRadius: 1 }}
+                                InputLabelProps={{ shrink: true, style: { color: '#0284C7' } }}
+                                InputProps={{ style: { color: '#0284C7' } }}
+                                sx={{ backgroundColor: '#FFFFFF', borderRadius: 1 }}
                             />
                             <TextField
                                 label="End Date"
                                 type="date"
                                 value={dateRange.endDate}
                                 onChange={(e) => setDateRange({ ...dateRange, endDate: e.target.value })}
-                                InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
-                                InputProps={{ style: { color: 'white' } }}
-                                sx={{ backgroundColor: '#333', borderRadius: 1 }}
+                                InputLabelProps={{ shrink: true, style: { color: '#0284C7' } }}
+                                InputProps={{ style: { color: '#0284C7' } }}
+                                sx={{ backgroundColor: '#FFFFFF', borderRadius: 1 }}
                             />
                             <Button
                                 variant="contained"
@@ -1144,7 +1144,7 @@ const AdminDashboard = () => {
                                     fetchRevenueReport();
                                     fetchUserReport();
                                 }}
-                                sx={{ backgroundColor: '#9333ea' }}
+                                sx={{ backgroundColor: '#0284C7' }}
                             >
                                 Generate Report
                             </Button>
@@ -1155,13 +1155,13 @@ const AdminDashboard = () => {
                         <Grid container spacing={3}>
                             {/* Revenue Report */}
                             <Grid item xs={12} md={6}>
-                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3 }}>
+                                <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', p: 3 }}>
                                     <Typography variant="h6" gutterBottom>
                                         Revenue Report
                                     </Typography>
                                     {revenueReport ? (
                                         <>
-                                            <Typography variant="h4" sx={{ mb: 2, color: '#4caf50' }}>
+                                            <Typography variant="h4" sx={{ mb: 2, color: '#0284C7' }}>
                                                 ${revenueReport.totalRevenue?.toLocaleString() || 0}
                                             </Typography>
                                             <Typography variant="body2" color="textSecondary" gutterBottom>
@@ -1177,19 +1177,19 @@ const AdminDashboard = () => {
                                                         <Table size="small">
                                                             <TableHead>
                                                                 <TableRow>
-                                                                    <TableCell sx={{ color: 'white' }}>Date</TableCell>
-                                                                    <TableCell sx={{ color: 'white' }}>Orders</TableCell>
-                                                                    <TableCell sx={{ color: 'white' }}>Revenue</TableCell>
+                                                                    <TableCell sx={{ color: '#0284C7' }}>Date</TableCell>
+                                                                    <TableCell sx={{ color: '#0284C7' }}>Orders</TableCell>
+                                                                    <TableCell sx={{ color: '#0284C7' }}>Revenue</TableCell>
                                                                 </TableRow>
                                                             </TableHead>
                                                             <TableBody>
                                                                 {revenueReport.revenueByDate.slice(0, 10).map((item, index) => (
                                                                     <TableRow key={index}>
-                                                                        <TableCell sx={{ color: '#ccc' }}>
+                                                                        <TableCell sx={{ color: '#0284C7' }}>
                                                                             {item._id.year}-{String(item._id.month).padStart(2, '0')}-{String(item._id.day).padStart(2, '0')}
                                                                         </TableCell>
-                                                                        <TableCell sx={{ color: '#ccc' }}>{item.orderCount}</TableCell>
-                                                                        <TableCell sx={{ color: '#ccc' }}>${item.totalRevenue.toLocaleString()}</TableCell>
+                                                                        <TableCell sx={{ color: '#0284C7' }}>{item.orderCount}</TableCell>
+                                                                        <TableCell sx={{ color: '#0284C7' }}>${item.totalRevenue.toLocaleString()}</TableCell>
                                                                     </TableRow>
                                                                 ))}
                                                             </TableBody>
@@ -1212,7 +1212,7 @@ const AdminDashboard = () => {
 
                             {/* User Report */}
                             <Grid item xs={12} md={6}>
-                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3 }}>
+                                <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', p: 3 }}>
                                     <Typography variant="h6" gutterBottom>
                                         User Statistics
                                     </Typography>
@@ -1262,7 +1262,7 @@ const AdminDashboard = () => {
                                                     <Typography variant="subtitle2" gutterBottom>
                                                         Recent Registrations (Last 30 Days)
                                                     </Typography>
-                                                    <Typography variant="h5" sx={{ color: '#9333ea' }}>
+                                                    <Typography variant="h5" sx={{ color: '#0284C7' }}>
                                                         {userReport.recentRegistrations.reduce((sum, item) => sum + item.count, 0)}
                                                     </Typography>
                                                     <Typography variant="caption" color="textSecondary">
@@ -1281,7 +1281,7 @@ const AdminDashboard = () => {
 
                             {/* Export Buttons */}
                             <Grid item xs={12}>
-                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3 }}>
+                                <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', p: 3 }}>
                                     <Typography variant="h6" gutterBottom>
                                         Export Data
                                     </Typography>
@@ -1290,7 +1290,7 @@ const AdminDashboard = () => {
                                             variant="outlined"
                                             startIcon={<People />}
                                             onClick={() => adminAPI.exportUsers()}
-                                            sx={{ color: 'white', borderColor: 'white' }}
+                                            sx={{ color: '#0284C7', borderColor: '#BAE6FD' }}
                                         >
                                             Export All Users (CSV)
                                         </Button>
@@ -1298,7 +1298,7 @@ const AdminDashboard = () => {
                                             variant="outlined"
                                             startIcon={<ShoppingCart />}
                                             onClick={() => adminAPI.exportOrders()}
-                                            sx={{ color: 'white', borderColor: 'white' }}
+                                            sx={{ color: '#0284C7', borderColor: '#BAE6FD' }}
                                         >
                                             Export All Orders (CSV)
                                         </Button>
@@ -1341,7 +1341,7 @@ const AdminDashboard = () => {
                         <CheckCircle sx={{ mr: 1 }} /> Activate User
                     </MenuItem>
                 )}
-                <MenuItem onClick={handleDeleteUser} sx={{ color: '#f44336' }}>
+                <MenuItem onClick={handleDeleteUser} sx={{ color: '#0284C7' }}>
                     <Delete sx={{ mr: 1 }} /> Delete User
                 </MenuItem>
             </Menu>
@@ -1353,10 +1353,10 @@ const AdminDashboard = () => {
                 maxWidth="md"
                 fullWidth
             >
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                     User Details - {selectedUser?.name}
                 </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                     {selectedUser && (
                         <Grid container spacing={2} sx={{ mt: 1 }}>
                             <Grid item xs={12} md={6}>
@@ -1402,8 +1402,8 @@ const AdminDashboard = () => {
                         </Grid>
                     )}
                 </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a' }}>
-                    <Button onClick={() => setUserDetailsOpen(false)} sx={{ color: '#ccc' }}>
+                <DialogActions sx={{ backgroundColor: '#FFFFFF' }}>
+                    <Button onClick={() => setUserDetailsOpen(false)} sx={{ color: '#0284C7' }}>
                         Close
                     </Button>
                 </DialogActions>
@@ -1414,10 +1414,10 @@ const AdminDashboard = () => {
                 open={approveDialogOpen}
                 onClose={() => setApproveDialogOpen(false)}
             >
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                     Approve Vendor
                 </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                     <Typography>
                         Are you sure you want to approve {selectedUser?.name} as a vendor?
                     </Typography>
@@ -1428,11 +1428,11 @@ const AdminDashboard = () => {
                         Email: {selectedUser?.email}
                     </Typography>
                 </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a' }}>
-                    <Button onClick={() => setApproveDialogOpen(false)} sx={{ color: '#ccc' }}>
+                <DialogActions sx={{ backgroundColor: '#FFFFFF' }}>
+                    <Button onClick={() => setApproveDialogOpen(false)} sx={{ color: '#0284C7' }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleApproveVendor} variant="contained" sx={{ backgroundColor: '#4caf50' }}>
+                    <Button onClick={handleApproveVendor} variant="contained" sx={{ backgroundColor: '#0284C7' }}>
                         Approve
                     </Button>
                 </DialogActions>
@@ -1445,18 +1445,18 @@ const AdminDashboard = () => {
                 maxWidth="sm"
                 fullWidth
             >
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                     Edit User - {selectedUser?.name}
                 </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white', mt: 2 }}>
+                <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', mt: 2 }}>
                     <TextField
                         fullWidth
                         label="Name"
                         value={editForm.name}
                         onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                         sx={{ mb: 2 }}
-                        InputProps={{ style: { color: 'white' } }}
-                        InputLabelProps={{ style: { color: '#ccc' } }}
+                        InputProps={{ style: { color: '#0284C7' } }}
+                        InputLabelProps={{ style: { color: '#0284C7' } }}
                     />
                     <TextField
                         fullWidth
@@ -1465,8 +1465,8 @@ const AdminDashboard = () => {
                         value={editForm.email}
                         onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                         sx={{ mb: 2 }}
-                        InputProps={{ style: { color: 'white' } }}
-                        InputLabelProps={{ style: { color: '#ccc' } }}
+                        InputProps={{ style: { color: '#0284C7' } }}
+                        InputLabelProps={{ style: { color: '#0284C7' } }}
                     />
                     <TextField
                         fullWidth
@@ -1474,15 +1474,15 @@ const AdminDashboard = () => {
                         value={editForm.phone}
                         onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
                         sx={{ mb: 2 }}
-                        InputProps={{ style: { color: 'white' } }}
-                        InputLabelProps={{ style: { color: '#ccc' } }}
+                        InputProps={{ style: { color: '#0284C7' } }}
+                        InputLabelProps={{ style: { color: '#0284C7' } }}
                     />
                     <FormControl fullWidth sx={{ mb: 2 }}>
-                        <InputLabel sx={{ color: '#ccc' }}>Role</InputLabel>
+                        <InputLabel sx={{ color: '#0284C7' }}>Role</InputLabel>
                         <Select
                             value={editForm.role}
                             onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
-                            sx={{ color: 'white' }}
+                            sx={{ color: '#0284C7' }}
                         >
                             <MenuItem value="customer">Customer</MenuItem>
                             <MenuItem value="vendor">Vendor</MenuItem>
@@ -1490,11 +1490,11 @@ const AdminDashboard = () => {
                         </Select>
                     </FormControl>
                     <FormControl fullWidth>
-                        <InputLabel sx={{ color: '#ccc' }}>Status</InputLabel>
+                        <InputLabel sx={{ color: '#0284C7' }}>Status</InputLabel>
                         <Select
                             value={editForm.status}
                             onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                            sx={{ color: 'white' }}
+                            sx={{ color: '#0284C7' }}
                         >
                             <MenuItem value="active">Active</MenuItem>
                             <MenuItem value="inactive">Inactive</MenuItem>
@@ -1502,11 +1502,11 @@ const AdminDashboard = () => {
                         </Select>
                     </FormControl>
                 </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a' }}>
-                    <Button onClick={() => setEditUserOpen(false)} sx={{ color: '#ccc' }}>
+                <DialogActions sx={{ backgroundColor: '#FFFFFF' }}>
+                    <Button onClick={() => setEditUserOpen(false)} sx={{ color: '#0284C7' }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSaveUser} variant="contained" sx={{ backgroundColor: '#9333ea' }}>
+                    <Button onClick={handleSaveUser} variant="contained" sx={{ backgroundColor: '#0284C7' }}>
                         Save Changes
                     </Button>
                 </DialogActions>
@@ -1517,10 +1517,10 @@ const AdminDashboard = () => {
                 open={deleteConfirmOpen}
                 onClose={() => setDeleteConfirmOpen(false)}
             >
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                     Confirm Delete
                 </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                     <Alert severity="warning" sx={{ mb: 2 }}>
                         This action will deactivate the user account. The user will no longer be able to log in.
                     </Alert>
@@ -1531,11 +1531,11 @@ const AdminDashboard = () => {
                         Email: {selectedUser?.email}
                     </Typography>
                 </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a' }}>
-                    <Button onClick={() => setDeleteConfirmOpen(false)} sx={{ color: '#ccc' }}>
+                <DialogActions sx={{ backgroundColor: '#FFFFFF' }}>
+                    <Button onClick={() => setDeleteConfirmOpen(false)} sx={{ color: '#0284C7' }}>
                         Cancel
                     </Button>
-                    <Button onClick={confirmDeleteUser} variant="contained" sx={{ backgroundColor: '#f44336' }}>
+                    <Button onClick={confirmDeleteUser} variant="contained" sx={{ backgroundColor: '#0284C7' }}>
                         Delete User
                     </Button>
                 </DialogActions>
@@ -1548,10 +1548,10 @@ const AdminDashboard = () => {
                 maxWidth="sm"
                 fullWidth
             >
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                     Reject Product
                 </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white', mt: 2 }}>
+                <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', mt: 2 }}>
                     <Typography variant="body2" sx={{ mb: 2 }}>
                         Please provide a reason for rejecting this product:
                     </Typography>
@@ -1563,19 +1563,19 @@ const AdminDashboard = () => {
                         onChange={(e) => setRejectReason(e.target.value)}
                         placeholder="Enter rejection reason..."
                         sx={{
-                            backgroundColor: '#333',
-                            '& .MuiInputBase-input': { color: 'white' }
+                            backgroundColor: '#FFFFFF',
+                            '& .MuiInputBase-input': { color: '#0284C7' }
                         }}
                     />
                 </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a' }}>
+                <DialogActions sx={{ backgroundColor: '#FFFFFF' }}>
                     <Button onClick={() => {
                         setRejectDialogOpen(false);
                         setRejectReason('');
-                    }} sx={{ color: '#ccc' }}>
+                    }} sx={{ color: '#0284C7' }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleRejectProduct} variant="contained" sx={{ backgroundColor: '#f44336' }}>
+                    <Button onClick={handleRejectProduct} variant="contained" sx={{ backgroundColor: '#0284C7' }}>
                         Reject Product
                     </Button>
                 </DialogActions>
