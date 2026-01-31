@@ -54,7 +54,11 @@ import {
     Add,
     TrendingUp,
     Schedule,
-    Payment
+    Payment,
+    Person,
+    Email,
+    Phone,
+    LocationOn
 } from '@mui/icons-material';
 import CustomerNavbar from '../components/CustomerNavbar';
 import { bookingsAPI, itemsAPI } from '../services/api';
@@ -64,6 +68,16 @@ const CustomerDashboard = () => {
     const [tabValue, setTabValue] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    
+    // Profile state
+    const [userProfile, setUserProfile] = useState(null);
+    const [editProfileDialog, setEditProfileDialog] = useState(false);
+    const [editProfileForm, setEditProfileForm] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        address: ''
+    });
     
     // Dynamic state
     const [stats, setStats] = useState({
@@ -99,6 +113,19 @@ const CustomerDashboard = () => {
     useEffect(() => {
         fetchDashboardData();
         
+        // Listen for tab changes from navbar
+        const handleTabChange = (event) => {
+            setTabValue(event.detail);
+        };
+        
+        window.addEventListener('changeDashboardTab', handleTabChange);
+        
+        // Check for initial tab from navigation state
+        const locationState = window.history?.state?.usr?.state;
+        if (locationState?.initialTab !== undefined) {
+            setTabValue(locationState.initialTab);
+        }
+        
         // Add timeout to prevent infinite loading
         const timeout = setTimeout(() => {
             if (loading) {
@@ -107,7 +134,10 @@ const CustomerDashboard = () => {
             }
         }, 10000); // 10 seconds timeout
 
-        return () => clearTimeout(timeout);
+        return () => {
+            clearTimeout(timeout);
+            window.removeEventListener('changeDashboardTab', handleTabChange);
+        };
     }, []);
 
     useEffect(() => {
@@ -121,7 +151,7 @@ const CustomerDashboard = () => {
             // Fetch full item details
             const response = await itemsAPI.getOne(item._id);
             setSelectedItem(response.data.item);
-            setTabValue(5); // Navigate to item details tab
+            setTabValue(6); // Navigate to item details tab
         } catch (error) {
             console.error('Error fetching item details:', error);
         }
@@ -171,6 +201,49 @@ const CustomerDashboard = () => {
         return days * selectedItem.price;
     };
 
+    // Profile handlers
+    const handleEditProfile = () => {
+        setEditProfileForm({
+            name: userProfile?.name || '',
+            email: userProfile?.email || '',
+            phone: userProfile?.phone || '',
+            address: userProfile?.address || ''
+        });
+        setEditProfileDialog(true);
+    };
+
+    const handleProfileChange = (e) => {
+        setEditProfileForm({
+            ...editProfileForm,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSaveProfile = async () => {
+        try {
+            // In a real app, you'd call an API to update the profile
+            // For now, we'll just update the local state
+            setUserProfile({
+                ...userProfile,
+                ...editProfileForm
+            });
+            
+            // Update localStorage
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            userData.name = editProfileForm.name;
+            userData.email = editProfileForm.email;
+            userData.phone = editProfileForm.phone;
+            userData.address = editProfileForm.address;
+            localStorage.setItem('user', JSON.stringify(userData));
+            
+            setEditProfileDialog(false);
+            alert('Profile updated successfully!');
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            alert('Failed to update profile. Please try again.');
+        }
+    };
+
     const fetchItems = async () => {
         try {
             setItemsLoading(true);
@@ -196,6 +269,10 @@ const CustomerDashboard = () => {
             setError('');
             
             console.log('Fetching dashboard data...');
+            
+            // Load user profile from localStorage
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            setUserProfile(userData);
             
             // Fetch customer's data
             const bookingsResponse = await bookingsAPI.getAll({ role: 'customer' });
@@ -386,6 +463,7 @@ const CustomerDashboard = () => {
                     <Tab icon={<Favorite />} label="Wishlist" />
                     <Tab icon={<History />} label="Rental History" />
                     <Tab icon={<Assessment />} label="Analytics" />
+                    <Tab icon={<Person />} label="Profile" />
                 </Tabs>
 
                 {/* My Bookings Tab */}
@@ -765,8 +843,143 @@ const CustomerDashboard = () => {
                     </Box>
                 )}
 
+                {/* Profile Tab */}
+                {tabValue === 5 && (
+                    <Box sx={{ p: 3 }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                            <Typography variant="h6">My Profile</Typography>
+                            <Button
+                                variant="contained"
+                                startIcon={<Edit />}
+                                onClick={handleEditProfile}
+                                sx={{ backgroundColor: '#9333ea' }}
+                            >
+                                Edit Profile
+                            </Button>
+                        </Box>
+
+                        {userProfile ? (
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} md={4}>
+                                    <Box sx={{ textAlign: 'center', mb: 3 }}>
+                                        <Avatar
+                                            sx={{ 
+                                                width: 120, 
+                                                height: 120, 
+                                                mx: 'auto', 
+                                                mb: 2,
+                                                bgcolor: '#9333ea',
+                                                fontSize: '3rem'
+                                            }}
+                                        >
+                                            {userProfile.name?.charAt(0).toUpperCase() || 'U'}
+                                        </Avatar>
+                                        <Typography variant="h5" gutterBottom>
+                                            {userProfile.name || 'User Name'}
+                                        </Typography>
+                                        <Chip
+                                            label={userProfile.role || 'customer'}
+                                            color="primary"
+                                            size="small"
+                                            sx={{ mb: 2 }}
+                                        />
+                                    </Box>
+                                </Grid>
+
+                                <Grid item xs={12} md={8}>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={12} sm={6}>
+                                            <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
+                                                <Box display="flex" alignItems="center" mb={2}>
+                                                    <Email sx={{ mr: 2, color: '#9333ea' }} />
+                                                    <Typography variant="subtitle1">Contact Information</Typography>
+                                                </Box>
+                                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                                    <strong>Email:</strong> {userProfile.email || 'N/A'}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                                    <strong>Phone:</strong> {userProfile.phone || 'Not provided'}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    <strong>Address:</strong> {userProfile.address || 'Not provided'}
+                                                </Typography>
+                                            </Card>
+                                        </Grid>
+
+                                        <Grid item xs={12} sm={6}>
+                                            <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
+                                                <Box display="flex" alignItems="center" mb={2}>
+                                                    <Assessment sx={{ mr: 2, color: '#9333ea' }} />
+                                                    <Typography variant="subtitle1">Account Statistics</Typography>
+                                                </Box>
+                                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                                    <strong>Total Bookings:</strong> {stats.totalBookings}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                                    <strong>Active Rentals:</strong> {stats.activeRentals}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    <strong>Total Spent:</strong> ${stats.totalSpent}
+                                                </Typography>
+                                            </Card>
+                                        </Grid>
+
+                                        <Grid item xs={12} sm={6}>
+                                            <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
+                                                <Box display="flex" alignItems="center" mb={2}>
+                                                    <Event sx={{ mr: 2, color: '#9333ea' }} />
+                                                    <Typography variant="subtitle1">Account Information</Typography>
+                                                </Box>
+                                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                                    <strong>Member Since:</strong> {userProfile.createdAt ? new Date(userProfile.createdAt).toLocaleDateString() : 'N/A'}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                                    <strong>Last Login:</strong> {userProfile.lastLogin ? new Date(userProfile.lastLogin).toLocaleDateString() : 'N/A'}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    <strong>Account Status:</strong> 
+                                                    <Chip 
+                                                        label="Active" 
+                                                        color="success" 
+                                                        size="small" 
+                                                        sx={{ ml: 1 }}
+                                                    />
+                                                </Typography>
+                                            </Card>
+                                        </Grid>
+
+                                        <Grid item xs={12} sm={6}>
+                                            <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
+                                                <Box display="flex" alignItems="center" mb={2}>
+                                                    <LocationOn sx={{ mr: 2, color: '#9333ea' }} />
+                                                    <Typography variant="subtitle1">Preferences</Typography>
+                                                </Box>
+                                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                                    <strong>Preferred Categories:</strong> Electronics, Tools
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                                    <strong>Notification Settings:</strong> Email & SMS
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    <strong>Language:</strong> English
+                                                </Typography>
+                                            </Card>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        ) : (
+                            <Box sx={{ textAlign: 'center', py: 4 }}>
+                                <Typography variant="h6" color="textSecondary">
+                                    Loading profile information...
+                                </Typography>
+                            </Box>
+                        )}
+                    </Box>
+                )}
+
                 {/* Item Details Tab */}
-                {tabValue === 5 && selectedItem && (
+                {tabValue === 6 && selectedItem && (
                     <Box sx={{ p: 3 }}>
                         <Box display="flex" alignItems="center" mb={3}>
                             <Button
@@ -1048,6 +1261,96 @@ const CustomerDashboard = () => {
                 <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
                     <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#ccc' }}>
                         Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Edit Profile Dialog */}
+            <Dialog open={editProfileDialog} onClose={() => setEditProfileDialog(false)} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    Edit Profile
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <Box sx={{ mt: 2 }}>
+                        <TextField
+                            fullWidth
+                            label="Name"
+                            name="name"
+                            value={editProfileForm.name}
+                            onChange={handleProfileChange}
+                            margin="normal"
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#444' },
+                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' }
+                                },
+                                '& .MuiInputLabel-root': { color: '#888' },
+                                '& .MuiInputBase-input': { color: 'white' }
+                            }}
+                        />
+                        <TextField
+                            fullWidth
+                            label="Email"
+                            name="email"
+                            type="email"
+                            value={editProfileForm.email}
+                            onChange={handleProfileChange}
+                            margin="normal"
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#444' },
+                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' }
+                                },
+                                '& .MuiInputLabel-root': { color: '#888' },
+                                '& .MuiInputBase-input': { color: 'white' }
+                            }}
+                        />
+                        <TextField
+                            fullWidth
+                            label="Phone"
+                            name="phone"
+                            value={editProfileForm.phone}
+                            onChange={handleProfileChange}
+                            margin="normal"
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#444' },
+                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' }
+                                },
+                                '& .MuiInputLabel-root': { color: '#888' },
+                                '& .MuiInputBase-input': { color: 'white' }
+                            }}
+                        />
+                        <TextField
+                            fullWidth
+                            label="Address"
+                            name="address"
+                            value={editProfileForm.address}
+                            onChange={handleProfileChange}
+                            margin="normal"
+                            multiline
+                            rows={3}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#444' },
+                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' }
+                                },
+                                '& .MuiInputLabel-root': { color: '#888' },
+                                '& .MuiInputBase-input': { color: 'white' }
+                            }}
+                        />
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                    <Button onClick={() => setEditProfileDialog(false)} sx={{ color: '#ccc' }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSaveProfile} variant="contained" sx={{ backgroundColor: '#9333ea' }}>
+                        Save Changes
                     </Button>
                 </DialogActions>
             </Dialog>

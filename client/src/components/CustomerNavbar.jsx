@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
     AppBar,
     Toolbar,
@@ -20,19 +20,21 @@ import {
 } from '@mui/material';
 import {
     Menu as MenuIcon,
-    Dashboard,
     ShoppingCart,
+    Search,
     Favorite,
     History,
     Assessment,
-    Home,
+    Person,
     AccountCircle,
-    ExitToApp
+    ExitToApp,
+    Store
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
 const CustomerNavbar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user, logout } = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -53,32 +55,82 @@ const CustomerNavbar = () => {
         handleMenuClose();
     };
 
+    // Check if we're on the dashboard page
+    const isDashboardPage = location.pathname === '/dashboard';
+
+    // Handle dashboard tab navigation
+    const handleDashboardTab = (tabIndex) => {
+        if (isDashboardPage) {
+            // If already on dashboard, emit custom event to change tab
+            window.dispatchEvent(new CustomEvent('changeDashboardTab', { detail: tabIndex }));
+        } else {
+            // Navigate to dashboard with tab parameter
+            navigate('/dashboard', { state: { initialTab: tabIndex } });
+        }
+        setMobileDrawerOpen(false);
+    };
+
     const menuItems = [
-        { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-        { text: 'Browse Items', icon: <Home />, path: '/' },
-        { text: 'My Bookings', icon: <ShoppingCart />, path: '/dashboard?tab=bookings' },
-        { text: 'Wishlist', icon: <Favorite />, path: '/dashboard?tab=wishlist' },
-        { text: 'Rental History', icon: <History />, path: '/dashboard?tab=history' },
-        { text: 'Analytics', icon: <Assessment />, path: '/dashboard?tab=analytics' },
+        { 
+            text: 'My Bookings', 
+            icon: <ShoppingCart />, 
+            action: () => handleDashboardTab(0)
+        },
+        { 
+            text: 'Browse Items', 
+            icon: <Search />, 
+            action: () => handleDashboardTab(1)
+        },
+        { 
+            text: 'Wishlist', 
+            icon: <Favorite />, 
+            action: () => handleDashboardTab(2)
+        },
+        { 
+            text: 'Rental History', 
+            icon: <History />, 
+            action: () => handleDashboardTab(3)
+        },
+        { 
+            text: 'Analytics', 
+            icon: <Assessment />, 
+            action: () => handleDashboardTab(4)
+        },
+        { 
+            text: 'Profile', 
+            icon: <Person />, 
+            action: () => handleDashboardTab(5)
+        },
     ];
 
     const drawerContent = (
-        <Box sx={{ width: 250, backgroundColor: '#2a2a2a', height: '100%' }}>
-            <Box sx={{ p: 2 }}>
-                <Typography variant="h6" sx={{ color: 'white' }}>
-                    Customer Portal
+        <Box sx={{ width: 280, backgroundColor: '#2a2a2a', height: '100%' }}>
+            <Box sx={{ p: 2, borderBottom: '1px solid #444' }}>
+                <Typography variant="h6" sx={{ color: 'white', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Store sx={{ color: '#9333ea' }} />
+                    RentHub Customer
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#ccc' }}>
+                    {user?.email}
                 </Typography>
             </Box>
-            <List>
+            <List sx={{ pt: 2 }}>
                 {menuItems.map((item) => (
                     <ListItem
                         button
                         key={item.text}
-                        onClick={() => {
-                            navigate(item.path);
-                            setMobileDrawerOpen(false);
+                        onClick={item.action}
+                        sx={{ 
+                            color: '#ccc', 
+                            '&:hover': { 
+                                backgroundColor: '#333',
+                                color: 'white'
+                            },
+                            '&.active': {
+                                backgroundColor: '#9333ea',
+                                color: 'white'
+                            }
                         }}
-                        sx={{ color: '#ccc', '&:hover': { backgroundColor: '#333' } }}
                     >
                         <ListItemIcon sx={{ color: '#9333ea' }}>
                             {item.icon}
@@ -92,7 +144,7 @@ const CustomerNavbar = () => {
 
     return (
         <>
-            <AppBar position="static" sx={{ backgroundColor: '#1a1a1a' }}>
+            <AppBar position="static" sx={{ backgroundColor: '#1a1a1a', boxShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
                 <Toolbar>
                     {isMobile && (
                         <IconButton
@@ -105,23 +157,104 @@ const CustomerNavbar = () => {
                         </IconButton>
                     )}
                     
-                    <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
-                        Customer Dashboard
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+                        <Store sx={{ mr: 1, color: '#9333ea', fontSize: '1.5rem' }} />
+                        <Typography variant="h6" sx={{ color: 'white' }}>
+                            RentHub
+                        </Typography>
+                        {isDashboardPage && (
+                            <Typography variant="caption" sx={{ ml: 2, color: '#ccc' }}>
+                                Customer Dashboard
+                            </Typography>
+                        )}
+                    </Box>
 
                     {!isMobile && (
-                        <Box sx={{ display: 'flex', gap: 2 }}>
-                            {menuItems.map((item) => (
-                                <Button
-                                    key={item.text}
-                                    color="inherit"
-                                    startIcon={item.icon}
-                                    onClick={() => navigate(item.path)}
-                                    sx={{ color: '#ccc', '&:hover': { color: 'white' } }}
-                                >
-                                    {item.text}
-                                </Button>
-                            ))}
+                        <Box sx={{ display: 'flex', gap: 1, mr: 2 }}>
+                            <Button
+                                color="inherit"
+                                startIcon={<ShoppingCart />}
+                                onClick={() => handleDashboardTab(0)}
+                                sx={{ 
+                                    color: '#ccc', 
+                                    '&:hover': { 
+                                        color: 'white',
+                                        backgroundColor: 'rgba(255,255,255,0.1)'
+                                    } 
+                                }}
+                            >
+                                My Bookings
+                            </Button>
+                            <Button
+                                color="inherit"
+                                startIcon={<Search />}
+                                onClick={() => handleDashboardTab(1)}
+                                sx={{ 
+                                    color: '#ccc', 
+                                    '&:hover': { 
+                                        color: 'white',
+                                        backgroundColor: 'rgba(255,255,255,0.1)'
+                                    } 
+                                }}
+                            >
+                                Browse Items
+                            </Button>
+                            <Button
+                                color="inherit"
+                                startIcon={<Favorite />}
+                                onClick={() => handleDashboardTab(2)}
+                                sx={{ 
+                                    color: '#ccc', 
+                                    '&:hover': { 
+                                        color: 'white',
+                                        backgroundColor: 'rgba(255,255,255,0.1)'
+                                    } 
+                                }}
+                            >
+                                Wishlist
+                            </Button>
+                            <Button
+                                color="inherit"
+                                startIcon={<History />}
+                                onClick={() => handleDashboardTab(3)}
+                                sx={{ 
+                                    color: '#ccc', 
+                                    '&:hover': { 
+                                        color: 'white',
+                                        backgroundColor: 'rgba(255,255,255,0.1)'
+                                    } 
+                                }}
+                            >
+                                Rental History
+                            </Button>
+                            <Button
+                                color="inherit"
+                                startIcon={<Assessment />}
+                                onClick={() => handleDashboardTab(4)}
+                                sx={{ 
+                                    color: '#ccc', 
+                                    '&:hover': { 
+                                        color: 'white',
+                                        backgroundColor: 'rgba(255,255,255,0.1)'
+                                    } 
+                                }}
+                            >
+                                Analytics
+                            </Button>
+                            <Button
+                                color="inherit"
+                                startIcon={<Person />}
+                                onClick={() => handleDashboardTab(5)}
+                                sx={{ 
+                                    color: '#ccc', 
+                                    '&:hover': { 
+                                        color: 'white',
+                                        backgroundColor: 'rgba(255,255,255,0.1)'
+                                    } 
+                                }}
+                            >
+                                Profile
+                            </Button>
                         </Box>
                     )}
 
@@ -129,10 +262,15 @@ const CustomerNavbar = () => {
                         <IconButton
                             color="inherit"
                             onClick={handleMenuOpen}
-                            sx={{ color: '#ccc' }}
+                            sx={{ 
+                                color: '#ccc',
+                                '&:hover': { 
+                                    backgroundColor: 'rgba(255,255,255,0.1)'
+                                }
+                            }}
                         >
                             <Avatar sx={{ width: 32, height: 32, bgcolor: '#9333ea' }}>
-                                {user?.name?.charAt(0)?.toUpperCase()}
+                                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                             </Avatar>
                         </IconButton>
                         <Menu
@@ -140,16 +278,35 @@ const CustomerNavbar = () => {
                             open={Boolean(anchorEl)}
                             onClose={handleMenuClose}
                             PaperProps={{
-                                sx: { backgroundColor: '#2a2a2a', color: 'white' }
+                                sx: { 
+                                    backgroundColor: '#2a2a2a', 
+                                    color: 'white',
+                                    minWidth: '200px'
+                                }
                             }}
                         >
-                            <MenuItem onClick={handleMenuClose}>
+                            <MenuItem sx={{ '&:hover': { backgroundColor: '#333' } }}>
                                 <ListItemIcon>
                                     <AccountCircle sx={{ color: '#9333ea' }} />
                                 </ListItemIcon>
-                                <ListItemText primary={user?.name} />
+                                <ListItemText primary={user?.name || 'User'} secondary={user?.email} />
                             </MenuItem>
-                            <MenuItem onClick={handleLogout}>
+                            <MenuItem 
+                                onClick={() => {
+                                    handleMenuClose();
+                                    handleDashboardTab(5);
+                                }}
+                                sx={{ '&:hover': { backgroundColor: '#333' } }}
+                            >
+                                <ListItemIcon>
+                                    <Person sx={{ color: '#9333ea' }} />
+                                </ListItemIcon>
+                                <ListItemText primary="Profile" />
+                            </MenuItem>
+                            <MenuItem 
+                                onClick={handleLogout}
+                                sx={{ '&:hover': { backgroundColor: '#333' } }}
+                            >
                                 <ListItemIcon>
                                     <ExitToApp sx={{ color: '#f44336' }} />
                                 </ListItemIcon>

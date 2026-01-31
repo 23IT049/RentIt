@@ -89,13 +89,13 @@ const VendorRegister = () => {
     };
 
     return (
-        <Container maxWidth="md" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+        <Container maxWidth="md" sx={{ py: 4, backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
             <Box sx={{ mt: 4, mb: 4 }}>
-                <Paper elevation={3} sx={{ p: 4, backgroundColor: '#2a2a2a', color: 'white' }}>
-                    <Typography variant="h4" align="center" gutterBottom sx={{ color: 'white' }}>
+                <Paper elevation={3} sx={{ p: 4, backgroundColor: 'white', color: 'black' }}>
+                    <Typography variant="h4" align="center" gutterBottom sx={{ color: 'black' }}>
                         Vendor Sign-up
                     </Typography>
-                    <Typography variant="body2" align="center" sx={{ mb: 3, color: '#cccccc' }}>
+                    <Typography variant="body2" align="center" sx={{ mb: 3, color: '#666666' }}>
                         Register your business to start listing items
                     </Typography>
 
@@ -118,12 +118,12 @@ const VendorRegister = () => {
                                     margin="normal"
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#444' },
-                                            '&:hover fieldset': { borderColor: '#666' },
+                                            '& fieldset': { borderColor: '#ddd' },
+                                            '&:hover fieldset': { borderColor: '#9333ea' },
                                             '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                         },
-                                        '& .MuiInputLabel-root': { color: '#888' },
-                                        '& .MuiInputBase-input': { color: 'white' }
+                                        '& .MuiInputLabel-root': { color: '#666' },
+                                        '& .MuiInputBase-input': { color: 'black' }
                                     }}
                                 />
                             </Grid>
@@ -138,12 +138,12 @@ const VendorRegister = () => {
                                     margin="normal"
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#444' },
-                                            '&:hover fieldset': { borderColor: '#666' },
+                                            '& fieldset': { borderColor: '#ddd' },
+                                            '&:hover fieldset': { borderColor: '#9333ea' },
                                             '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                         },
-                                        '& .MuiInputLabel-root': { color: '#888' },
-                                        '& .MuiInputBase-input': { color: 'white' }
+                                        '& .MuiInputLabel-root': { color: '#666' },
+                                        '& .MuiInputBase-input': { color: 'black' }
                                     }}
                                 />
                             </Grid>
@@ -159,17 +159,17 @@ const VendorRegister = () => {
                             margin="normal"
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '& fieldset': { borderColor: '#ddd' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
                                     '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                 },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
+                                '& .MuiInputLabel-root': { color: '#666' },
+                                '& .MuiInputBase-input': { color: 'black' }
                             }}
                         />
 
                         <FormControl fullWidth margin="normal">
-                            <InputLabel sx={{ color: '#888' }}>Product Category</InputLabel>
+                            <InputLabel sx={{ color: '#666' }}>Product Category</InputLabel>
                             <Select
                                 name="productCategory"
                                 value={formData.productCategory}
@@ -177,12 +177,12 @@ const VendorRegister = () => {
                                 label="Product Category"
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
-                                        '& fieldset': { borderColor: '#444' },
-                                        '&:hover fieldset': { borderColor: '#666' },
+                                        '& fieldset': { borderColor: '#ddd' },
+                                        '&:hover fieldset': { borderColor: '#9333ea' },
                                         '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                     },
-                                    '& .MuiInputLabel-root': { color: '#888' },
-                                    '& .MuiInputBase-input': { color: 'white' }
+                                    '& .MuiInputLabel-root': { color: '#666' },
+                                    '& .MuiInputBase-input': { color: 'black' }
                                 }}
                             >
                                 <MenuItem value="electronics">Electronics</MenuItem>
@@ -205,12 +205,12 @@ const VendorRegister = () => {
                             margin="normal"
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '& fieldset': { borderColor: '#ddd' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
                                     '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                 },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
+                                '& .MuiInputLabel-root': { color: '#666' },
+                                '& .MuiInputBase-input': { color: 'black' }
                             }}
                         />
 
@@ -225,12 +225,12 @@ const VendorRegister = () => {
                             margin="normal"
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '& fieldset': { borderColor: '#ddd' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
                                     '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                 },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
+                                '& .MuiInputLabel-root': { color: '#666' },
+                                '& .MuiInputBase-input': { color: 'black' }
                             }}
                         />
 
@@ -246,13 +246,13 @@ const VendorRegister = () => {
                             helperText="Minimum 6 characters"
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '& fieldset': { borderColor: '#ddd' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
                                     '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                 },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' },
-                                '& .MuiFormHelperText-root': { color: '#888' }
+                                '& .MuiInputLabel-root': { color: '#666' },
+                                '& .MuiInputBase-input': { color: 'black' },
+                                '& .MuiFormHelperText-root': { color: '#666' }
                             }}
                         />
 
@@ -267,12 +267,12 @@ const VendorRegister = () => {
                             margin="normal"
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '& fieldset': { borderColor: '#ddd' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
                                     '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                 },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
+                                '& .MuiInputLabel-root': { color: '#666' },
+                                '& .MuiInputBase-input': { color: 'black' }
                             }}
                         />
 
@@ -294,7 +294,7 @@ const VendorRegister = () => {
                             {loading ? 'Registering...' : 'Register'}
                         </Button>
 
-                        <Typography align="center" variant="body2" sx={{ color: '#cccccc' }}>
+                        <Typography align="center" variant="body2" sx={{ color: '#666666' }}>
                             Already have an account?{' '}
                             <Link to="/login" style={{ textDecoration: 'none', color: '#9333ea' }}>
                                 Login here
