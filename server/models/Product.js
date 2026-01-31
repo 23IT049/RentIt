@@ -28,7 +28,22 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    
+    approvalStatus: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending'
+    },
+    rejectionReason: {
+        type: String
+    },
+    approvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    approvedAt: {
+        type: Date
+    },
+
     // Pricing
     pricing: {
         hourly: {
@@ -48,7 +63,7 @@ const productSchema = new mongoose.Schema({
             min: 0
         }
     },
-    
+
     // Inventory
     inventory: {
         quantityOnHand: {
@@ -77,7 +92,7 @@ const productSchema = new mongoose.Schema({
             min: 0
         }
     },
-    
+
     // Product attributes and variants
     attributes: [{
         name: {
@@ -89,7 +104,7 @@ const productSchema = new mongoose.Schema({
             required: true
         }
     }],
-    
+
     variants: [{
         name: {
             type: String,
@@ -111,7 +126,7 @@ const productSchema = new mongoose.Schema({
             }
         }]
     }],
-    
+
     // Media
     images: [{
         url: {
@@ -126,7 +141,7 @@ const productSchema = new mongoose.Schema({
             default: false
         }
     }],
-    
+
     // Rental settings
     rentalSettings: {
         minRentalPeriod: {
@@ -146,7 +161,7 @@ const productSchema = new mongoose.Schema({
             default: 0
         }
     },
-    
+
     // Metadata
     tags: [String],
     sku: {
@@ -154,7 +169,7 @@ const productSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
-    
+
     // Availability tracking
     availability: [{
         startDate: {
@@ -186,55 +201,55 @@ productSchema.index({ sku: 1 });
 productSchema.index({ 'availability.startDate': 1, 'availability.endDate': 1 });
 
 // Virtual for available quantity
-productSchema.virtual('availableQuantity').get(function() {
+productSchema.virtual('availableQuantity').get(function () {
     return this.inventory.quantityOnHand - this.inventory.quantityReserved - this.inventory.quantityWithCustomer;
 });
 
 // Method to check availability for a given period
-productSchema.methods.checkAvailability = function(startDate, endDate, quantity = 1) {
+productSchema.methods.checkAvailability = function (startDate, endDate, quantity = 1) {
     const conflictingBookings = this.availability.filter(booking => {
         return (startDate < booking.endDate && endDate > booking.startDate);
     });
-    
+
     const totalReserved = conflictingBookings.reduce((sum, booking) => sum + booking.quantity, 0);
     return this.availableQuantity - totalReserved >= quantity;
 };
 
 // Method to reserve stock
-productSchema.methods.reserveStock = function(startDate, endDate, quantity, orderId) {
+productSchema.methods.reserveStock = function (startDate, endDate, quantity, orderId) {
     if (!this.checkAvailability(startDate, endDate, quantity)) {
         throw new Error('Insufficient stock for the requested period');
     }
-    
+
     this.availability.push({
         startDate,
         endDate,
         quantity,
         orderId
     });
-    
+
     this.inventory.quantityReserved += quantity;
     return this.save();
 };
 
 // Method to release reserved stock
-productSchema.methods.releaseStock = function(orderId) {
-    const bookingIndex = this.availability.findIndex(booking => 
+productSchema.methods.releaseStock = function (orderId) {
+    const bookingIndex = this.availability.findIndex(booking =>
         booking.orderId.toString() === orderId.toString()
     );
-    
+
     if (bookingIndex !== -1) {
         const booking = this.availability[bookingIndex];
         this.inventory.quantityReserved -= booking.quantity;
         this.availability.splice(bookingIndex, 1);
         return this.save();
     }
-    
+
     throw new Error('Booking not found');
 };
 
 // Pre-save middleware to generate SKU if not provided
-productSchema.pre('save', async function(next) {
+productSchema.pre('save', async function (next) {
     if (!this.sku) {
         const count = await this.constructor.countDocuments();
         this.sku = `PRD-${String(count + 1).padStart(6, '0')}`;

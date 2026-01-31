@@ -11,7 +11,8 @@ router.get('/', async (req, res) => {
     try {
         const { search, category, minPrice, maxPrice, page = 1, limit = 12 } = req.query;
 
-        let query = { available: true };
+        // Only show approved items to public
+        let query = { available: true, approvalStatus: 'approved' };
 
         // Search
         if (search) {
@@ -60,7 +61,8 @@ router.get('/:id', async (req, res) => {
     try {
         const item = await Item.findById(req.params.id).populate('vendor', 'name email phone avatar');
 
-        if (!item) {
+        // Only show approved items to public (unless it's the vendor viewing their own item)
+        if (!item || (item.approvalStatus !== 'approved' && (!req.user || item.vendor._id.toString() !== req.user.id))) {
             return res.status(404).json({
                 success: false,
                 message: 'Item not found'

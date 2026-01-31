@@ -30,6 +30,13 @@ export const adminAPI = {
     getRevenueReport: (params) => api.get('/admin/reports/revenue', { params }),
     getUserReport: () => api.get('/admin/reports/users'),
 
+    // Product Management
+    getProducts: (params) => api.get('/admin/products', { params }),
+    getPendingProducts: () => api.get('/admin/products/pending'),
+    approveProduct: (id) => api.put(`/admin/products/${id}/approve`),
+    rejectProduct: (id, reason) => api.put(`/admin/products/${id}/reject`, { reason }),
+    deleteProduct: (id) => api.delete(`/admin/products/${id}`),
+
     // Export Functions
     exportUsers: () => {
         const token = localStorage.getItem('token');

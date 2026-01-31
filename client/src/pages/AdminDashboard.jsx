@@ -98,28 +98,37 @@ const AdminDashboard = () => {
         totalOrders: 0,
         totalRevenue: 0,
         pendingVendors: 0,
-        activeRentals: 0
+        activeRentals: 0,
+        totalProducts: 0,
+        pendingProducts: 0
     });
     const [users, setUsers] = useState([]);
     const [vendors, setVendors] = useState([]);
     const [orders, setOrders] = useState([]);
+    const [products, setProducts] = useState([]);
     const [systemSettings, setSystemSettings] = useState(null);
 
     // Pagination states
     const [userPage, setUserPage] = useState(1);
     const [vendorPage, setVendorPage] = useState(1);
     const [orderPage, setOrderPage] = useState(1);
+    const [productPage, setProductPage] = useState(1);
     const [userTotal, setUserTotal] = useState(0);
     const [vendorTotal, setVendorTotal] = useState(0);
     const [orderTotal, setOrderTotal] = useState(0);
+    const [productTotal, setProductTotal] = useState(0);
 
     // Search and filter states
     const [userSearch, setUserSearch] = useState('');
     const [vendorSearch, setVendorSearch] = useState('');
     const [orderSearch, setOrderSearch] = useState('');
+    const [productSearch, setProductSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
     const [orderStatusFilter, setOrderStatusFilter] = useState('');
+    const [productStatusFilter, setProductStatusFilter] = useState('');
+    const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+    const [rejectReason, setRejectReason] = useState('');
 
     useEffect(() => {
         fetchDashboardData();
@@ -129,8 +138,9 @@ const AdminDashboard = () => {
         if (tabValue === 0) fetchUsers();
         else if (tabValue === 1) fetchVendors();
         else if (tabValue === 2) fetchOrders();
-        else if (tabValue === 3) fetchSettings();
-    }, [tabValue, userPage, vendorPage, orderPage, userSearch, roleFilter, statusFilter]);
+        else if (tabValue === 3) fetchProducts();
+        else if (tabValue === 4) fetchSettings();
+    }, [tabValue, userPage, vendorPage, orderPage, productPage, userSearch, roleFilter, statusFilter, productSearch, productStatusFilter]);
 
     const fetchDashboardData = async () => {
         try {
@@ -199,6 +209,27 @@ const AdminDashboard = () => {
         } catch (error) {
             console.error('Error fetching orders:', error);
             showSnackbar('Failed to load orders', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchProducts = async () => {
+        try {
+            setLoading(true);
+            const params = {
+                page: productPage,
+                limit: 10,
+                search: productSearch,
+                approvalStatus: productStatusFilter
+            };
+            const response = await adminAPI.getProducts(params);
+            setProducts(response.data.products);
+            setProductTotal(response.data.pagination.total);
+            setError(null);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            showSnackbar('Failed to load products', 'error');
         } finally {
             setLoading(false);
         }
@@ -372,6 +403,50 @@ const AdminDashboard = () => {
         }
     }, [tabValue, dateRange]);
 
+    const handleApproveProduct = async (productId) => {
+        try {
+            await adminAPI.approveProduct(productId);
+            showSnackbar('Product approved successfully', 'success');
+            fetchProducts();
+            fetchDashboardData(); // Refresh stats
+        } catch (error) {
+            console.error('Error approving product:', error);
+            showSnackbar('Failed to approve product', 'error');
+        }
+    };
+
+    const handleRejectProduct = async () => {
+        try {
+            if (!rejectReason.trim()) {
+                showSnackbar('Please provide a rejection reason', 'error');
+                return;
+            }
+            await adminAPI.rejectProduct(selectedUser._id, rejectReason);
+            showSnackbar('Product rejected successfully', 'success');
+            setRejectDialogOpen(false);
+            setRejectReason('');
+            fetchProducts();
+            fetchDashboardData();
+        } catch (error) {
+            console.error('Error rejecting product:', error);
+            showSnackbar('Failed to reject product', 'error');
+        }
+    };
+
+    const handleDeleteProduct = async (productId) => {
+        if (window.confirm('Are you sure you want to delete this product?')) {
+            try {
+                await adminAPI.deleteProduct(productId);
+                showSnackbar('Product deleted successfully', 'success');
+                fetchProducts();
+                fetchDashboardData();
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                showSnackbar('Failed to delete product', 'error');
+            }
+        }
+    };
+
     const showSnackbar = (message, severity = 'success') => {
         setSnackbar({ open: true, message, severity });
     };
@@ -525,6 +600,14 @@ const AdminDashboard = () => {
                         color="#f44336"
                     />
                 </Grid>
+                <Grid item xs={12} sm={6} md={2}>
+                    <StatCard
+                        title="Pending Products"
+                        value={stats.pendingProducts}
+                        icon={<Store />}
+                        color="#ff9800"
+                    />
+                </Grid>
             </Grid>
 
             {/* Tabs */}
@@ -542,6 +625,7 @@ const AdminDashboard = () => {
                     <Tab label="Users" />
                     <Tab label="Vendors" />
                     <Tab label="Orders" />
+                    <Tab label="Products" />
                     <Tab label="System Settings" />
                     <Tab label="Reports" />
                 </Tabs>
@@ -812,8 +896,129 @@ const AdminDashboard = () => {
                     </Box>
                 )}
 
+                {/* Products Tab */}
+                {tabValue === 3 && (
+                    <Box sx={{ p: 3 }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                            <Typography variant="h6">Product Management</Typography>
+                            <Box display="flex" gap={2}>
+                                <TextField
+                                    placeholder="Search products..."
+                                    value={productSearch}
+                                    onChange={(e) => setProductSearch(e.target.value)}
+                                    size="small"
+                                    InputProps={{
+                                        startAdornment: <Search sx={{ color: '#ccc', mr: 1 }} />,
+                                        style: { color: 'white' }
+                                    }}
+                                    sx={{ backgroundColor: '#333', borderRadius: 1 }}
+                                />
+                                <FormControl size="small" sx={{ minWidth: 150 }}>
+                                    <InputLabel sx={{ color: '#ccc' }}>Status</InputLabel>
+                                    <Select
+                                        value={productStatusFilter}
+                                        onChange={(e) => setProductStatusFilter(e.target.value)}
+                                        sx={{ color: 'white', backgroundColor: '#333' }}
+                                    >
+                                        <MenuItem value="">All</MenuItem>
+                                        <MenuItem value="pending">Pending</MenuItem>
+                                        <MenuItem value="approved">Approved</MenuItem>
+                                        <MenuItem value="rejected">Rejected</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </Box>
+
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ color: 'white' }}>Product Name</TableCell>
+                                        <TableCell sx={{ color: 'white' }}>Vendor</TableCell>
+                                        <TableCell sx={{ color: 'white' }}>Category</TableCell>
+                                        <TableCell sx={{ color: 'white' }}>Price (Daily)</TableCell>
+                                        <TableCell sx={{ color: 'white' }}>Status</TableCell>
+                                        <TableCell sx={{ color: 'white' }}>Actions</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {products.map((product) => (
+                                        <TableRow key={product._id}>
+                                            <TableCell sx={{ color: '#ccc' }}>{product.name}</TableCell>
+                                            <TableCell sx={{ color: '#ccc' }}>
+                                                {product.vendor?.companyName || product.vendor?.name}
+                                            </TableCell>
+                                            <TableCell sx={{ color: '#ccc' }}>
+                                                <Chip label={product.category} size="small" />
+                                            </TableCell>
+                                            <TableCell sx={{ color: '#ccc' }}>
+                                                ${product.pricing?.daily || 'N/A'}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Chip
+                                                    label={product.approvalStatus}
+                                                    color={
+                                                        product.approvalStatus === 'approved' ? 'success' :
+                                                            product.approvalStatus === 'rejected' ? 'error' :
+                                                                'warning'
+                                                    }
+                                                    size="small"
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box display="flex" gap={1}>
+                                                    {product.approvalStatus === 'pending' && (
+                                                        <>
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleApproveProduct(product._id)}
+                                                                sx={{ color: '#4caf50' }}
+                                                                title="Approve"
+                                                            >
+                                                                <CheckCircle />
+                                                            </IconButton>
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => {
+                                                                    setSelectedUser(product);
+                                                                    setRejectDialogOpen(true);
+                                                                }}
+                                                                sx={{ color: '#f44336' }}
+                                                                title="Reject"
+                                                            >
+                                                                <Cancel />
+                                                            </IconButton>
+                                                        </>
+                                                    )}
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleDeleteProduct(product._id)}
+                                                        sx={{ color: '#ff9800' }}
+                                                        title="Delete"
+                                                    >
+                                                        <Delete />
+                                                    </IconButton>
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+
+                        <Box display="flex" justifyContent="center" mt={3}>
+                            <Pagination
+                                count={Math.ceil(productTotal / 10)}
+                                page={productPage}
+                                onChange={(e, page) => setProductPage(page)}
+                                sx={{ '& .MuiPaginationItem-root': { color: 'white' } }}
+                            />
+                        </Box>
+                    </Box>
+                )}
+
                 {/* System Settings Tab */}
-                {tabValue === 3 && systemSettings && (
+                {tabValue === 4 && systemSettings && (
                     <Box sx={{ p: 3 }}>
                         <Typography variant="h6" gutterBottom>
                             System Settings
@@ -1332,6 +1537,46 @@ const AdminDashboard = () => {
                     </Button>
                     <Button onClick={confirmDeleteUser} variant="contained" sx={{ backgroundColor: '#f44336' }}>
                         Delete User
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Product Rejection Dialog */}
+            <Dialog
+                open={rejectDialogOpen}
+                onClose={() => setRejectDialogOpen(false)}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    Reject Product
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white', mt: 2 }}>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                        Please provide a reason for rejecting this product:
+                    </Typography>
+                    <TextField
+                        fullWidth
+                        multiline
+                        rows={4}
+                        value={rejectReason}
+                        onChange={(e) => setRejectReason(e.target.value)}
+                        placeholder="Enter rejection reason..."
+                        sx={{
+                            backgroundColor: '#333',
+                            '& .MuiInputBase-input': { color: 'white' }
+                        }}
+                    />
+                </DialogContent>
+                <DialogActions sx={{ backgroundColor: '#2a2a2a' }}>
+                    <Button onClick={() => {
+                        setRejectDialogOpen(false);
+                        setRejectReason('');
+                    }} sx={{ color: '#ccc' }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleRejectProduct} variant="contained" sx={{ backgroundColor: '#f44336' }}>
+                        Reject Product
                     </Button>
                 </DialogActions>
             </Dialog>
