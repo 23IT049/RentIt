@@ -43,8 +43,6 @@ import {
     ShoppingCart,
     Search,
     Favorite,
-    History,
-    Assessment,
     LocalShipping,
     Event,
     Star,
@@ -58,7 +56,10 @@ import {
     Person,
     Email,
     Phone,
-    LocationOn
+    LocationOn,
+    RemoveShoppingCart,
+    FavoriteBorder,
+    DeleteOutline
 } from '@mui/icons-material';
 import CustomerNavbar from '../components/CustomerNavbar';
 import { bookingsAPI, itemsAPI } from '../services/api';
@@ -89,7 +90,10 @@ const CustomerDashboard = () => {
 
     const [myBookings, setMyBookings] = useState([]);
     const [wishlist, setWishlist] = useState([]);
-    const [rentalHistory, setRentalHistory] = useState([]);
+    
+    // Cart state
+    const [cart, setCart] = useState([]);
+    const [cartDialog, setCartDialog] = useState(false);
     
     // Browse Items state
     const [items, setItems] = useState([]);
@@ -244,6 +248,58 @@ const CustomerDashboard = () => {
         }
     };
 
+    // Cart functions
+    const handleAddToCart = (item) => {
+        const existingItem = cart.find(cartItem => cartItem._id === item._id);
+        if (existingItem) {
+            alert('This item is already in your cart!');
+            return;
+        }
+        
+        const cartItem = {
+            ...item,
+            quantity: 1,
+            addedAt: new Date().toISOString()
+        };
+        
+        setCart([...cart, cartItem]);
+        alert(`${item.title} added to cart!`);
+    };
+
+    const handleRemoveFromCart = (itemId) => {
+        setCart(cart.filter(item => item._id !== itemId));
+    };
+
+    const calculateCartTotal = () => {
+        return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    };
+
+    // Wishlist functions
+    const handleAddToWishlist = (item) => {
+        const existingItem = wishlist.find(wishlistItem => wishlistItem._id === item._id);
+        if (existingItem) {
+            alert('This item is already in your wishlist!');
+            return;
+        }
+        
+        const wishlistItem = {
+            ...item,
+            addedAt: new Date().toISOString()
+        };
+        
+        setWishlist([...wishlist, wishlistItem]);
+        alert(`${item.title} added to wishlist!`);
+    };
+
+    const handleRemoveFromWishlist = (itemId) => {
+        setWishlist(wishlist.filter(item => item._id !== itemId));
+    };
+
+    const handleMoveToCart = (item) => {
+        handleAddToCart(item);
+        handleRemoveFromWishlist(item._id);
+    };
+
     const fetchItems = async () => {
         try {
             setItemsLoading(true);
@@ -300,21 +356,9 @@ const CustomerDashboard = () => {
             setStats({
                 activeRentals,
                 totalBookings: bookings.length,
-                wishlistItems: 0, // Will implement wishlist API later
+                wishlistItems: wishlist.length,
                 totalSpent
             });
-
-            // Set rental history from completed bookings
-            setRentalHistory(completedBookings.map(booking => ({
-                id: booking.id,
-                itemName: booking.item?.title || 'Item',
-                vendorName: booking.vendor?.name || 'Vendor',
-                rentalPeriod: `${booking.startDate ? new Date(booking.startDate).toLocaleDateString() : 'N/A'} - ${booking.endDate ? new Date(booking.endDate).toLocaleDateString() : 'N/A'}`,
-                totalAmount: booking.totalAmount || 0,
-                status: booking.status,
-                rating: 5, // Will implement rating system later
-                review: 'Great experience!' // Will implement review system later
-            })));
 
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
@@ -366,7 +410,10 @@ const CustomerDashboard = () => {
     if (loading) {
         return (
             <>
-                <CustomerNavbar />
+                <CustomerNavbar 
+                    cart={cart} 
+                    onCartClick={() => setCartDialog(true)} 
+                />
                 <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
                     <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
                         <CircularProgress sx={{ color: '#9333ea' }} />
@@ -383,7 +430,10 @@ const CustomerDashboard = () => {
     if (!loading && !error && myBookings.length === 0 && items.length === 0) {
         return (
             <>
-                <CustomerNavbar />
+                <CustomerNavbar 
+                    cart={cart} 
+                    onCartClick={() => setCartDialog(true)} 
+                />
                 <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
                     <Typography variant="h4" gutterBottom sx={{ color: 'white', mb: 4 }}>
                         Customer Dashboard
@@ -398,11 +448,26 @@ const CustomerDashboard = () => {
 
     return (
         <>
-            <CustomerNavbar />
+            <CustomerNavbar 
+                cart={cart} 
+                onCartClick={() => setCartDialog(true)} 
+            />
             <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
                 <Typography variant="h4" gutterBottom sx={{ color: 'white', mb: 4 }}>
                     Customer Dashboard
                 </Typography>
+
+                {/* Cart Button */}
+                <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button
+                        variant="contained"
+                        startIcon={<ShoppingCart />}
+                        onClick={() => setCartDialog(true)}
+                        sx={{ backgroundColor: '#9333ea' }}
+                    >
+                        Cart ({cart.length})
+                    </Button>
+                </Box>
 
                 {error && (
                     <Alert severity="error" sx={{ mb: 3 }}>
@@ -461,8 +526,6 @@ const CustomerDashboard = () => {
                     <Tab icon={<ShoppingCart />} label="My Bookings" />
                     <Tab icon={<Search />} label="Browse Items" />
                     <Tab icon={<Favorite />} label="Wishlist" />
-                    <Tab icon={<History />} label="Rental History" />
-                    <Tab icon={<Assessment />} label="Analytics" />
                     <Tab icon={<Person />} label="Profile" />
                 </Tabs>
 
@@ -657,11 +720,41 @@ const CustomerDashboard = () => {
                                                         sx={{ backgroundColor: '#9333ea', color: 'white' }}
                                                     />
                                                 </Box>
+                                                <Box display="flex" gap={1} mb={2}>
+                                                    <Button
+                                                        size="small"
+                                                        variant="contained"
+                                                        startIcon={<ShoppingCart />}
+                                                        onClick={() => handleAddToCart(item)}
+                                                        sx={{ 
+                                                            backgroundColor: '#9333ea',
+                                                            flex: 1
+                                                        }}
+                                                    >
+                                                        Add to Cart
+                                                    </Button>
+                                                    <Button
+                                                        size="small"
+                                                        variant="outlined"
+                                                        startIcon={<Favorite />}
+                                                        onClick={() => handleAddToWishlist(item)}
+                                                        sx={{ 
+                                                            borderColor: '#9333ea',
+                                                            color: '#9333ea',
+                                                            flex: 1
+                                                        }}
+                                                    >
+                                                        Wishlist
+                                                    </Button>
+                                                </Box>
                                                 <Button
                                                     fullWidth
-                                                    variant="contained"
+                                                    variant="outlined"
                                                     onClick={() => handleViewItem(item)}
-                                                    sx={{ backgroundColor: '#9333ea' }}
+                                                    sx={{ 
+                                                        borderColor: '#9333ea',
+                                                        color: '#9333ea'
+                                                    }}
                                                 >
                                                     View Details
                                                 </Button>
@@ -678,15 +771,25 @@ const CustomerDashboard = () => {
                 {tabValue === 2 && (
                     <Box sx={{ p: 3 }}>
                         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                            <Typography variant="h6">My Wishlist</Typography>
-                            <Button
-                                variant="contained"
-                                startIcon={<Add />}
-                                onClick={() => navigate('/')}
-                                sx={{ backgroundColor: '#9333ea' }}
-                            >
-                                Browse More Items
-                            </Button>
+                            <Typography variant="h6">My Wishlist ({wishlist.length})</Typography>
+                            <Box display="flex" gap={2}>
+                                <Button
+                                    variant="contained"
+                                    startIcon={<ShoppingCart />}
+                                    onClick={() => setCartDialog(true)}
+                                    sx={{ backgroundColor: '#9333ea' }}
+                                >
+                                    View Cart ({cart.length})
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<Add />}
+                                    onClick={() => setTabValue(1)}
+                                    sx={{ borderColor: '#9333ea', color: '#9333ea' }}
+                                >
+                                    Browse More Items
+                                </Button>
+                            </Box>
                         </Box>
 
                         {wishlist.length === 0 ? (
@@ -696,47 +799,53 @@ const CustomerDashboard = () => {
                         ) : (
                             <Grid container spacing={3}>
                                 {wishlist.map((item) => (
-                                    <Grid item xs={12} sm={6} md={4} key={item.id}>
+                                    <Grid item xs={12} sm={6} md={4} key={item._id}>
                                         <Card sx={{ backgroundColor: '#333', color: 'white' }}>
+                                            <CardMedia
+                                                component="img"
+                                                height="150"
+                                                image={item.image || 'https://via.placeholder.com/300x150'}
+                                                alt={item.title}
+                                            />
                                             <CardContent>
-                                                <Box display="flex" alignItems="center" mb={2}>
-                                                    <Avatar
-                                                        src={item.image}
-                                                        sx={{ mr: 2, width: 50, height: 50 }}
+                                                <Typography variant="h6" gutterBottom>
+                                                    {item.title}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, color: '#ccc' }}>
+                                                    {item.description?.substring(0, 80)}...
+                                                </Typography>
+                                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                                                    <Typography variant="h6" color="primary" sx={{ color: '#9333ea' }}>
+                                                        ₹{item.price}/day
+                                                    </Typography>
+                                                    <Chip 
+                                                        label={item.category} 
+                                                        size="small" 
+                                                        sx={{ backgroundColor: '#9333ea', color: 'white' }}
                                                     />
-                                                    <Box flexGrow={1}>
-                                                        <Typography variant="h6">{item.name}</Typography>
-                                                        <Typography variant="body2" color="textSecondary">
-                                                            {item.vendorName}
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                                <Box display="flex" justifyContent="space-between" mb={2}>
-                                                    <Typography variant="body2">
-                                                        ${item.dailyRate}/day
-                                                    </Typography>
-                                                    <Typography variant="body2">
-                                                        ${item.weeklyRate}/week
-                                                    </Typography>
-                                                </Box>
-                                                <Box display="flex" alignItems="center" mb={2}>
-                                                    <Star sx={{ color: '#ffc107', mr: 1, fontSize: 16 }} />
-                                                    <Typography variant="body2">
-                                                        {item.rating} ({item.reviews} reviews)
-                                                    </Typography>
                                                 </Box>
                                                 <Box display="flex" gap={1}>
                                                     <Button
                                                         size="small"
                                                         variant="contained"
-                                                        sx={{ backgroundColor: '#9333ea' }}
+                                                        startIcon={<ShoppingCart />}
+                                                        onClick={() => handleMoveToCart(item)}
+                                                        sx={{ 
+                                                            backgroundColor: '#9333ea',
+                                                            flex: 1
+                                                        }}
                                                     >
-                                                        Book Now
+                                                        Move to Cart
                                                     </Button>
                                                     <Button
                                                         size="small"
                                                         variant="outlined"
-                                                        sx={{ color: '#f44336', borderColor: '#f44336' }}
+                                                        startIcon={<DeleteOutline />}
+                                                        onClick={() => handleRemoveFromWishlist(item._id)}
+                                                        sx={{ 
+                                                            borderColor: '#f44336',
+                                                            color: '#f44336'
+                                                        }}
                                                     >
                                                         Remove
                                                     </Button>
@@ -750,101 +859,8 @@ const CustomerDashboard = () => {
                     </Box>
                 )}
 
-                {/* Rental History Tab */}
-                {tabValue === 3 && (
-                    <Box sx={{ p: 3 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Rental History & Reviews
-                        </Typography>
-                        {rentalHistory.length === 0 ? (
-                            <Alert severity="info">
-                                No rental history yet. Your completed rentals will appear here.
-                            </Alert>
-                        ) : (
-                            <List>
-                                {rentalHistory.map((rental) => (
-                                    <Box key={rental.id}>
-                                        <ListItem>
-                                            <ListItemText
-                                                primary={rental.itemName}
-                                                secondary={
-                                                    <Box>
-                                                        <Typography variant="body2" color="textSecondary">
-                                                            {rental.vendorName} • {rental.rentalPeriod}
-                                                        </Typography>
-                                                        <Typography variant="body2" color="textSecondary">
-                                                            Total: ${rental.totalAmount}
-                                                        </Typography>
-                                                        {rental.review && (
-                                                            <Typography variant="body2" sx={{ mt: 1, fontStyle: 'italic' }}>
-                                                                "{rental.review}"
-                                                            </Typography>
-                                                        )}
-                                                    </Box>
-                                                }
-                                            />
-                                            <ListItemSecondaryAction>
-                                                <Box display="flex" alignItems="center" gap={1}>
-                                                    <Star sx={{ color: '#ffc107', fontSize: 16 }} />
-                                                    <Typography variant="body2">{rental.rating}</Typography>
-                                                </Box>
-                                            </ListItemSecondaryAction>
-                                        </ListItem>
-                                        <Divider />
-                                    </Box>
-                                ))}
-                            </List>
-                        )}
-                    </Box>
-                )}
-
-                {/* Analytics Tab */}
-                {tabValue === 4 && (
-                    <Box sx={{ p: 3 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Your Rental Analytics
-                        </Typography>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} md={6}>
-                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3 }}>
-                                    <Typography variant="subtitle1" gutterBottom>
-                                        Spending Overview
-                                    </Typography>
-                                    <LinearProgress
-                                        variant="determinate"
-                                        value={65}
-                                        sx={{ mb: 2, backgroundColor: '#555' }}
-                                    />
-                                    <Typography variant="body2">
-                                        You've spent $2,450 this year
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary">
-                                        Average per rental: $163
-                                    </Typography>
-                                </Card>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3 }}>
-                                    <Typography variant="subtitle1" gutterBottom>
-                                        Favorite Categories
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        📸 Electronics (8 rentals)
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        🎵 Audio Equipment (4 rentals)
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        🎥 Video Gear (3 rentals)
-                                    </Typography>
-                                </Card>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                )}
-
                 {/* Profile Tab */}
-                {tabValue === 5 && (
+                {tabValue === 3 && (
                     <Box sx={{ p: 3 }}>
                         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                             <Typography variant="h6">My Profile</Typography>
@@ -909,7 +925,7 @@ const CustomerDashboard = () => {
                                         <Grid item xs={12} sm={6}>
                                             <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
                                                 <Box display="flex" alignItems="center" mb={2}>
-                                                    <Assessment sx={{ mr: 2, color: '#9333ea' }} />
+                                                    <TrendingUp sx={{ mr: 2, color: '#9333ea' }} />
                                                     <Typography variant="subtitle1">Account Statistics</Typography>
                                                 </Box>
                                                 <Typography variant="body2" sx={{ mb: 1 }}>
@@ -1352,6 +1368,77 @@ const CustomerDashboard = () => {
                     <Button onClick={handleSaveProfile} variant="contained" sx={{ backgroundColor: '#9333ea' }}>
                         Save Changes
                     </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Cart Dialog */}
+            <Dialog 
+                open={cartDialog} 
+                onClose={() => setCartDialog(false)} 
+                maxWidth="md" 
+                fullWidth
+            >
+                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    Shopping Cart ({cart.length} items)
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    {cart.length === 0 ? (
+                        <Box sx={{ textAlign: 'center', py: 4 }}>
+                            <Typography variant="body1" sx={{ color: '#ccc' }}>
+                                Your cart is empty
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Box sx={{ pt: 2 }}>
+                            {cart.map((item) => (
+                                <Box key={item._id} sx={{ display: 'flex', alignItems: 'center', mb: 2, pb: 2, borderBottom: '1px solid #444' }}>
+                                    <Avatar
+                                        src={item.image}
+                                        sx={{ mr: 2, width: 60, height: 60 }}
+                                    />
+                                    <Box flexGrow={1}>
+                                        <Typography variant="h6">{item.title}</Typography>
+                                        <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                            {item.category} • ₹{item.price}/day
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography variant="h6" sx={{ color: '#9333ea' }}>
+                                            ₹{item.price * item.quantity}
+                                        </Typography>
+                                        <IconButton
+                                            onClick={() => handleRemoveFromCart(item._id)}
+                                            sx={{ color: '#f44336' }}
+                                        >
+                                            <RemoveShoppingCart />
+                                        </IconButton>
+                                    </Box>
+                                </Box>
+                            ))}
+                            <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid #444' }}>
+                                <Typography variant="h5" sx={{ color: '#9333ea' }}>
+                                    Total: ₹{calculateCartTotal()}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    )}
+                </DialogContent>
+                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                    <Button onClick={() => setCartDialog(false)} sx={{ color: '#ccc' }}>
+                        Continue Shopping
+                    </Button>
+                    {cart.length > 0 && (
+                        <Button 
+                            variant="contained" 
+                            sx={{ backgroundColor: '#9333ea' }}
+                            onClick={() => {
+                                alert('Proceeding to checkout...');
+                                setCartDialog(false);
+                            }}
+                        >
+                            Proceed to Checkout
+                        </Button>
+                    )}
                 </DialogActions>
             </Dialog>
             </Container>
