@@ -30,6 +30,7 @@ const productRoutes = require('./routes/products');
 const quotationRoutes = require('./routes/quotations');
 const itemRoutes = require('./routes/items');
 const bookingRoutes = require('./routes/bookings');
+const adminRoutes = require('./routes/admin');
 
 // Routes
 app.get('/', (req, res) => {
@@ -40,6 +41,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/quotations', quotationRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

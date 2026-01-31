@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         lowercase: true,
         trim: true,
-        set: function(email) {
+        set: function (email) {
             return email.toLowerCase().trim();
         }
     },
@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true,
         validate: {
-            validator: function(v) {
+            validator: function (v) {
                 // GSTIN validation: 15 characters alphanumeric
                 // For testing purposes, accept simpler formats too
                 if (!v) return true; // Optional field
@@ -76,6 +76,14 @@ const userSchema = new mongoose.Schema({
     isApproved: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: String,
+        enum: ['active', 'inactive', 'suspended'],
+        default: 'active'
+    },
+    lastLogin: {
+        type: Date
     },
     permissions: {
         canManageProducts: { type: Boolean, default: false },
@@ -105,17 +113,17 @@ userSchema.pre('save', async function (next) {
     if (!this.isModified('email')) return next();
 
     try {
-        const existingUser = await this.constructor.findOne({ 
+        const existingUser = await this.constructor.findOne({
             email: this.email.toLowerCase().trim(),
             _id: { $ne: this._id }
         });
-        
+
         if (existingUser) {
             const error = new Error('Email already exists');
             error.code = 11000;
             return next(error);
         }
-        
+
         next();
     } catch (error) {
         next(error);
