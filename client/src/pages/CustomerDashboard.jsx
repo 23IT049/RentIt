@@ -91,6 +91,10 @@ const CustomerDashboard = () => {
         endDate: '',
         notes: ''
     });
+    
+    // Booking Details state
+    const [bookingDetailsDialog, setBookingDetailsDialog] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState(null);
 
     useEffect(() => {
         fetchDashboardData();
@@ -125,6 +129,11 @@ const CustomerDashboard = () => {
 
     const handleBooking = () => {
         setBookingDialog(true);
+    };
+
+    const handleBookingDetails = (booking) => {
+        setSelectedBooking(booking);
+        setBookingDetailsDialog(true);
     };
 
     const handleBookingSubmit = async () => {
@@ -403,6 +412,7 @@ const CustomerDashboard = () => {
                                     <Table>
                                         <TableHead>
                                             <TableRow>
+                                                <TableCell sx={{ color: 'white' }}>Order ID</TableCell>
                                                 <TableCell sx={{ color: 'white' }}>Item</TableCell>
                                                 <TableCell sx={{ color: 'white' }}>Vendor</TableCell>
                                                 <TableCell sx={{ color: 'white' }}>Rental Period</TableCell>
@@ -414,6 +424,11 @@ const CustomerDashboard = () => {
                                         <TableBody>
                                             {myBookings.map((booking) => (
                                                 <TableRow key={booking.id}>
+                                                    <TableCell sx={{ color: '#ccc' }}>
+                                                        <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                                                            #{booking.id || booking._id?.slice(-8) || 'N/A'}
+                                                        </Typography>
+                                                    </TableCell>
                                                     <TableCell sx={{ color: '#ccc' }}>
                                                         <Box display="flex" alignItems="center">
                                                             <Avatar
@@ -445,7 +460,10 @@ const CustomerDashboard = () => {
                                                         />
                                                     </TableCell>
                                                     <TableCell>
-                                                        <IconButton sx={{ color: '#ccc' }}>
+                                                        <IconButton 
+                                                            sx={{ color: '#ccc' }}
+                                                            onClick={() => handleBookingDetails(booking)}
+                                                        >
                                                             <Visibility />
                                                         </IconButton>
                                                     </TableCell>
@@ -932,6 +950,104 @@ const CustomerDashboard = () => {
                         disabled={!bookingData.startDate || !bookingData.endDate}
                     >
                         Confirm Booking
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Booking Details Dialog */}
+            <Dialog open={bookingDetailsDialog} onClose={() => setBookingDetailsDialog(false)} maxWidth="md" fullWidth>
+                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    Booking Details - #{selectedBooking?.id || selectedBooking?._id?.slice(-8)}
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    {selectedBooking && (
+                        <Box sx={{ pt: 2 }}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} md={6}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Order Information
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Order ID:</strong> #{selectedBooking.id || selectedBooking._id?.slice(-8)}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Status:</strong> {selectedBooking.status}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Total Amount:</strong> ${selectedBooking.totalAmount || 0}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Booking Date:</strong> {selectedBooking.createdAt ? new Date(selectedBooking.createdAt).toLocaleDateString() : 'N/A'}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Item Details
+                                    </Typography>
+                                    <Box display="flex" alignItems="center" mb={2}>
+                                        <Avatar
+                                            src={selectedBooking.item?.image || 'https://via.placeholder.com/50x50'}
+                                            sx={{ mr: 2, width: 50, height: 50 }}
+                                        />
+                                        <Box>
+                                            <Typography variant="body1">
+                                                {selectedBooking.item?.title || 'Item'}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                {selectedBooking.item?.category}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Daily Rate:</strong> ${selectedBooking.item?.price || 0}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Location:</strong> {selectedBooking.item?.location || 'N/A'}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Rental Period
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Start Date:</strong> {selectedBooking.startDate ? new Date(selectedBooking.startDate).toLocaleDateString() : 'N/A'}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>End Date:</strong> {selectedBooking.endDate ? new Date(selectedBooking.endDate).toLocaleDateString() : 'N/A'}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Duration:</strong> {selectedBooking.startDate && selectedBooking.endDate ? 
+                                            Math.ceil((new Date(selectedBooking.endDate) - new Date(selectedBooking.startDate)) / (1000 * 60 * 60 * 24)) + 1 : 0} days
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Vendor Information
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Name:</strong> {selectedBooking.vendor?.name || 'Vendor'}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Email:</strong> {selectedBooking.vendor?.email || 'vendor@example.com'}
+                                    </Typography>
+                                </Grid>
+                                {selectedBooking.notes && (
+                                    <Grid item xs={12}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Notes
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                            {selectedBooking.notes}
+                                        </Typography>
+                                    </Grid>
+                                )}
+                            </Grid>
+                        </Box>
+                    )}
+                </DialogContent>
+                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                    <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#ccc' }}>
+                        Close
                     </Button>
                 </DialogActions>
             </Dialog>

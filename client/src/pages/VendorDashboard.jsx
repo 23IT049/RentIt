@@ -46,7 +46,8 @@ import {
     People,
     LocalShipping,
     Store,
-    Assessment
+    Assessment,
+    CheckCircle
 } from '@mui/icons-material';
 import VendorNavbar from '../components/VendorNavbar';
 import { itemsAPI, bookingsAPI } from '../services/api';
@@ -72,6 +73,9 @@ const VendorDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [products, setProducts] = useState([]);
     const [quotations, setQuotations] = useState([]);
+    
+    // Booking Details state
+    const [bookingDetailsDialog, setBookingDetailsDialog] = useState(false);
     
     // Create Item state
     const [createItemDialog, setCreateItemDialog] = useState(false);
@@ -271,6 +275,31 @@ const VendorDashboard = () => {
         setViewItemDialog(true);
     };
 
+    const handleBookingDetails = (order) => {
+        console.log('handleBookingDetails called with order:', order);
+        setSelectedOrder(order);
+        setBookingDetailsDialog(true);
+        console.log('bookingDetailsDialog set to true');
+    };
+
+    const handleApproveBooking = async (orderId) => {
+        console.log('handleApproveBooking called with orderId:', orderId);
+        try {
+            const response = await bookingsAPI.confirm(orderId);
+            console.log('Approve response:', response);
+            if (response.data.success) {
+                alert('Booking approved successfully!');
+                setBookingDetailsDialog(false);
+                fetchDashboardData(); // Refresh orders
+            } else {
+                alert('Failed to approve booking: ' + (response.data.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error approving booking:', error);
+            alert('Failed to approve booking. Please try again.');
+        }
+    };
+
     const getStatusColor = (status) => {
         switch (status) {
             case 'confirmed': return 'primary';
@@ -451,12 +480,37 @@ const VendorDashboard = () => {
                                                         />
                                                     </TableCell>
                                                     <TableCell>
-                                                        <IconButton
-                                                            onClick={(e) => handleMenuClick(e, order)}
-                                                            sx={{ color: '#ccc' }}
-                                                        >
-                                                            <MoreVert />
-                                                        </IconButton>
+                                                        <Box display="flex" gap={1}>
+                                                            <IconButton
+                                                                onClick={() => {
+                                                                    console.log('View Details button clicked for order:', order);
+                                                                    handleBookingDetails(order);
+                                                                }}
+                                                                sx={{ color: '#ccc' }}
+                                                                title="View Details"
+                                                            >
+                                                                <Visibility />
+                                                            </IconButton>
+                                                            {order.status === 'pending' && (
+                                                                <IconButton
+                                                                    onClick={() => {
+                                                                        console.log('Approve button clicked for order:', order.id);
+                                                                        handleApproveBooking(order.id);
+                                                                    }}
+                                                                    sx={{ color: '#4caf50' }}
+                                                                    title="Approve Booking"
+                                                                >
+                                                                    <CheckCircle />
+                                                                </IconButton>
+                                                            )}
+                                                            <IconButton
+                                                                onClick={(e) => handleMenuClick(e, order)}
+                                                                sx={{ color: '#ccc' }}
+                                                                title="More Options"
+                                                            >
+                                                                <MoreVert />
+                                                            </IconButton>
+                                                        </Box>
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -1226,6 +1280,122 @@ const VendorDashboard = () => {
                     <Button onClick={() => setViewItemDialog(false)} sx={{ backgroundColor: '#9333ea' }}>
                         Close
                     </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Booking Details Dialog */}
+            <Dialog open={bookingDetailsDialog} onClose={() => {
+                console.log('Dialog closing');
+                setBookingDetailsDialog(false);
+            }} maxWidth="md" fullWidth>
+                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    Booking Details - #{selectedOrder?.id}
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    {selectedOrder && (
+                        <Box sx={{ pt: 2 }}>
+                            <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                Debug: Dialog is open, selectedOrder: {JSON.stringify(selectedOrder, null, 2)}
+                            </Typography>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} md={6}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Order Information
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Order ID:</strong> #{selectedOrder.id}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Status:</strong> {selectedOrder.status}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Total Amount:</strong> ${selectedOrder.totalAmount || 0}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Booking Date:</strong> {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString() : 'N/A'}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Customer Information
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Name:</strong> {selectedOrder.renter?.name || 'Customer'}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Email:</strong> {selectedOrder.renter?.email || 'customer@example.com'}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Phone:</strong> {selectedOrder.renter?.phone || 'N/A'}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Item Details
+                                    </Typography>
+                                    <Box display="flex" alignItems="center" mb={2}>
+                                        <Avatar
+                                            src={selectedOrder.item?.image || 'https://via.placeholder.com/50x50'}
+                                            sx={{ mr: 2, width: 50, height: 50 }}
+                                        />
+                                        <Box>
+                                            <Typography variant="body1">
+                                                {selectedOrder.item?.title || 'Item'}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                {selectedOrder.item?.category}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Daily Rate:</strong> ${selectedOrder.item?.price || 0}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Location:</strong> {selectedOrder.item?.location || 'N/A'}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Rental Period
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Start Date:</strong> {selectedOrder.startDate ? new Date(selectedOrder.startDate).toLocaleDateString() : 'N/A'}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>End Date:</strong> {selectedOrder.endDate ? new Date(selectedOrder.endDate).toLocaleDateString() : 'N/A'}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Duration:</strong> {selectedOrder.startDate && selectedOrder.endDate ? 
+                                            Math.ceil((new Date(selectedOrder.endDate) - new Date(selectedOrder.startDate)) / (1000 * 60 * 60 * 24)) + 1 : 0} days
+                                    </Typography>
+                                </Grid>
+                                {selectedOrder.notes && (
+                                    <Grid item xs={12}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Customer Notes
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                            {selectedOrder.notes}
+                                        </Typography>
+                                    </Grid>
+                                )}
+                            </Grid>
+                        </Box>
+                    )}
+                </DialogContent>
+                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                    <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#ccc' }}>
+                        Close
+                    </Button>
+                    {selectedOrder?.status === 'pending' && (
+                        <Button 
+                            onClick={() => handleApproveBooking(selectedOrder.id)} 
+                            variant="contained"
+                            sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#45a049' } }}
+                        >
+                            Approve Booking
+                        </Button>
+                    )}
                 </DialogActions>
             </Dialog>
             </Container>

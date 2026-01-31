@@ -57,13 +57,13 @@ const Login = () => {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+        <Container maxWidth="sm" sx={{ py: 4, backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
             <Box sx={{ mt: 4, mb: 4 }}>
-                <Paper elevation={3} sx={{ p: 4, backgroundColor: '#2a2a2a', color: 'white' }}>
-                    <Typography variant="h4" align="center" gutterBottom sx={{ color: 'white' }}>
+                <Paper elevation={3} sx={{ p: 4, backgroundColor: 'white', color: 'black' }}>
+                    <Typography variant="h4" align="center" gutterBottom sx={{ color: 'black' }}>
                         Login
                     </Typography>
-                    <Typography variant="body2" align="center" sx={{ mb: 3, color: '#cccccc' }}>
+                    <Typography variant="body2" align="center" sx={{ mb: 3, color: '#666666' }}>
                         Welcome back to RentHub
                     </Typography>
 
@@ -86,12 +86,12 @@ const Login = () => {
                             autoFocus
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '& fieldset': { borderColor: '#ddd' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
                                     '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                 },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
+                                '& .MuiInputLabel-root': { color: '#666' },
+                                '& .MuiInputBase-input': { color: 'black' }
                             }}
                         />
 
@@ -106,12 +106,12 @@ const Login = () => {
                             margin="normal"
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
+                                    '& fieldset': { borderColor: '#ddd' },
+                                    '&:hover fieldset': { borderColor: '#9333ea' },
                                     '&.Mui-focused fieldset': { borderColor: '#9333ea' }
                                 },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
+                                '& .MuiInputLabel-root': { color: '#666' },
+                                '& .MuiInputBase-input': { color: 'black' }
                             }}
                         />
 
@@ -147,7 +147,7 @@ const Login = () => {
                             </Link>
                         </Box>
 
-                        <Typography align="center" variant="body2" sx={{ color: '#cccccc' }}>
+                        <Typography align="center" variant="body2" sx={{ color: '#666666' }}>
                             Don't have an account?{' '}
                             <Link to="/register" style={{ textDecoration: 'none', color: '#9333ea' }}>
                                 Register Here
