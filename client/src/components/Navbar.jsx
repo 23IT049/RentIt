@@ -20,10 +20,10 @@ const Navbar = () => {
             position="sticky"
             elevation={0}
             sx={{
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                backgroundColor: '#FFFFFF',
                 backdropFilter: 'blur(10px)',
-                borderBottom: '1px solid #E2E8F0',
-                color: '#0F172A',
+                borderBottom: '2px solid #0284C7',
+                color: '#0284C7',
                 transition: 'all 0.3s ease',
             }}
         >
@@ -36,12 +36,8 @@ const Navbar = () => {
                         sx={{
                             flexGrow: 1,
                             textDecoration: 'none',
-                            color: 'inherit',
+                            color: '#0284C7',
                             fontWeight: 800,
-                            background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text',
                             display: 'flex',
                             alignItems: 'center',
                             gap: 1,
@@ -61,14 +57,13 @@ const Navbar = () => {
                             to="/"
                             startIcon={<HomeIcon />}
                             sx={{
-                                color: '#64748B',
+                                color: '#0284C7',
                                 fontWeight: 600,
                                 px: 2,
                                 borderRadius: '0.5rem',
                                 transition: 'all 0.3s ease',
                                 '&:hover': {
-                                    backgroundColor: '#F1F5F9',
-                                    color: '#0EA5E9',
+                                    backgroundColor: '#E0F2FE',
                                     transform: 'translateY(-2px)',
                                 }
                             }}
@@ -84,14 +79,13 @@ const Navbar = () => {
                                     to="/create-item"
                                     startIcon={<AddIcon />}
                                     sx={{
-                                        color: '#64748B',
+                                        color: '#0284C7',
                                         fontWeight: 600,
                                         px: 2,
                                         borderRadius: '0.5rem',
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            backgroundColor: '#F1F5F9',
-                                            color: '#0EA5E9',
+                                            backgroundColor: '#E0F2FE',
                                             transform: 'translateY(-2px)',
                                         }
                                     }}
@@ -104,14 +98,13 @@ const Navbar = () => {
                                     to="/my-items"
                                     startIcon={<InventoryIcon />}
                                     sx={{
-                                        color: '#64748B',
+                                        color: '#0284C7',
                                         fontWeight: 600,
                                         px: 2,
                                         borderRadius: '0.5rem',
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            backgroundColor: '#F1F5F9',
-                                            color: '#0EA5E9',
+                                            backgroundColor: '#E0F2FE',
                                             transform: 'translateY(-2px)',
                                         }
                                     }}
@@ -124,14 +117,13 @@ const Navbar = () => {
                                     to="/my-bookings"
                                     startIcon={<BookmarksIcon />}
                                     sx={{
-                                        color: '#64748B',
+                                        color: '#0284C7',
                                         fontWeight: 600,
                                         px: 2,
                                         borderRadius: '0.5rem',
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            backgroundColor: '#F1F5F9',
-                                            color: '#0EA5E9',
+                                            backgroundColor: '#E0F2FE',
                                             transform: 'translateY(-2px)',
                                         }
                                     }}
@@ -143,16 +135,17 @@ const Navbar = () => {
                                     onClick={handleLogout}
                                     sx={{
                                         ml: 1,
-                                        borderColor: '#E2E8F0',
-                                        color: '#64748B',
+                                        borderColor: '#0284C7',
+                                        color: '#0284C7',
                                         fontWeight: 600,
                                         px: 2.5,
                                         borderRadius: '0.5rem',
+                                        borderWidth: '2px',
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            borderColor: '#0EA5E9',
-                                            backgroundColor: '#F0F9FF',
-                                            color: '#0EA5E9',
+                                            borderColor: '#0284C7',
+                                            borderWidth: '2px',
+                                            backgroundColor: '#E0F2FE',
                                             transform: 'translateY(-2px)',
                                         }
                                     }}
@@ -167,14 +160,13 @@ const Navbar = () => {
                                     component={Link}
                                     to="/login"
                                     sx={{
-                                        color: '#64748B',
+                                        color: '#0284C7',
                                         fontWeight: 600,
                                         px: 2,
                                         borderRadius: '0.5rem',
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            backgroundColor: '#F1F5F9',
-                                            color: '#0EA5E9',
+                                            backgroundColor: '#E0F2FE',
                                             transform: 'translateY(-2px)',
                                         }
                                     }}
@@ -186,17 +178,17 @@ const Navbar = () => {
                                     component={Link}
                                     to="/register"
                                     sx={{
-                                        background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
-                                        color: 'white',
+                                        backgroundColor: '#0284C7',
+                                        color: '#FFFFFF',
                                         fontWeight: 600,
                                         px: 2.5,
                                         borderRadius: '0.5rem',
-                                        boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.3)',
+                                        boxShadow: '0 4px 6px -1px rgba(2, 132, 199, 0.3)',
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            background: 'linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%)',
+                                            backgroundColor: '#0369A1',
                                             transform: 'translateY(-2px)',
-                                            boxShadow: '0 10px 25px -5px rgba(14, 165, 233, 0.4)',
+                                            boxShadow: '0 10px 25px -5px rgba(2, 132, 199, 0.4)',
                                         }
                                     }}
                                 >

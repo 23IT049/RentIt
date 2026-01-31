@@ -345,34 +345,27 @@ const VendorDashboard = () => {
     };
 
     const getStatusColor = (status) => {
-        switch (status) {
-            case 'confirmed': return 'primary';
-            case 'renting': return 'success';
-            case 'delivered': return 'info';
-            case 'returned': return 'default';
-            case 'cancelled': return 'error';
-            default: return 'default';
-        }
+        return 'primary';
     };
 
     const StatCard = ({ title, value, icon, color, subtitle }) => (
-        <Card sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+        <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
             <CardContent>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                     <Box>
-                        <Typography color="textSecondary" gutterBottom variant="h6" component="div">
+                        <Typography sx={{ color: '#0284C7' }} gutterBottom variant="h6" component="div">
                             {title}
                         </Typography>
                         <Typography variant="h4" component="div">
                             {value}
                         </Typography>
                         {subtitle && (
-                            <Typography variant="caption" color="textSecondary">
+                            <Typography variant="caption" sx={{ color: '#0284C7' }}>
                                 {subtitle}
                             </Typography>
                         )}
                     </Box>
-                    <Box sx={{ color, fontSize: 40 }}>
+                    <Box sx={{ color: '#0284C7', fontSize: 40 }}>
                         {icon}
                     </Box>
                 </Box>
@@ -384,9 +377,9 @@ const VendorDashboard = () => {
         return (
             <>
                 <VendorNavbar />
-                <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+                <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
                     <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-                        <CircularProgress sx={{ color: '#9333ea' }} />
+                        <CircularProgress sx={{ color: '#0284C7' }} />
                     </Box>
                 </Container>
             </>
@@ -396,8 +389,8 @@ const VendorDashboard = () => {
     return (
         <>
             <VendorNavbar />
-            <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
-                <Typography variant="h4" gutterBottom sx={{ color: 'white', mb: 4 }}>
+            <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
+                <Typography variant="h4" gutterBottom sx={{ color: '#0284C7', mb: 4 }}>
                     Vendor Dashboard
                 </Typography>
 
@@ -414,7 +407,7 @@ const VendorDashboard = () => {
                             title="Total Orders"
                             value={stats.totalOrders}
                             icon={<ShoppingCart />}
-                            color="#9333ea"
+                            color="#0284C7"
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
@@ -422,7 +415,7 @@ const VendorDashboard = () => {
                             title="Active Rentals"
                             value={stats.activeRentals}
                             icon={<LocalShipping />}
-                            color="#4caf50"
+                            color="#0284C7"
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
@@ -430,7 +423,7 @@ const VendorDashboard = () => {
                             title="Monthly Revenue"
                             value={`$${stats.monthlyRevenue.toLocaleString()}`}
                             icon={<AttachMoney />}
-                            color="#ff9800"
+                            color="#0284C7"
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
@@ -438,21 +431,21 @@ const VendorDashboard = () => {
                             title="Total Products"
                             value={stats.totalProducts}
                             icon={<Store />}
-                            color="#2196f3"
+                            color="#0284C7"
                         />
                     </Grid>
                 </Grid>
 
                 {/* Tabs */}
-                <Paper sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                <Paper sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                     <Tabs
                         value={tabValue}
                         onChange={handleTabChange}
                         sx={{
                             borderBottom: 1,
-                            borderColor: '#444',
-                            '& .MuiTab-root': { color: '#ccc' },
-                            '& .Mui-selected': { color: 'white' }
+                            borderColor: '#BAE6FD',
+                            '& .MuiTab-root': { color: '#0284C7' },
+                            '& .Mui-selected': { color: '#0284C7' }
                         }}
                     >
                         <Tab label="Orders" />
@@ -465,12 +458,12 @@ const VendorDashboard = () => {
                     {tabValue === 0 && (
                         <Box sx={{ p: 3 }}>
                             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                                <Typography variant="h6">Customer Orders to Process</Typography>
+                                <Typography variant="h6" sx={{ color: '#0284C7' }}>Customer Orders to Process</Typography>
                                 <Button
                                     variant="contained"
                                     startIcon={<Assessment />}
                                     onClick={() => fetchDashboardData()}
-                                    sx={{ backgroundColor: '#9333ea' }}
+                                    sx={{ backgroundColor: '#0284C7' }}
                                 >
                                     Refresh
                                 </Button>
@@ -485,41 +478,41 @@ const VendorDashboard = () => {
                                     <Table>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell sx={{ color: 'white' }}>Order ID</TableCell>
-                                                <TableCell sx={{ color: 'white' }}>Customer</TableCell>
-                                                <TableCell sx={{ color: 'white' }}>Items</TableCell>
-                                                <TableCell sx={{ color: 'white' }}>Rental Period</TableCell>
-                                                <TableCell sx={{ color: 'white' }}>Total</TableCell>
-                                                <TableCell sx={{ color: 'white' }}>Status</TableCell>
-                                                <TableCell sx={{ color: 'white' }}>Actions</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Order ID</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Customer</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Items</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Rental Period</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Total</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Status</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Actions</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
                                             {orders.map((order) => (
                                                 <TableRow key={order._id}>
-                                                    <TableCell sx={{ color: '#ccc' }}>#{order._id?.slice(-8) || 'N/A'}</TableCell>
-                                                    <TableCell sx={{ color: '#ccc' }}>
+                                                    <TableCell sx={{ color: '#0284C7' }}>#{order._id?.slice(-8) || 'N/A'}</TableCell>
+                                                    <TableCell sx={{ color: '#0284C7' }}>
                                                         <Box>
                                                             <Typography variant="body2">{order.renter?.name}</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#888' }}>
+                                                            <Typography variant="caption" sx={{ color: '#0284C7' }}>
                                                                 {order.renter?.email}
                                                             </Typography>
                                                         </Box>
                                                     </TableCell>
-                                                    <TableCell sx={{ color: '#ccc' }}>
+                                                    <TableCell sx={{ color: '#0284C7' }}>
                                                         {order.item?.title || 'Item'}
                                                     </TableCell>
-                                                    <TableCell sx={{ color: '#ccc' }}>
+                                                    <TableCell sx={{ color: '#0284C7' }}>
                                                         {order.startDate ? new Date(order.startDate).toLocaleDateString() : 'N/A'} -
                                                         {order.endDate ? new Date(order.endDate).toLocaleDateString() : 'N/A'}
                                                     </TableCell>
-                                                    <TableCell sx={{ color: '#ccc' }}>
+                                                    <TableCell sx={{ color: '#0284C7' }}>
                                                         ${order.totalAmount || 0}
                                                     </TableCell>
                                                     <TableCell>
                                                         <Chip
                                                             label={order.status}
-                                                            color={getStatusColor(order.status)}
+                                                            color="primary"
                                                             size="small"
                                                         />
                                                     </TableCell>
@@ -530,7 +523,7 @@ const VendorDashboard = () => {
                                                                     console.log('View Details button clicked for order:', order);
                                                                     handleBookingDetails(order);
                                                                 }}
-                                                                sx={{ color: '#ccc' }}
+                                                                sx={{ color: '#0284C7' }}
                                                                 title="View Details"
                                                             >
                                                                 <Visibility />
@@ -541,7 +534,7 @@ const VendorDashboard = () => {
                                                                         console.log('Approve button clicked for order:', order._id);
                                                                         handleApproveBooking(order._id);
                                                                     }}
-                                                                    sx={{ color: '#4caf50' }}
+                                                                    sx={{ color: '#0284C7' }}
                                                                     title="Approve Booking"
                                                                 >
                                                                     <CheckCircle />
@@ -549,7 +542,7 @@ const VendorDashboard = () => {
                                                             )}
                                                             <IconButton
                                                                 onClick={(e) => handleMenuClick(e, order)}
-                                                                sx={{ color: '#ccc' }}
+                                                                sx={{ color: '#0284C7' }}
                                                                 title="More Options"
                                                             >
                                                                 <MoreVert />
@@ -569,12 +562,12 @@ const VendorDashboard = () => {
                     {tabValue === 1 && (
                         <Box sx={{ p: 3 }}>
                             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                                <Typography variant="h6">My Products</Typography>
+                                <Typography variant="h6" sx={{ color: '#0284C7' }}>My Products</Typography>
                                 <Button
                                     variant="contained"
                                     startIcon={<Add />}
                                     onClick={handleCreateItem}
-                                    sx={{ backgroundColor: '#9333ea' }}
+                                    sx={{ backgroundColor: '#0284C7' }}
                                 >
                                     Add Product
                                 </Button>
@@ -588,23 +581,20 @@ const VendorDashboard = () => {
                                 <Grid container spacing={3}>
                                     {products.map((product) => (
                                         <Grid item xs={12} sm={6} md={4} key={product._id}>
-                                            <Card sx={{ backgroundColor: '#333', color: 'white' }}>
+                                            <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                                                 <CardContent>
                                                     <Typography variant="h6" gutterBottom>
                                                         {product.title}
                                                     </Typography>
                                                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                                                        <Typography color="textSecondary">
+                                                        <Typography sx={{ color: '#0284C7' }}>
                                                             {product.category}
                                                         </Typography>
                                                         <Chip
                                                             label={product.approvalStatus || 'pending'}
-                                                            color={
-                                                                product.approvalStatus === 'approved' ? 'success' :
-                                                                    product.approvalStatus === 'rejected' ? 'error' :
-                                                                        'warning'
-                                                            }
+                                                            color="primary"
                                                             size="small"
+                                                            sx={{ color: '#FFFFFF' }}
                                                         />
                                                     </Box>
                                                     {product.approvalStatus === 'rejected' && product.rejectionReason && (
@@ -631,7 +621,7 @@ const VendorDashboard = () => {
                                                             variant="outlined"
                                                             startIcon={<Edit />}
                                                             onClick={() => handleEditItem(product)}
-                                                            sx={{ color: '#9333ea', borderColor: '#9333ea' }}
+                                                            sx={{ color: '#0284C7', borderColor: '#0284C7' }}
                                                         >
                                                             Edit
                                                         </Button>
@@ -640,7 +630,7 @@ const VendorDashboard = () => {
                                                             variant="outlined"
                                                             startIcon={<Visibility />}
                                                             onClick={() => handleViewItem(product)}
-                                                            sx={{ color: '#9333ea', borderColor: '#9333ea' }}
+                                                            sx={{ color: '#0284C7', borderColor: '#0284C7' }}
                                                         >
                                                             View
                                                         </Button>
@@ -657,7 +647,7 @@ const VendorDashboard = () => {
                     {/* Quotations Tab */}
                     {tabValue === 2 && (
                         <Box sx={{ p: 3 }}>
-                            <Typography variant="h6" gutterBottom>
+                            <Typography variant="h6" gutterBottom sx={{ color: '#0284C7' }}>
                                 Quotations
                             </Typography>
                             <Alert severity="info">
@@ -669,19 +659,19 @@ const VendorDashboard = () => {
                     {/* Analytics Tab */}
                     {tabValue === 3 && (
                         <Box sx={{ p: 3 }}>
-                            <Typography variant="h6" gutterBottom>
+                            <Typography variant="h6" gutterBottom sx={{ color: '#0284C7' }}>
                                 Analytics & Reports
                             </Typography>
                             <Grid container spacing={3}>
                                 <Grid item xs={12} md={6}>
-                                    <Card sx={{ backgroundColor: '#333', color: 'white', p: 3 }}>
+                                    <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', p: 3 }}>
                                         <Typography variant="subtitle1" gutterBottom>
                                             Revenue Overview
                                         </Typography>
                                         <LinearProgress
                                             variant="determinate"
                                             value={75}
-                                            sx={{ mb: 2, backgroundColor: '#555' }}
+                                            sx={{ mb: 2, backgroundColor: '#BAE6FD', '& .MuiLinearProgress-bar': { backgroundColor: '#0284C7' } }}
                                         />
                                         <Typography variant="body2">
                                             75% of monthly target achieved
@@ -689,7 +679,7 @@ const VendorDashboard = () => {
                                     </Card>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <Card sx={{ backgroundColor: '#333', color: 'white', p: 3 }}>
+                                    <Card sx={{ backgroundColor: '#FFFFFF', color: '#0284C7', p: 3 }}>
                                         <Typography variant="subtitle1" gutterBottom>
                                             Popular Products
                                         </Typography>
@@ -708,12 +698,13 @@ const VendorDashboard = () => {
                     anchorEl={anchorEl}
                     open={Boolean(anchorEl)}
                     onClose={handleMenuClose}
+                    PaperProps={{ sx: { backgroundColor: '#FFFFFF', color: '#0284C7' } }}
                 >
-                    <MenuItem onClick={handleOrderDetails}>
-                        <Visibility sx={{ mr: 1 }} /> View Details
+                    <MenuItem onClick={handleOrderDetails} sx={{ color: '#0284C7' }}>
+                        <Visibility sx={{ mr: 1, color: '#0284C7' }} /> View Details
                     </MenuItem>
-                    <MenuItem onClick={() => {/* Generate invoice */ }}>
-                        <AttachMoney sx={{ mr: 1 }} /> Generate Invoice
+                    <MenuItem onClick={() => {/* Generate invoice */ }} sx={{ color: '#0284C7' }}>
+                        <AttachMoney sx={{ mr: 1, color: '#0284C7' }} /> Generate Invoice
                     </MenuItem>
                 </Menu>
 
@@ -723,36 +714,37 @@ const VendorDashboard = () => {
                     onClose={() => setOrderDetailsOpen(false)}
                     maxWidth="md"
                     fullWidth
+                    PaperProps={{ sx: { backgroundColor: '#FFFFFF' } }}
                 >
-                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         Order Details - {selectedOrder?.id}
                     </DialogTitle>
-                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         {selectedOrder && (
                             <Box>
                                 <Grid container spacing={2} sx={{ mb: 3 }}>
                                     <Grid item xs={6}>
-                                        <Typography variant="subtitle2" color="textSecondary">
+                                        <Typography variant="subtitle2" sx={{ color: '#0284C7' }}>
                                             Customer
                                         </Typography>
                                         <Typography>{selectedOrder.renter?.name}</Typography>
-                                        <Typography variant="body2" color="textSecondary">
+                                        <Typography variant="body2" sx={{ color: '#0284C7' }}>
                                             {selectedOrder.renter?.email}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Typography variant="subtitle2" color="textSecondary">
+                                        <Typography variant="subtitle2" sx={{ color: '#0284C7' }}>
                                             Order Status
                                         </Typography>
                                         <Chip
                                             label={selectedOrder.status}
-                                            color={getStatusColor(selectedOrder.status)}
+                                            color="primary"
                                             size="small"
                                         />
                                     </Grid>
                                 </Grid>
 
-                                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                                <Typography variant="subtitle2" sx={{ color: '#0284C7' }} gutterBottom>
                                     Item
                                 </Typography>
                                 <Typography sx={{ mb: 1 }}>
@@ -767,11 +759,11 @@ const VendorDashboard = () => {
                             </Box>
                         )}
                     </DialogContent>
-                    <DialogActions sx={{ backgroundColor: '#2a2a2a' }}>
-                        <Button onClick={() => setOrderDetailsOpen(false)} sx={{ color: '#ccc' }}>
+                    <DialogActions sx={{ backgroundColor: '#FFFFFF' }}>
+                        <Button onClick={() => setOrderDetailsOpen(false)} sx={{ color: '#0284C7' }}>
                             Close
                         </Button>
-                        <Button variant="contained" sx={{ backgroundColor: '#9333ea' }}>
+                        <Button variant="contained" sx={{ backgroundColor: '#0284C7' }}>
                             Generate Invoice
                         </Button>
                     </DialogActions>
@@ -783,11 +775,12 @@ const VendorDashboard = () => {
                     onClose={() => setCreateItemDialog(false)}
                     maxWidth="md"
                     fullWidth
+                    PaperProps={{ sx: { backgroundColor: '#FFFFFF' } }}
                 >
-                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         Add New Product
                     </DialogTitle>
-                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         <Box sx={{ pt: 2 }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
@@ -798,13 +791,13 @@ const VendorDashboard = () => {
                                         value={formData.title}
                                         onChange={handleCreateItemChange}
                                         required
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -818,20 +811,20 @@ const VendorDashboard = () => {
                                         onChange={handleCreateItemChange}
                                         multiline
                                         rows={3}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <FormControl fullWidth>
-                                        <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
+                                        <InputLabel sx={{ color: '#0284C7' }}>Category</InputLabel>
                                         <Select
                                             name="category"
                                             value={formData.category}
@@ -839,11 +832,11 @@ const VendorDashboard = () => {
                                             label="Category"
                                             sx={{
                                                 '& .MuiOutlinedInput-root': {
-                                                    '& fieldset': { borderColor: '#555' },
-                                                    '&:hover fieldset': { borderColor: '#9333ea' },
-                                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                    '& fieldset': { borderColor: '#BAE6FD' },
+                                                    '&:hover fieldset': { borderColor: '#0284C7' },
+                                                    '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                                 },
-                                                '& .MuiSelect-select': { color: 'white' }
+                                                '& .MuiSelect-select': { color: '#0284C7' }
                                             }}
                                         >
                                             <MenuItem value="Electronics">Electronics</MenuItem>
@@ -864,13 +857,13 @@ const VendorDashboard = () => {
                                         onChange={handleCreateItemChange}
                                         type="number"
                                         required
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -883,13 +876,13 @@ const VendorDashboard = () => {
                                         value={formData.deposit}
                                         onChange={handleCreateItemChange}
                                         type="number"
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -901,20 +894,20 @@ const VendorDashboard = () => {
                                         name="location"
                                         value={formData.location}
                                         onChange={handleCreateItemChange}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <FormControl fullWidth>
-                                        <InputLabel sx={{ color: '#ccc' }}>Condition</InputLabel>
+                                        <InputLabel sx={{ color: '#0284C7' }}>Condition</InputLabel>
                                         <Select
                                             name="condition"
                                             value={formData.condition}
@@ -922,11 +915,11 @@ const VendorDashboard = () => {
                                             label="Condition"
                                             sx={{
                                                 '& .MuiOutlinedInput-root': {
-                                                    '& fieldset': { borderColor: '#555' },
-                                                    '&:hover fieldset': { borderColor: '#9333ea' },
-                                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                    '& fieldset': { borderColor: '#BAE6FD' },
+                                                    '&:hover fieldset': { borderColor: '#0284C7' },
+                                                    '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                                 },
-                                                '& .MuiSelect-select': { color: 'white' }
+                                                '& .MuiSelect-select': { color: '#0284C7' }
                                             }}
                                         >
                                             <MenuItem value="New">New</MenuItem>
@@ -944,13 +937,13 @@ const VendorDashboard = () => {
                                         name="image"
                                         value={formData.image}
                                         onChange={handleCreateItemChange}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -963,13 +956,13 @@ const VendorDashboard = () => {
                                         value={formData.features}
                                         onChange={handleCreateItemChange}
                                         placeholder="e.g., Waterproof, Portable, High Quality"
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -983,13 +976,13 @@ const VendorDashboard = () => {
                                         onChange={handleCreateItemChange}
                                         multiline
                                         rows={2}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -997,14 +990,14 @@ const VendorDashboard = () => {
                             </Grid>
                         </Box>
                     </DialogContent>
-                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                        <Button onClick={() => setCreateItemDialog(false)} sx={{ color: '#ccc' }}>
+                    <DialogActions sx={{ backgroundColor: '#FFFFFF', p: 3 }}>
+                        <Button onClick={() => setCreateItemDialog(false)} sx={{ color: '#0284C7' }}>
                             Cancel
                         </Button>
                         <Button
                             onClick={handleCreateItemSubmit}
                             variant="contained"
-                            sx={{ backgroundColor: '#9333ea' }}
+                            sx={{ backgroundColor: '#0284C7' }}
                             disabled={createItemLoading || !formData.title || !formData.price}
                         >
                             {createItemLoading ? 'Creating...' : 'Add Product'}
@@ -1018,11 +1011,12 @@ const VendorDashboard = () => {
                     onClose={() => setEditItemDialog(false)}
                     maxWidth="md"
                     fullWidth
+                    PaperProps={{ sx: { backgroundColor: '#FFFFFF' } }}
                 >
-                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         Edit Product - {selectedProduct?.title}
                     </DialogTitle>
-                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         <Box sx={{ pt: 2 }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
@@ -1033,13 +1027,13 @@ const VendorDashboard = () => {
                                         value={formData.title}
                                         onChange={handleCreateItemChange}
                                         required
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -1053,20 +1047,20 @@ const VendorDashboard = () => {
                                         onChange={handleCreateItemChange}
                                         multiline
                                         rows={3}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <FormControl fullWidth>
-                                        <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
+                                        <InputLabel sx={{ color: '#0284C7' }}>Category</InputLabel>
                                         <Select
                                             name="category"
                                             value={formData.category}
@@ -1074,11 +1068,11 @@ const VendorDashboard = () => {
                                             label="Category"
                                             sx={{
                                                 '& .MuiOutlinedInput-root': {
-                                                    '& fieldset': { borderColor: '#555' },
-                                                    '&:hover fieldset': { borderColor: '#9333ea' },
-                                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                    '& fieldset': { borderColor: '#BAE6FD' },
+                                                    '&:hover fieldset': { borderColor: '#0284C7' },
+                                                    '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                                 },
-                                                '& .MuiSelect-select': { color: 'white' }
+                                                '& .MuiSelect-select': { color: '#0284C7' }
                                             }}
                                         >
                                             <MenuItem value="Electronics">Electronics</MenuItem>
@@ -1099,13 +1093,13 @@ const VendorDashboard = () => {
                                         onChange={handleCreateItemChange}
                                         type="number"
                                         required
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -1118,13 +1112,13 @@ const VendorDashboard = () => {
                                         value={formData.deposit}
                                         onChange={handleCreateItemChange}
                                         type="number"
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -1136,20 +1130,20 @@ const VendorDashboard = () => {
                                         name="location"
                                         value={formData.location}
                                         onChange={handleCreateItemChange}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <FormControl fullWidth>
-                                        <InputLabel sx={{ color: '#ccc' }}>Condition</InputLabel>
+                                        <InputLabel sx={{ color: '#0284C7' }}>Condition</InputLabel>
                                         <Select
                                             name="condition"
                                             value={formData.condition}
@@ -1157,11 +1151,11 @@ const VendorDashboard = () => {
                                             label="Condition"
                                             sx={{
                                                 '& .MuiOutlinedInput-root': {
-                                                    '& fieldset': { borderColor: '#555' },
-                                                    '&:hover fieldset': { borderColor: '#9333ea' },
-                                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                    '& fieldset': { borderColor: '#BAE6FD' },
+                                                    '&:hover fieldset': { borderColor: '#0284C7' },
+                                                    '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                                 },
-                                                '& .MuiSelect-select': { color: 'white' }
+                                                '& .MuiSelect-select': { color: '#0284C7' }
                                             }}
                                         >
                                             <MenuItem value="New">New</MenuItem>
@@ -1179,13 +1173,13 @@ const VendorDashboard = () => {
                                         name="image"
                                         value={formData.image}
                                         onChange={handleCreateItemChange}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -1198,13 +1192,13 @@ const VendorDashboard = () => {
                                         value={formData.features}
                                         onChange={handleCreateItemChange}
                                         placeholder="e.g., Waterproof, Portable, High Quality"
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -1218,13 +1212,13 @@ const VendorDashboard = () => {
                                         onChange={handleCreateItemChange}
                                         multiline
                                         rows={2}
-                                        InputLabelProps={{ style: { color: '#ccc' } }}
-                                        InputProps={{ style: { color: 'white' } }}
+                                        InputLabelProps={{ style: { color: '#0284C7' } }}
+                                        InputProps={{ style: { color: '#0284C7' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                '& fieldset': { borderColor: '#BAE6FD' },
+                                                '&:hover fieldset': { borderColor: '#0284C7' },
+                                                '&.Mui-focused fieldset': { borderColor: '#0284C7' },
                                             }
                                         }}
                                     />
@@ -1232,14 +1226,14 @@ const VendorDashboard = () => {
                             </Grid>
                         </Box>
                     </DialogContent>
-                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                        <Button onClick={() => setEditItemDialog(false)} sx={{ color: '#ccc' }}>
+                    <DialogActions sx={{ backgroundColor: '#FFFFFF', p: 3 }}>
+                        <Button onClick={() => setEditItemDialog(false)} sx={{ color: '#0284C7' }}>
                             Cancel
                         </Button>
                         <Button
                             onClick={handleEditItemSubmit}
                             variant="contained"
-                            sx={{ backgroundColor: '#9333ea' }}
+                            sx={{ backgroundColor: '#0284C7' }}
                             disabled={editItemLoading || !formData.title || !formData.price}
                         >
                             {editItemLoading ? 'Updating...' : 'Update Product'}
@@ -1253,11 +1247,12 @@ const VendorDashboard = () => {
                     onClose={() => setViewItemDialog(false)}
                     maxWidth="md"
                     fullWidth
+                    PaperProps={{ sx: { backgroundColor: '#FFFFFF' } }}
                 >
-                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         Product Details - {selectedProduct?.title}
                     </DialogTitle>
-                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         {selectedProduct && (
                             <Box sx={{ pt: 2 }}>
                                 <Grid container spacing={3}>
@@ -1271,67 +1266,68 @@ const VendorDashboard = () => {
                                         ) : (
                                             <Box sx={{
                                                 height: 200,
-                                                backgroundColor: '#333',
+                                                backgroundColor: '#FFFFFF',
+                                                border: '1px solid #BAE6FD',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 borderRadius: '8px'
                                             }}>
-                                                <Typography variant="body2" sx={{ color: '#888' }}>
+                                                <Typography variant="body2" sx={{ color: '#0284C7' }}>
                                                     No Image Available
                                                 </Typography>
                                             </Box>
                                         )}
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography variant="h5" gutterBottom sx={{ color: 'white' }}>
+                                        <Typography variant="h5" gutterBottom sx={{ color: '#0284C7' }}>
                                             {selectedProduct.title}
                                         </Typography>
-                                        <Typography variant="body1" sx={{ mb: 2, color: '#ccc' }}>
+                                        <Typography variant="body1" sx={{ mb: 2, color: '#0284C7' }}>
                                             {selectedProduct.description}
                                         </Typography>
                                         <Box sx={{ mb: 2 }}>
                                             <Chip
                                                 label={selectedProduct.category}
                                                 size="small"
-                                                sx={{ backgroundColor: '#9333ea', color: 'white' }}
+                                                sx={{ backgroundColor: '#0284C7', color: 'white' }}
                                             />
                                             <Chip
                                                 label={selectedProduct.condition}
                                                 size="small"
-                                                sx={{ ml: 1, backgroundColor: '#555', color: 'white' }}
+                                                sx={{ ml: 1, backgroundColor: '#BAE6FD', color: '#0284C7' }}
                                             />
                                         </Box>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#9333ea' }}>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#0284C7' }}>
                                             ₹{selectedProduct.price} / day
                                         </Typography>
                                         {selectedProduct.deposit > 0 && (
-                                            <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                            <Typography variant="body2" sx={{ mb: 2, color: '#0284C7' }}>
                                                 Security Deposit: ₹{selectedProduct.deposit}
                                             </Typography>
                                         )}
-                                        <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                        <Typography variant="body2" sx={{ mb: 2, color: '#0284C7' }}>
                                             <strong>Location:</strong> {selectedProduct.location}
                                         </Typography>
                                         {selectedProduct.features && selectedProduct.features.length > 0 && (
                                             <Box sx={{ mb: 2 }}>
-                                                <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
+                                                <Typography variant="body2" sx={{ mb: 1, color: '#0284C7' }}>
                                                     <strong>Features:</strong>
                                                 </Typography>
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                                                     {selectedProduct.features.map((feature, index) => (
                                                         <Chip key={index} label={feature} variant="outlined" size="small"
-                                                            sx={{ borderColor: '#9333ea', color: '#9333ea' }} />
+                                                            sx={{ borderColor: '#0284C7', color: '#0284C7' }} />
                                                     ))}
                                                 </Box>
                                             </Box>
                                         )}
                                         {selectedProduct.terms && (
                                             <Box sx={{ mt: 2 }}>
-                                                <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
+                                                <Typography variant="body2" sx={{ mb: 1, color: '#0284C7' }}>
                                                     <strong>Terms & Conditions:</strong>
                                                 </Typography>
-                                                <Typography variant="body2" sx={{ color: '#888' }}>
+                                                <Typography variant="body2" sx={{ color: '#0284C7' }}>
                                                     {selectedProduct.terms}
                                                 </Typography>
                                             </Box>
@@ -1341,8 +1337,8 @@ const VendorDashboard = () => {
                             </Box>
                         )}
                     </DialogContent>
-                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                        <Button onClick={() => setViewItemDialog(false)} sx={{ backgroundColor: '#9333ea' }}>
+                    <DialogActions sx={{ backgroundColor: '#FFFFFF', p: 3 }}>
+                        <Button onClick={() => setViewItemDialog(false)} sx={{ backgroundColor: '#0284C7', color: 'white', '&:hover': { backgroundColor: '#026aa1' } }}>
                             Close
                         </Button>
                     </DialogActions>
@@ -1352,14 +1348,16 @@ const VendorDashboard = () => {
                 <Dialog open={bookingDetailsDialog} onClose={() => {
                     console.log('Dialog closing');
                     setBookingDetailsDialog(false);
-                }} maxWidth="md" fullWidth>
-                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                }} maxWidth="md" fullWidth
+                    PaperProps={{ sx: { backgroundColor: '#FFFFFF' } }}
+                >
+                    <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         Booking Details - #{selectedBookingOrder?._id?.slice(-8) || 'N/A'}
                     </DialogTitle>
-                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                    <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         {selectedBookingOrder ? (
                             <Box sx={{ pt: 2 }}>
-                                <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                <Typography variant="body2" sx={{ mb: 2, color: '#0284C7' }}>
                                     Debug: Dialog is open, selectedBookingOrder ID: {selectedBookingOrder._id}
                                 </Typography>
                                 <Grid container spacing={3}>
@@ -1407,7 +1405,7 @@ const VendorDashboard = () => {
                                                 <Typography variant="body1">
                                                     {selectedBookingOrder.item?.title || 'Item'}
                                                 </Typography>
-                                                <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                <Typography variant="body2" sx={{ color: '#0284C7' }}>
                                                     {selectedBookingOrder.item?.category || 'N/A'}
                                                 </Typography>
                                             </Box>
@@ -1439,7 +1437,7 @@ const VendorDashboard = () => {
                                             <Typography variant="h6" gutterBottom>
                                                 Customer Notes
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                            <Typography variant="body2" sx={{ color: '#0284C7' }}>
                                                 {selectedBookingOrder.notes}
                                             </Typography>
                                         </Grid>
@@ -1448,21 +1446,21 @@ const VendorDashboard = () => {
                             </Box>
                         ) : (
                             <Box sx={{ pt: 2 }}>
-                                <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                <Typography variant="body2" sx={{ color: '#0284C7' }}>
                                     No booking data available
                                 </Typography>
                             </Box>
                         )}
                     </DialogContent>
-                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                        <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#ccc' }}>
+                    <DialogActions sx={{ backgroundColor: '#FFFFFF', p: 3 }}>
+                        <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#0284C7' }}>
                             Close
                         </Button>
                         {selectedBookingOrder?.status === 'pending' && (
                             <Button
                                 onClick={() => handleApproveBooking(selectedBookingOrder._id)}
                                 variant="contained"
-                                sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#45a049' } }}
+                                sx={{ backgroundColor: '#0284C7', '&:hover': { backgroundColor: '#026aa1' } }}
                             >
                                 Approve Booking
                             </Button>

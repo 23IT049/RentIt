@@ -65,20 +65,17 @@ const VendorNavbar = () => {
 
     const drawerContent = (
         <Box sx={{ width: 280, backgroundColor: '#FFFFFF', height: '100%' }}>
-            <Box sx={{ p: 3, borderBottom: '1px solid #E2E8F0' }}>
+            <Box sx={{ p: 3, borderBottom: '2px solid #0284C7' }}>
                 <Typography
                     variant="h6"
                     sx={{
                         fontWeight: 800,
-                        background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
+                        color: '#0284C7',
                     }}
                 >
                     🏪 Vendor Portal
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#64748B' }}>
+                <Typography variant="caption" sx={{ color: '#0284C7' }}>
                     {user?.email}
                 </Typography>
             </Box>
@@ -92,17 +89,16 @@ const VendorNavbar = () => {
                             setMobileDrawerOpen(false);
                         }}
                         sx={{
-                            color: '#64748B',
+                            color: '#0284C7',
                             mx: 1,
                             borderRadius: '0.5rem',
                             transition: 'all 0.2s ease',
                             '&:hover': {
-                                backgroundColor: '#F0F9FF',
-                                color: '#0EA5E9',
+                                backgroundColor: '#E0F2FE',
                             }
                         }}
                     >
-                        <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>
+                        <ListItemIcon sx={{ color: '#0284C7', minWidth: 40 }}>
                             {item.icon}
                         </ListItemIcon>
                         <ListItemText
@@ -121,10 +117,10 @@ const VendorNavbar = () => {
                 position="sticky"
                 elevation={0}
                 sx={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    backgroundColor: '#FFFFFF',
                     backdropFilter: 'blur(10px)',
-                    borderBottom: '1px solid #E2E8F0',
-                    color: '#0F172A',
+                    borderBottom: '2px solid #0284C7',
+                    color: '#0284C7',
                 }}
             >
                 <Toolbar sx={{ py: 1 }}>
@@ -135,10 +131,9 @@ const VendorNavbar = () => {
                             onClick={() => setMobileDrawerOpen(true)}
                             sx={{
                                 mr: 2,
-                                color: '#64748B',
+                                color: '#0284C7',
                                 '&:hover': {
-                                    backgroundColor: '#F1F5F9',
-                                    color: '#0EA5E9',
+                                    backgroundColor: '#E0F2FE',
                                 }
                             }}
                         >
@@ -151,10 +146,7 @@ const VendorNavbar = () => {
                         sx={{
                             flexGrow: 1,
                             fontWeight: 800,
-                            background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text',
+                            color: '#0284C7',
                         }}
                     >
                         🏪 Vendor Dashboard
@@ -169,14 +161,13 @@ const VendorNavbar = () => {
                                     startIcon={item.icon}
                                     onClick={() => navigate(item.path)}
                                     sx={{
-                                        color: '#64748B',
+                                        color: '#0284C7',
                                         fontWeight: 600,
                                         px: 2,
                                         borderRadius: '0.5rem',
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            backgroundColor: '#F1F5F9',
-                                            color: '#0EA5E9',
+                                            backgroundColor: '#E0F2FE',
                                             transform: 'translateY(-2px)',
                                         }
                                     }}
@@ -202,9 +193,10 @@ const VendorNavbar = () => {
                                 sx={{
                                     width: 40,
                                     height: 40,
-                                    background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
+                                    backgroundColor: '#0284C7',
+                                    color: '#FFFFFF',
                                     fontWeight: 700,
-                                    boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.3)',
+                                    boxShadow: '0 4px 6px -1px rgba(2, 132, 199, 0.3)',
                                 }}
                             >
                                 {user?.name?.charAt(0)?.toUpperCase()}
@@ -217,9 +209,9 @@ const VendorNavbar = () => {
                             PaperProps={{
                                 sx: {
                                     backgroundColor: '#FFFFFF',
-                                    border: '1px solid #E2E8F0',
+                                    border: '2px solid #0284C7',
                                     borderRadius: '0.75rem',
-                                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                                    boxShadow: '0 10px 15px -3px rgba(2, 132, 199, 0.2)',
                                     minWidth: '200px',
                                     mt: 1,
                                 }
@@ -227,33 +219,33 @@ const VendorNavbar = () => {
                         >
                             <MenuItem
                                 sx={{
-                                    '&:hover': { backgroundColor: '#F8FAFC' },
+                                    '&:hover': { backgroundColor: '#E0F2FE' },
                                     pointerEvents: 'none',
                                 }}
                             >
                                 <ListItemIcon>
-                                    <AccountCircle sx={{ color: '#0EA5E9' }} />
+                                    <AccountCircle sx={{ color: '#0284C7' }} />
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={user?.name}
                                     primaryTypographyProps={{
                                         fontWeight: 600,
-                                        color: '#0F172A'
+                                        color: '#0284C7'
                                     }}
                                 />
                             </MenuItem>
-                            <Divider sx={{ my: 1 }} />
+                            <Divider sx={{ my: 1, borderColor: '#BAE6FD' }} />
                             <MenuItem
                                 onClick={handleLogout}
                                 sx={{
-                                    color: '#EF4444',
+                                    color: '#0284C7',
                                     '&:hover': {
-                                        backgroundColor: '#FEE2E2',
+                                        backgroundColor: '#E0F2FE',
                                     }
                                 }}
                             >
                                 <ListItemIcon>
-                                    <ExitToApp sx={{ color: '#EF4444' }} />
+                                    <ExitToApp sx={{ color: '#0284C7' }} />
                                 </ListItemIcon>
                                 <ListItemText
                                     primary="Logout"

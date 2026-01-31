@@ -50,14 +50,12 @@ const Register = () => {
         setError('');
         setLoading(true);
 
-        // Validate passwords match
         if (formData.password !== formData.confirmPassword) {
             setError('Passwords do not match');
             setLoading(false);
             return;
         }
 
-        // Prepare registration data
         const registerData = {
             name: `${formData.firstName} ${formData.lastName}`,
             email: formData.email,
@@ -71,7 +69,6 @@ const Register = () => {
         const result = await register(registerData);
 
         if (result.success) {
-            // Redirect based on user role
             switch (result.user.role) {
                 case 'customer':
                     navigate('/dashboard');
@@ -95,7 +92,7 @@ const Register = () => {
         <Box
             sx={{
                 minHeight: '100vh',
-                background: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 50%, #FFFFFF 100%)',
+                background: 'linear-gradient(135deg, #E0F2FE 0%, #FFFFFF 50%, #E0F2FE 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -113,7 +110,7 @@ const Register = () => {
                     width: 400,
                     height: 400,
                     borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0) 70%)',
+                    background: 'radial-gradient(circle, rgba(2, 132, 199, 0.2) 0%, rgba(2, 132, 199, 0) 70%)',
                     animation: 'pulse 4s ease-in-out infinite',
                 }}
             />
@@ -125,7 +122,7 @@ const Register = () => {
                     width: 500,
                     height: 500,
                     borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(56, 189, 248, 0) 70%)',
+                    background: 'radial-gradient(circle, rgba(2, 132, 199, 0.15) 0%, rgba(2, 132, 199, 0) 70%)',
                     animation: 'pulse 5s ease-in-out infinite',
                     animationDelay: '1s',
                 }}
@@ -138,11 +135,11 @@ const Register = () => {
                         className="animate-scaleIn"
                         sx={{
                             p: 5,
-                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            backgroundColor: '#FFFFFF',
                             backdropFilter: 'blur(10px)',
-                            border: '1px solid #E2E8F0',
+                            border: '2px solid #0284C7',
                             borderRadius: '1.5rem',
-                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                            boxShadow: '0 20px 25px -5px rgba(2, 132, 199, 0.2)',
                         }}
                     >
                         {/* Logo/Icon */}
@@ -155,13 +152,13 @@ const Register = () => {
                                     width: 80,
                                     height: 80,
                                     borderRadius: '50%',
-                                    background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
+                                    backgroundColor: '#0284C7',
                                     mb: 2,
-                                    boxShadow: '0 10px 25px -5px rgba(14, 165, 233, 0.4)',
+                                    boxShadow: '0 10px 25px -5px rgba(2, 132, 199, 0.4)',
                                     animation: 'bounce 2s ease-in-out infinite',
                                 }}
                             >
-                                <PersonAddIcon sx={{ fontSize: 40, color: 'white' }} />
+                                <PersonAddIcon sx={{ fontSize: 40, color: '#FFFFFF' }} />
                             </Box>
                             <Typography
                                 variant="h4"
@@ -169,7 +166,7 @@ const Register = () => {
                                 gutterBottom
                                 sx={{
                                     fontWeight: 800,
-                                    color: '#0F172A',
+                                    color: '#0284C7',
                                 }}
                             >
                                 Create Account
@@ -178,7 +175,7 @@ const Register = () => {
                                 variant="body1"
                                 align="center"
                                 sx={{
-                                    color: '#64748B',
+                                    color: '#0284C7',
                                     fontWeight: 500,
                                 }}
                             >
@@ -193,7 +190,12 @@ const Register = () => {
                                     sx={{
                                         mb: 3,
                                         borderRadius: '0.75rem',
-                                        border: '1px solid #FEE2E2',
+                                        border: '2px solid #0284C7',
+                                        backgroundColor: '#E0F2FE',
+                                        color: '#0284C7',
+                                        '& .MuiAlert-icon': {
+                                            color: '#0284C7',
+                                        }
                                     }}
                                 >
                                     {error}
@@ -214,7 +216,7 @@ const Register = () => {
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <PersonIcon sx={{ color: '#0EA5E9' }} />
+                                                    <PersonIcon sx={{ color: '#0284C7' }} />
                                                 </InputAdornment>
                                             ),
                                         }}
@@ -236,7 +238,7 @@ const Register = () => {
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <PersonIcon sx={{ color: '#0EA5E9' }} />
+                                                    <PersonIcon sx={{ color: '#0284C7' }} />
                                                 </InputAdornment>
                                             ),
                                         }}
@@ -261,7 +263,7 @@ const Register = () => {
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <EmailIcon sx={{ color: '#0EA5E9' }} />
+                                            <EmailIcon sx={{ color: '#0284C7' }} />
                                         </InputAdornment>
                                     ),
                                 }}
@@ -286,7 +288,7 @@ const Register = () => {
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <LockIcon sx={{ color: '#0EA5E9' }} />
+                                            <LockIcon sx={{ color: '#0284C7' }} />
                                         </InputAdornment>
                                     ),
                                     endAdornment: (
@@ -294,6 +296,7 @@ const Register = () => {
                                             <IconButton
                                                 onClick={() => setShowPassword(!showPassword)}
                                                 edge="end"
+                                                sx={{ color: '#0284C7' }}
                                             >
                                                 {showPassword ? <VisibilityOff /> : <Visibility />}
                                             </IconButton>
@@ -303,6 +306,9 @@ const Register = () => {
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         backgroundColor: '#FFFFFF',
+                                    },
+                                    '& .MuiFormHelperText-root': {
+                                        color: '#0284C7',
                                     }
                                 }}
                             />
@@ -319,7 +325,7 @@ const Register = () => {
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <LockIcon sx={{ color: '#0EA5E9' }} />
+                                            <LockIcon sx={{ color: '#0284C7' }} />
                                         </InputAdornment>
                                     ),
                                     endAdornment: (
@@ -327,6 +333,7 @@ const Register = () => {
                                             <IconButton
                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                 edge="end"
+                                                sx={{ color: '#0284C7' }}
                                             >
                                                 {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                                             </IconButton>
@@ -350,21 +357,21 @@ const Register = () => {
                                 sx={{
                                     py: 1.5,
                                     mb: 2,
-                                    background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
-                                    color: 'white',
+                                    backgroundColor: '#0284C7',
+                                    color: '#FFFFFF',
                                     fontWeight: 700,
                                     fontSize: '1rem',
                                     borderRadius: '0.75rem',
-                                    boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.3)',
+                                    boxShadow: '0 4px 6px -1px rgba(2, 132, 199, 0.3)',
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
-                                        background: 'linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%)',
+                                        backgroundColor: '#0369A1',
                                         transform: 'translateY(-2px)',
-                                        boxShadow: '0 10px 25px -5px rgba(14, 165, 233, 0.5)',
+                                        boxShadow: '0 10px 25px -5px rgba(2, 132, 199, 0.5)',
                                     },
                                     '&:disabled': {
-                                        background: '#E2E8F0',
-                                        color: '#94A3B8',
+                                        backgroundColor: '#BAE6FD',
+                                        color: '#FFFFFF',
                                     }
                                 }}
                             >
@@ -376,7 +383,7 @@ const Register = () => {
                                     to="/vendor-register"
                                     style={{
                                         textDecoration: 'none',
-                                        color: '#0EA5E9',
+                                        color: '#0284C7',
                                         fontWeight: 600,
                                     }}
                                 >
@@ -388,13 +395,13 @@ const Register = () => {
                                 sx={{
                                     textAlign: 'center',
                                     pt: 3,
-                                    borderTop: '1px solid #E2E8F0',
+                                    borderTop: '2px solid #E0F2FE',
                                 }}
                             >
                                 <Typography
                                     variant="body2"
                                     sx={{
-                                        color: '#64748B',
+                                        color: '#0284C7',
                                         fontWeight: 500,
                                     }}
                                 >
@@ -403,7 +410,7 @@ const Register = () => {
                                         to="/login"
                                         style={{
                                             textDecoration: 'none',
-                                            color: '#0EA5E9',
+                                            color: '#0284C7',
                                             fontWeight: 700,
                                         }}
                                     >

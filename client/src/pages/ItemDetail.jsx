@@ -79,9 +79,9 @@ const ItemDetail = () => {
         return (
             <>
                 <Navbar />
-                <Container sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+                <Container sx={{ py: 4, backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
                     <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-                        <CircularProgress sx={{ color: '#9333ea' }} />
+                        <CircularProgress sx={{ color: '#0284C7' }} />
                     </Box>
                 </Container>
             </>
@@ -92,7 +92,7 @@ const ItemDetail = () => {
         return (
             <>
                 <Navbar />
-                <Container maxWidth="lg" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+                <Container maxWidth="lg" sx={{ py: 4, backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
                     <Alert severity="error">{error || 'Item not found'}</Alert>
                 </Container>
             </>
@@ -104,11 +104,11 @@ const ItemDetail = () => {
     return (
         <>
             <Navbar />
-            <Container maxWidth="lg" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+            <Container maxWidth="lg" sx={{ py: 4, backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
                 <Grid container spacing={4}>
                     {/* Image */}
                     <Grid item xs={12} md={6}>
-                        <Paper elevation={3} sx={{ backgroundColor: '#2a2a2a' }}>
+                        <Paper elevation={3} sx={{ backgroundColor: '#FFFFFF' }}>
                             <img
                                 src={item.image}
                                 alt={item.title}
@@ -119,61 +119,61 @@ const ItemDetail = () => {
 
                     {/* Details */}
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
+                        <Typography variant="h4" gutterBottom sx={{ color: '#0284C7' }}>
                             {item.title}
                         </Typography>
 
-                        <Typography variant="body1" color="text.secondary" sx={{ mb: 2, color: '#ccc' }}>
+                        <Typography variant="body1" color="text.secondary" sx={{ mb: 2, color: '#0284C7' }}>
                             {item.description}
                         </Typography>
 
                         <Box sx={{ mb: 2 }}>
-                            <Chip 
-                                label={item.category} 
-                                size="small" 
-                                sx={{ backgroundColor: '#9333ea', color: 'white' }}
+                            <Chip
+                                label={item.category}
+                                size="small"
+                                sx={{ backgroundColor: '#0284C7', color: 'white' }}
                             />
                         </Box>
 
-                        <Typography variant="h5" color="primary" sx={{ mb: 2, color: '#9333ea' }}>
+                        <Typography variant="h5" color="primary" sx={{ mb: 2, color: '#0284C7' }}>
                             ₹{item.price} / day
                         </Typography>
 
                         {item.deposit > 0 && (
-                            <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                            <Typography variant="body2" sx={{ mb: 2, color: '#0284C7' }}>
                                 Security Deposit: ₹{item.deposit}
                             </Typography>
                         )}
 
-                        <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                        <Typography variant="body2" sx={{ mb: 2, color: '#0284C7' }}>
                             <strong>Location:</strong> {item.location}
                         </Typography>
 
-                        <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                        <Typography variant="body2" sx={{ mb: 2, color: '#0284C7' }}>
                             <strong>Condition:</strong> {item.condition}
                         </Typography>
 
                         {item.features && item.features.length > 0 && (
                             <Box sx={{ mb: 2 }}>
-                                <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
+                                <Typography variant="body2" sx={{ mb: 1, color: '#0284C7' }}>
                                     <strong>Features:</strong>
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                                     {item.features.map((feature, index) => (
-                                        <Chip key={index} label={feature} variant="outlined" size="small" 
-                                            sx={{ borderColor: '#9333ea', color: '#9333ea' }} />
+                                        <Chip key={index} label={feature} variant="outlined" size="small"
+                                            sx={{ borderColor: '#0284C7', color: '#0284C7' }} />
                                     ))}
                                 </Box>
                             </Box>
                         )}
 
-                        <Paper elevation={2} sx={{ p: 2, mt: 3, bgcolor: '#333' }}>
+                        <Paper elevation={2} sx={{ p: 2, mt: 3, bgcolor: '#FFFFFF', border: '1px solid #BAE6FD' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                <PersonIcon sx={{ color: '#9333ea' }} />
-                                <Typography variant="h6" sx={{ color: 'white' }}>Vendor</Typography>
+                                <PersonIcon sx={{ color: '#0284C7' }} />
+                                <Typography variant="h6" sx={{ color: '#0284C7' }}>Vendor</Typography>
                             </Box>
-                            <Typography variant="body1" sx={{ color: '#ccc' }}>{item.vendor.name}</Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ color: '#888' }}>
+                            <Typography variant="body1" sx={{ color: '#0284C7' }}>{item.vendor.name}</Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ color: '#0284C7' }}>
                                 {item.vendor.email}
                             </Typography>
                         </Paper>
@@ -183,7 +183,7 @@ const ItemDetail = () => {
                                 variant="contained"
                                 size="large"
                                 fullWidth
-                                sx={{ mt: 3, backgroundColor: '#9333ea' }}
+                                sx={{ mt: 3, backgroundColor: '#0284C7' }}
                                 onClick={() => setBookingDialog(true)}
                             >
                                 Book Now
@@ -200,16 +200,16 @@ const ItemDetail = () => {
             </Container>
 
             {/* Booking Dialog */}
-            <Dialog 
-                open={bookingDialog} 
-                onClose={() => setBookingDialog(false)} 
-                maxWidth="sm" 
+            <Dialog
+                open={bookingDialog}
+                onClose={() => setBookingDialog(false)}
+                maxWidth="sm"
                 fullWidth
                 PaperProps={{
-                    sx: { backgroundColor: '#2a2a2a', color: 'white' }
+                    sx: { backgroundColor: '#FFFFFF', color: '#0284C7' }
                 }}
             >
-                <DialogTitle sx={{ color: 'white' }}>Book {item.title}</DialogTitle>
+                <DialogTitle sx={{ color: '#0284C7' }}>Book {item.title}</DialogTitle>
                 <DialogContent>
                     <Box sx={{ pt: 2 }}>
                         <TextField
@@ -218,19 +218,19 @@ const ItemDetail = () => {
                             type="date"
                             value={bookingData.startDate}
                             onChange={(e) => setBookingData({ ...bookingData, startDate: e.target.value })}
-                            InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
-                            InputProps={{ style: { color: 'white' } }}
-                            sx={{ 
+                            InputLabelProps={{ shrink: true, style: { color: '#0284C7' } }}
+                            InputProps={{ style: { color: '#0284C7' } }}
+                            sx={{
                                 mb: 2,
                                 '& .MuiOutlinedInput-root': {
                                     '& fieldset': {
-                                        borderColor: '#555',
+                                        borderColor: '#BAE6FD',
                                     },
                                     '&:hover fieldset': {
-                                        borderColor: '#9333ea',
+                                        borderColor: '#0284C7',
                                     },
                                     '&.Mui-focused fieldset': {
-                                        borderColor: '#9333ea',
+                                        borderColor: '#0284C7',
                                     },
                                 }
                             }}
@@ -242,23 +242,23 @@ const ItemDetail = () => {
                             rows={3}
                             value={bookingData.notes}
                             onChange={(e) => setBookingData({ ...bookingData, notes: e.target.value })}
-                            InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
-                            InputProps={{ style: { color: 'white' } }}
-                            sx={{ 
+                            InputLabelProps={{ shrink: true, style: { color: '#0284C7' } }}
+                            InputProps={{ style: { color: '#0284C7' } }}
+                            sx={{
                                 '& .MuiOutlinedInput-root': {
                                     '& fieldset': {
-                                        borderColor: '#555',
+                                        borderColor: '#BAE6FD',
                                     },
                                     '&:hover fieldset': {
-                                        borderColor: '#9333ea',
+                                        borderColor: '#0284C7',
                                     },
                                     '&.Mui-focused fieldset': {
-                                        borderColor: '#9333ea',
+                                        borderColor: '#0284C7',
                                     },
                                 }
                             }}
                         />
-                        <Paper elevation={0} sx={{ p: 2, mt: 2, bgcolor: '#333', color: 'white' }}>
+                        <Paper elevation={0} sx={{ p: 2, mt: 2, bgcolor: '#FFFFFF', color: '#0284C7', border: '1px solid #BAE6FD' }}>
                             <Typography variant="body2" gutterBottom>
                                 <strong>Rental Period:</strong> 24 hours
                             </Typography>
@@ -276,15 +276,15 @@ const ItemDetail = () => {
                         </Paper>
                     </Box>
                 </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a' }}>
-                    <Button onClick={() => setBookingDialog(false)} sx={{ color: '#ccc' }}>
+                <DialogActions sx={{ backgroundColor: '#FFFFFF' }}>
+                    <Button onClick={() => setBookingDialog(false)} sx={{ color: '#0284C7' }}>
                         Cancel
                     </Button>
                     <Button
                         variant="contained"
                         onClick={handleBooking}
                         disabled={bookingLoading}
-                        sx={{ backgroundColor: '#9333ea' }}
+                        sx={{ backgroundColor: '#0284C7' }}
                     >
                         {bookingLoading ? 'Creating...' : 'Confirm Booking'}
                     </Button>

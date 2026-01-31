@@ -18,11 +18,11 @@ const ItemCard = ({ item }) => {
 
     const getStockStatus = () => {
         if (!item.quantity || item.quantity === 0) {
-            return { label: 'Out of Stock', color: '#EF4444', bgColor: '#FEE2E2' };
+            return { label: 'Out of Stock', color: '#0284C7', bgColor: '#E0F2FE' };
         } else if (item.quantity <= 5) {
-            return { label: 'Low Stock', color: '#F59E0B', bgColor: '#FEF3C7' };
+            return { label: 'Low Stock', color: '#0284C7', bgColor: '#BAE6FD' };
         }
-        return { label: 'In Stock', color: '#10B981', bgColor: '#D1FAE5' };
+        return { label: 'In Stock', color: '#FFFFFF', bgColor: '#0284C7' };
     };
 
     const stockStatus = getStockStatus();
@@ -37,16 +37,16 @@ const ItemCard = ({ item }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 backgroundColor: '#FFFFFF',
-                border: '1px solid #E2E8F0',
+                border: '2px solid #BAE6FD',
                 borderRadius: '0.75rem',
                 overflow: 'hidden',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
                 boxShadow: isHovered
-                    ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-                    : '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                    ? '0 20px 25px -5px rgba(2, 132, 199, 0.3)'
+                    : '0 1px 3px 0 rgba(2, 132, 199, 0.1)',
                 '&:hover': {
-                    borderColor: '#0EA5E9',
+                    borderColor: '#0284C7',
                 }
             }}
         >
@@ -73,8 +73,8 @@ const ItemCard = ({ item }) => {
                         py: 0.5,
                         borderRadius: '9999px',
                         fontSize: '0.75rem',
-                        fontWeight: 600,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        fontWeight: 700,
+                        boxShadow: '0 2px 4px rgba(2, 132, 199, 0.2)',
                         animation: 'fadeIn 0.5s ease',
                     }}
                 >
@@ -88,7 +88,7 @@ const ItemCard = ({ item }) => {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            background: 'linear-gradient(180deg, rgba(14, 165, 233, 0) 0%, rgba(14, 165, 233, 0.3) 100%)',
+                            background: 'linear-gradient(180deg, rgba(2, 132, 199, 0) 0%, rgba(2, 132, 199, 0.3) 100%)',
                             animation: 'fadeIn 0.3s ease',
                         }}
                     />
@@ -102,7 +102,7 @@ const ItemCard = ({ item }) => {
                     noWrap
                     sx={{
                         fontWeight: 700,
-                        color: '#0F172A',
+                        color: '#0284C7',
                         mb: 1,
                     }}
                 >
@@ -110,7 +110,6 @@ const ItemCard = ({ item }) => {
                 </Typography>
                 <Typography
                     variant="body2"
-                    color="text.secondary"
                     sx={{
                         mb: 2,
                         display: '-webkit-box',
@@ -118,14 +117,14 @@ const ItemCard = ({ item }) => {
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
                         lineHeight: 1.6,
-                        color: '#64748B',
+                        color: '#0284C7',
                     }}
                 >
                     {item.description}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
-                    <LocationOnIcon fontSize="small" sx={{ color: '#0EA5E9' }} />
-                    <Typography variant="body2" sx={{ color: '#64748B', fontWeight: 500 }}>
+                    <LocationOnIcon fontSize="small" sx={{ color: '#0284C7' }} />
+                    <Typography variant="body2" sx={{ color: '#0284C7', fontWeight: 500 }}>
                         {item.location}
                     </Typography>
                 </Box>
@@ -134,13 +133,13 @@ const ItemCard = ({ item }) => {
                         label={item.category}
                         size="small"
                         sx={{
-                            backgroundColor: '#F0F9FF',
-                            color: '#0EA5E9',
-                            fontWeight: 600,
-                            border: '1px solid #BAE6FD',
+                            backgroundColor: '#E0F2FE',
+                            color: '#0284C7',
+                            fontWeight: 700,
+                            border: '2px solid #0284C7',
                             transition: 'all 0.2s ease',
                             '&:hover': {
-                                backgroundColor: '#E0F2FE',
+                                backgroundColor: '#BAE6FD',
                             }
                         }}
                     />
@@ -148,10 +147,10 @@ const ItemCard = ({ item }) => {
                         label={item.condition}
                         size="small"
                         sx={{
-                            backgroundColor: '#F8FAFC',
-                            color: '#64748B',
-                            fontWeight: 600,
-                            border: '1px solid #E2E8F0',
+                            backgroundColor: '#FFFFFF',
+                            color: '#0284C7',
+                            fontWeight: 700,
+                            border: '2px solid #BAE6FD',
                         }}
                     />
                 </Box>
@@ -166,15 +165,12 @@ const ItemCard = ({ item }) => {
                         variant="h5"
                         sx={{
                             fontWeight: 800,
-                            background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text',
+                            color: '#0284C7',
                         }}
                     >
                         ₹{item.price}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#94A3B8', fontWeight: 500 }}>
+                    <Typography variant="body2" sx={{ color: '#0284C7', fontWeight: 500 }}>
                         /24hrs
                     </Typography>
                 </Box>
@@ -186,17 +182,17 @@ const ItemCard = ({ item }) => {
                     fullWidth
                     onClick={() => navigate(`/items/${item._id}`)}
                     sx={{
-                        background: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
-                        color: 'white',
+                        backgroundColor: '#0284C7',
+                        color: '#FFFFFF',
                         fontWeight: 700,
                         py: 1.25,
                         borderRadius: '0.5rem',
-                        boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.3)',
+                        boxShadow: '0 4px 6px -1px rgba(2, 132, 199, 0.3)',
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                            background: 'linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%)',
+                            backgroundColor: '#0369A1',
                             transform: 'translateY(-2px)',
-                            boxShadow: '0 10px 25px -5px rgba(14, 165, 233, 0.5)',
+                            boxShadow: '0 10px 25px -5px rgba(2, 132, 199, 0.5)',
                         }
                     }}
                 >
