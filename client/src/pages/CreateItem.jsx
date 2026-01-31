@@ -67,12 +67,12 @@ const CreateItem = () => {
     return (
         <>
             <VendorNavbar />
-            <Container maxWidth="md" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
-                <Paper elevation={3} sx={{ p: 4, backgroundColor: '#2a2a2a', color: 'white' }}>
-                    <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
+            <Container maxWidth="md" sx={{ py: 4, backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
+                <Paper elevation={3} sx={{ p: 4, backgroundColor: '#FFFFFF', color: '#0284C7' }}>
+                    <Typography variant="h4" gutterBottom sx={{ color: '#0284C7' }}>
                         Create Rental Item
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3, color: '#0284C7' }}>
                         Fill in the details to list your item for rent
                     </Typography>
 
@@ -92,18 +92,18 @@ const CreateItem = () => {
                                     value={formData.title}
                                     onChange={handleChange}
                                     required
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
+                                    InputLabelProps={{ style: { color: '#0284C7' } }}
+                                    InputProps={{ style: { color: '#0284C7' } }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             '& fieldset': {
-                                                borderColor: '#555',
+                                                borderColor: '#BAE6FD',
                                             },
                                             '&:hover fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                             '&.Mui-focused fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                         }
                                     }}
@@ -120,18 +120,18 @@ const CreateItem = () => {
                                     multiline
                                     rows={4}
                                     required
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
+                                    InputLabelProps={{ style: { color: '#0284C7' } }}
+                                    InputProps={{ style: { color: '#0284C7' } }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             '& fieldset': {
-                                                borderColor: '#555',
+                                                borderColor: '#BAE6FD',
                                             },
                                             '&:hover fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                             '&.Mui-focused fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                         }
                                     }}
@@ -140,7 +140,7 @@ const CreateItem = () => {
 
                             <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth required>
-                                    <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
+                                    <InputLabel sx={{ color: '#0284C7' }}>Category</InputLabel>
                                     <Select
                                         name="category"
                                         value={formData.category}
@@ -149,17 +149,17 @@ const CreateItem = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    borderColor: '#555',
+                                                    borderColor: '#BAE6FD',
                                                 },
                                                 '&:hover fieldset': {
-                                                    borderColor: '#9333ea',
+                                                    borderColor: '#0284C7',
                                                 },
                                                 '&.Mui-focused fieldset': {
-                                                    borderColor: '#9333ea',
+                                                    borderColor: '#0284C7',
                                                 },
                                             },
                                             '& .MuiSelect-select': {
-                                                color: 'white'
+                                                color: '#0284C7'
                                             }
                                         }}
                                     >
@@ -175,7 +175,7 @@ const CreateItem = () => {
 
                             <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth required>
-                                    <InputLabel sx={{ color: '#ccc' }}>Condition</InputLabel>
+                                    <InputLabel sx={{ color: '#0284C7' }}>Condition</InputLabel>
                                     <Select
                                         name="condition"
                                         value={formData.condition}
@@ -184,17 +184,17 @@ const CreateItem = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    borderColor: '#555',
+                                                    borderColor: '#BAE6FD',
                                                 },
                                                 '&:hover fieldset': {
-                                                    borderColor: '#9333ea',
+                                                    borderColor: '#0284C7',
                                                 },
                                                 '&.Mui-focused fieldset': {
-                                                    borderColor: '#9333ea',
+                                                    borderColor: '#0284C7',
                                                 },
                                             },
                                             '& .MuiSelect-select': {
-                                                color: 'white'
+                                                color: '#0284C7'
                                             }
                                         }}
                                     >
@@ -215,18 +215,18 @@ const CreateItem = () => {
                                     value={formData.price}
                                     onChange={handleChange}
                                     required
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
+                                    InputLabelProps={{ style: { color: '#0284C7' } }}
+                                    InputProps={{ style: { color: '#0284C7' } }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             '& fieldset': {
-                                                borderColor: '#555',
+                                                borderColor: '#BAE6FD',
                                             },
                                             '&:hover fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                             '&.Mui-focused fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                         }
                                     }}
@@ -241,18 +241,18 @@ const CreateItem = () => {
                                     type="number"
                                     value={formData.deposit}
                                     onChange={handleChange}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
+                                    InputLabelProps={{ style: { color: '#0284C7' } }}
+                                    InputProps={{ style: { color: '#0284C7' } }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             '& fieldset': {
-                                                borderColor: '#555',
+                                                borderColor: '#BAE6FD',
                                             },
                                             '&:hover fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                             '&.Mui-focused fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                         }
                                     }}
@@ -267,18 +267,18 @@ const CreateItem = () => {
                                     value={formData.location}
                                     onChange={handleChange}
                                     required
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
+                                    InputLabelProps={{ style: { color: '#0284C7' } }}
+                                    InputProps={{ style: { color: '#0284C7' } }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             '& fieldset': {
-                                                borderColor: '#555',
+                                                borderColor: '#BAE6FD',
                                             },
                                             '&:hover fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                             '&.Mui-focused fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                         }
                                     }}
@@ -293,22 +293,22 @@ const CreateItem = () => {
                                     value={formData.image}
                                     onChange={handleChange}
                                     helperText="Enter image URL or use placeholder"
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
+                                    InputLabelProps={{ style: { color: '#0284C7' } }}
+                                    InputProps={{ style: { color: '#0284C7' } }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             '& fieldset': {
-                                                borderColor: '#555',
+                                                borderColor: '#BAE6FD',
                                             },
                                             '&:hover fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                             '&.Mui-focused fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                         }
                                     }}
-                                    FormHelperTextProps={{ style: { color: '#888' } }}
+                                    FormHelperTextProps={{ style: { color: '#0284C7' } }}
                                 />
                             </Grid>
 
@@ -321,25 +321,25 @@ const CreateItem = () => {
                                     onChange={handleChange}
                                     placeholder="e.g. WiFi, Bluetooth, HD Camera"
                                     helperText="Separate features with commas"
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ 
-                                        style: { color: 'white' },
-                                        placeholder: { color: '#888' }
+                                    InputLabelProps={{ style: { color: '#0284C7' } }}
+                                    InputProps={{
+                                        style: { color: '#0284C7' },
+                                        placeholder: { color: '#BAE6FD' }
                                     }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             '& fieldset': {
-                                                borderColor: '#555',
+                                                borderColor: '#BAE6FD',
                                             },
                                             '&:hover fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                             '&.Mui-focused fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                         }
                                     }}
-                                    FormHelperTextProps={{ style: { color: '#888' } }}
+                                    FormHelperTextProps={{ style: { color: '#0284C7' } }}
                                 />
                             </Grid>
 
@@ -352,18 +352,18 @@ const CreateItem = () => {
                                     onChange={handleChange}
                                     multiline
                                     rows={2}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
+                                    InputLabelProps={{ style: { color: '#0284C7' } }}
+                                    InputProps={{ style: { color: '#0284C7' } }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             '& fieldset': {
-                                                borderColor: '#555',
+                                                borderColor: '#BAE6FD',
                                             },
                                             '&:hover fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                             '&.Mui-focused fieldset': {
-                                                borderColor: '#9333ea',
+                                                borderColor: '#0284C7',
                                             },
                                         }
                                     }}
@@ -377,11 +377,11 @@ const CreateItem = () => {
                             size="large"
                             fullWidth
                             disabled={loading}
-                            sx={{ 
-                                py: 1.5, 
-                                backgroundColor: '#9333ea',
+                            sx={{
+                                py: 1.5,
+                                backgroundColor: '#0284C7',
                                 '&:hover': {
-                                    backgroundColor: '#7b2cbf'
+                                    backgroundColor: '#0369A1'
                                 }
                             }}
                         >

@@ -70,8 +70,8 @@ const Home = () => {
             {/* Hero Section */}
             <Box
                 sx={{
-                    background: 'linear-gradient(180deg, #F0F9FF 0%, #FFFFFF 100%)',
-                    borderBottom: '1px solid #E2E8F0',
+                    background: 'linear-gradient(180deg, #E0F2FE 0%, #FFFFFF 100%)',
+                    borderBottom: '2px solid #0284C7',
                     position: 'relative',
                     overflow: 'hidden',
                 }}
@@ -85,7 +85,7 @@ const Home = () => {
                         width: 400,
                         height: 400,
                         borderRadius: '50%',
-                        background: 'radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, rgba(14, 165, 233, 0) 70%)',
+                        background: 'radial-gradient(circle, rgba(2, 132, 199, 0.2) 0%, rgba(2, 132, 199, 0) 70%)',
                         animation: 'pulse 4s ease-in-out infinite',
                     }}
                 />
@@ -97,7 +97,7 @@ const Home = () => {
                         width: 500,
                         height: 500,
                         borderRadius: '50%',
-                        background: 'radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0) 70%)',
+                        background: 'radial-gradient(circle, rgba(2, 132, 199, 0.15) 0%, rgba(2, 132, 199, 0) 70%)',
                         animation: 'pulse 5s ease-in-out infinite',
                         animationDelay: '1s',
                     }}
@@ -112,7 +112,7 @@ const Home = () => {
                                 className="animate-slideDown"
                                 sx={{
                                     fontWeight: 800,
-                                    color: '#0F172A',
+                                    color: '#0284C7',
                                     mb: 2,
                                     fontSize: { xs: '2.5rem', md: '3.5rem' }
                                 }}
@@ -123,8 +123,8 @@ const Home = () => {
                                 variant="h5"
                                 className="animate-slideUp"
                                 sx={{
-                                    color: '#64748B',
-                                    fontWeight: 500,
+                                    color: '#0284C7',
+                                    fontWeight: 600,
                                     mb: 4,
                                     fontSize: { xs: '1.25rem', md: '1.5rem' }
                                 }}
@@ -141,11 +141,11 @@ const Home = () => {
                             className="animate-scaleIn"
                             sx={{
                                 p: 3,
-                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                backgroundColor: '#FFFFFF',
                                 backdropFilter: 'blur(10px)',
-                                border: '1px solid #E2E8F0',
+                                border: '2px solid #0284C7',
                                 borderRadius: '1rem',
-                                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                                boxShadow: '0 20px 25px -5px rgba(2, 132, 199, 0.2)',
                             }}
                         >
                             <Grid container spacing={2}>
@@ -159,7 +159,7 @@ const Home = () => {
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <SearchIcon sx={{ color: '#0EA5E9' }} />
+                                                    <SearchIcon sx={{ color: '#0284C7' }} />
                                                 </InputAdornment>
                                             ),
                                         }}
@@ -168,10 +168,10 @@ const Home = () => {
                                                 backgroundColor: '#FFFFFF',
                                                 transition: 'all 0.3s ease',
                                                 '&:hover': {
-                                                    boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.1)',
+                                                    boxShadow: '0 4px 6px -1px rgba(2, 132, 199, 0.2)',
                                                 },
                                                 '&.Mui-focused': {
-                                                    boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.2)',
+                                                    boxShadow: '0 4px 6px -1px rgba(2, 132, 199, 0.3)',
                                                 }
                                             }
                                         }}
@@ -179,7 +179,7 @@ const Home = () => {
                                 </Grid>
                                 <Grid item xs={12} md={3}>
                                     <FormControl fullWidth>
-                                        <InputLabel>Category</InputLabel>
+                                        <InputLabel sx={{ color: '#0284C7' }}>Category</InputLabel>
                                         <Select
                                             name="category"
                                             value={filters.category}
@@ -189,7 +189,7 @@ const Home = () => {
                                                 backgroundColor: '#FFFFFF',
                                                 transition: 'all 0.3s ease',
                                                 '&:hover': {
-                                                    boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.1)',
+                                                    boxShadow: '0 4px 6px -1px rgba(2, 132, 199, 0.2)',
                                                 }
                                             }}
                                         >
@@ -240,7 +240,7 @@ const Home = () => {
             </Box>
 
             {/* Items Grid */}
-            <Container maxWidth="lg" sx={{ py: 6, minHeight: '60vh' }}>
+            <Container maxWidth="lg" sx={{ py: 6, minHeight: '60vh', backgroundColor: '#FFFFFF' }}>
                 {loading ? (
                     <Box display="flex" justifyContent="center" alignItems="center" py={8}>
                         <Box textAlign="center">
@@ -248,11 +248,11 @@ const Home = () => {
                                 size={60}
                                 thickness={4}
                                 sx={{
-                                    color: '#0EA5E9',
+                                    color: '#0284C7',
                                     mb: 2,
                                 }}
                             />
-                            <Typography variant="h6" sx={{ color: '#64748B', fontWeight: 500 }}>
+                            <Typography variant="h6" sx={{ color: '#0284C7', fontWeight: 600 }}>
                                 Loading amazing items...
                             </Typography>
                         </Box>
@@ -263,7 +263,12 @@ const Home = () => {
                             severity="error"
                             sx={{
                                 borderRadius: '0.75rem',
-                                border: '1px solid #FEE2E2',
+                                border: '2px solid #0284C7',
+                                backgroundColor: '#E0F2FE',
+                                color: '#0284C7',
+                                '& .MuiAlert-icon': {
+                                    color: '#0284C7',
+                                }
                             }}
                         >
                             {error}
@@ -276,14 +281,14 @@ const Home = () => {
                                 variant="h4"
                                 gutterBottom
                                 sx={{
-                                    color: '#0F172A',
+                                    color: '#0284C7',
                                     fontWeight: 700,
                                     mb: 2,
                                 }}
                             >
                                 No items found
                             </Typography>
-                            <Typography variant="h6" sx={{ color: '#64748B' }}>
+                            <Typography variant="h6" sx={{ color: '#0284C7' }}>
                                 Try adjusting your filters to see more results
                             </Typography>
                         </Box>
