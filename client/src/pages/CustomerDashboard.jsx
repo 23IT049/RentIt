@@ -69,7 +69,7 @@ const CustomerDashboard = () => {
     const [tabValue, setTabValue] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    
+
     // Profile state
     const [userProfile, setUserProfile] = useState(null);
     const [editProfileDialog, setEditProfileDialog] = useState(false);
@@ -79,7 +79,7 @@ const CustomerDashboard = () => {
         phone: '',
         address: ''
     });
-    
+
     // Dynamic state
     const [stats, setStats] = useState({
         activeRentals: 0,
@@ -90,18 +90,17 @@ const CustomerDashboard = () => {
 
     const [myBookings, setMyBookings] = useState([]);
     const [wishlist, setWishlist] = useState([]);
-    
+
     // Cart state
     const [cart, setCart] = useState([]);
-    const [cartDialog, setCartDialog] = useState(false);
-    
+
     // Browse Items state
     const [items, setItems] = useState([]);
     const [itemsLoading, setItemsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
-    
+
     // Booking state
     const [bookingDialog, setBookingDialog] = useState(false);
     const [bookingData, setBookingData] = useState({
@@ -109,27 +108,27 @@ const CustomerDashboard = () => {
         endDate: '',
         notes: ''
     });
-    
+
     // Booking Details state
     const [bookingDetailsDialog, setBookingDetailsDialog] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState(null);
 
     useEffect(() => {
         fetchDashboardData();
-        
+
         // Listen for tab changes from navbar
         const handleTabChange = (event) => {
             setTabValue(event.detail);
         };
-        
+
         window.addEventListener('changeDashboardTab', handleTabChange);
-        
+
         // Check for initial tab from navigation state
         const locationState = window.history?.state?.usr?.state;
         if (locationState?.initialTab !== undefined) {
             setTabValue(locationState.initialTab);
         }
-        
+
         // Add timeout to prevent infinite loading
         const timeout = setTimeout(() => {
             if (loading) {
@@ -181,7 +180,7 @@ const CustomerDashboard = () => {
             };
 
             const response = await bookingsAPI.create(bookingPayload);
-            
+
             if (response.data.success) {
                 alert('Booking created successfully! Check your bookings.');
                 setBookingDialog(false);
@@ -197,11 +196,11 @@ const CustomerDashboard = () => {
 
     const calculateTotalAmount = () => {
         if (!selectedItem || !bookingData.startDate || !bookingData.endDate) return 0;
-        
+
         const start = new Date(bookingData.startDate);
         const end = new Date(bookingData.endDate);
         const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-        
+
         return days * selectedItem.price;
     };
 
@@ -231,7 +230,7 @@ const CustomerDashboard = () => {
                 ...userProfile,
                 ...editProfileForm
             });
-            
+
             // Update localStorage
             const userData = JSON.parse(localStorage.getItem('user') || '{}');
             userData.name = editProfileForm.name;
@@ -239,7 +238,7 @@ const CustomerDashboard = () => {
             userData.phone = editProfileForm.phone;
             userData.address = editProfileForm.address;
             localStorage.setItem('user', JSON.stringify(userData));
-            
+
             setEditProfileDialog(false);
             alert('Profile updated successfully!');
         } catch (error) {
@@ -255,13 +254,13 @@ const CustomerDashboard = () => {
             alert('This item is already in your cart!');
             return;
         }
-        
+
         const cartItem = {
             ...item,
             quantity: 1,
             addedAt: new Date().toISOString()
         };
-        
+
         setCart([...cart, cartItem]);
         alert(`${item.title} added to cart!`);
     };
@@ -281,12 +280,12 @@ const CustomerDashboard = () => {
             alert('This item is already in your wishlist!');
             return;
         }
-        
+
         const wishlistItem = {
             ...item,
             addedAt: new Date().toISOString()
         };
-        
+
         setWishlist([...wishlist, wishlistItem]);
         alert(`${item.title} added to wishlist!`);
     };
@@ -306,7 +305,7 @@ const CustomerDashboard = () => {
             const params = {};
             if (searchTerm) params.search = searchTerm;
             if (selectedCategory) params.category = selectedCategory;
-            
+
             console.log('Fetching items with params:', params);
             const response = await itemsAPI.getAll(params);
             console.log('Items response:', response);
@@ -323,13 +322,13 @@ const CustomerDashboard = () => {
         try {
             setLoading(true);
             setError('');
-            
+
             console.log('Fetching dashboard data...');
-            
+
             // Load user profile from localStorage
             const userData = JSON.parse(localStorage.getItem('user') || '{}');
             setUserProfile(userData);
-            
+
             // Fetch customer's data
             const bookingsResponse = await bookingsAPI.getAll({ role: 'customer' });
             console.log('Bookings response:', bookingsResponse);
@@ -338,7 +337,7 @@ const CustomerDashboard = () => {
             setMyBookings(bookings);
 
             // Calculate stats
-            const activeRentals = bookings.filter(booking => 
+            const activeRentals = bookings.filter(booking =>
                 booking.status === 'renting' || booking.status === 'confirmed'
             ).length;
 
@@ -349,7 +348,7 @@ const CustomerDashboard = () => {
                 return total;
             }, 0);
 
-            const completedBookings = bookings.filter(booking => 
+            const completedBookings = bookings.filter(booking =>
                 booking.status === 'completed'
             );
 
@@ -410,9 +409,9 @@ const CustomerDashboard = () => {
     if (loading) {
         return (
             <>
-                <CustomerNavbar 
-                    cart={cart} 
-                    onCartClick={() => setCartDialog(true)} 
+                <CustomerNavbar
+                    cart={cart}
+                    onCartClick={() => navigate('/cart', { state: { cart } })}
                 />
                 <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
                     <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
@@ -430,9 +429,9 @@ const CustomerDashboard = () => {
     if (!loading && !error && myBookings.length === 0 && items.length === 0) {
         return (
             <>
-                <CustomerNavbar 
-                    cart={cart} 
-                    onCartClick={() => setCartDialog(true)} 
+                <CustomerNavbar
+                    cart={cart}
+                    onCartClick={() => navigate('/cart', { state: { cart } })}
                 />
                 <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
                     <Typography variant="h4" gutterBottom sx={{ color: 'white', mb: 4 }}>
@@ -448,103 +447,38 @@ const CustomerDashboard = () => {
 
     return (
         <>
-            <CustomerNavbar 
-                cart={cart} 
-                onCartClick={() => setCartDialog(true)} 
+            <CustomerNavbar
+                cart={cart}
+                onCartClick={() => navigate('/cart', { state: { cart } })}
             />
             <Container maxWidth="xl" sx={{ py: 4, backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
-                <Typography variant="h4" gutterBottom sx={{ color: 'white', mb: 4 }}>
-                    Customer Dashboard
-                </Typography>
-
-                {/* Cart Button */}
-                <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button
-                        variant="contained"
-                        startIcon={<ShoppingCart />}
-                        onClick={() => setCartDialog(true)}
-                        sx={{ backgroundColor: '#9333ea' }}
-                    >
-                        Cart ({cart.length})
-                    </Button>
-                </Box>
-
                 {error && (
                     <Alert severity="error" sx={{ mb: 3 }}>
                         {error}
                     </Alert>
                 )}
 
-            {/* Stats Cards */}
-            <Grid container spacing={3} sx={{ mb: 4 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard
-                        title="Active Rentals"
-                        value={stats.activeRentals}
-                        icon={<LocalShipping />}
-                        color="#4caf50"
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard
-                        title="Total Bookings"
-                        value={stats.totalBookings}
-                        icon={<ShoppingCart />}
-                        color="#9333ea"
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard
-                        title="Wishlist"
-                        value={stats.wishlistItems}
-                        icon={<Favorite />}
-                        color="#ff9800"
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard
-                        title="Total Spent"
-                        value={`$${stats.totalSpent}`}
-                        icon={<Payment />}
-                        color="#2196f3"
-                    />
-                </Grid>
-            </Grid>
 
-            {/* Tabs */}
-            <Paper sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                <Tabs
-                    value={tabValue}
-                    onChange={handleTabChange}
-                    sx={{
-                        borderBottom: 1,
-                        borderColor: '#444',
-                        '& .MuiTab-root': { color: '#ccc' },
-                        '& .Mui-selected': { color: 'white' }
-                    }}
-                >
-                    <Tab icon={<ShoppingCart />} label="My Bookings" />
-                    <Tab icon={<Search />} label="Browse Items" />
-                    <Tab icon={<Favorite />} label="Wishlist" />
-                    <Tab icon={<Person />} label="Profile" />
-                </Tabs>
 
-                {/* My Bookings Tab */}
-                {tabValue === 0 && (
-                    <Box sx={{ p: 3 }}>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                            <Typography variant="h6">My Current Bookings</Typography>
-                            <Button
-                                variant="contained"
-                                startIcon={<Search />}
-                                onClick={() => setTabValue(1)}
-                                sx={{ backgroundColor: '#9333ea' }}
-                            >
-                                Browse Items
-                            </Button>
-                        </Box>
+                {/* Tabs */}
+                <Paper sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
 
-                        {myBookings.length === 0 ? (
+                    {/* My Bookings Tab */}
+                    {tabValue === 0 && (
+                        <Box sx={{ p: 3 }}>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                                <Typography variant="h6">My Current Bookings</Typography>
+                                <Button
+                                    variant="contained"
+                                    startIcon={<Search />}
+                                    onClick={() => setTabValue(1)}
+                                    sx={{ backgroundColor: '#9333ea' }}
+                                >
+                                    Browse Items
+                                </Button>
+                            </Box>
+
+                            {myBookings.length === 0 ? (
                                 <Alert severity="info">
                                     No bookings found. Start by browsing and renting items!
                                 </Alert>
@@ -587,7 +521,7 @@ const CustomerDashboard = () => {
                                                         {booking.vendor?.name || 'Vendor'}
                                                     </TableCell>
                                                     <TableCell sx={{ color: '#ccc' }}>
-                                                        {booking.startDate ? new Date(booking.startDate).toLocaleDateString() : 'N/A'} - 
+                                                        {booking.startDate ? new Date(booking.startDate).toLocaleDateString() : 'N/A'} -
                                                         {booking.endDate ? new Date(booking.endDate).toLocaleDateString() : 'N/A'}
                                                     </TableCell>
                                                     <TableCell sx={{ color: '#ccc' }}>
@@ -601,7 +535,7 @@ const CustomerDashboard = () => {
                                                         />
                                                     </TableCell>
                                                     <TableCell>
-                                                        <IconButton 
+                                                        <IconButton
                                                             sx={{ color: '#ccc' }}
                                                             onClick={() => handleBookingDetails(booking)}
                                                         >
@@ -614,833 +548,763 @@ const CustomerDashboard = () => {
                                     </Table>
                                 </TableContainer>
                             )}
-                    </Box>
-                )}
-
-                {/* Browse Items Tab */}
-                {tabValue === 1 && (
-                    <Box sx={{ p: 3 }}>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                            <Typography variant="h6">Browse Available Items</Typography>
                         </Box>
+                    )}
 
-                        {/* Search and Filter */}
-                        <Grid container spacing={2} sx={{ mb: 3 }}>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    placeholder="Search items..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    InputProps={{
-                                        startAdornment: <Search sx={{ color: '#ccc', mr: 1 }} />,
-                                        style: { color: 'white' }
-                                    }}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
-                                    <Select
-                                        value={selectedCategory}
-                                        onChange={(e) => setSelectedCategory(e.target.value)}
-                                        label="Category"
+                    {/* Browse Items Tab */}
+                    {tabValue === 1 && (
+                        <Box sx={{ p: 3 }}>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                                <Typography variant="h6">Browse Available Items</Typography>
+                            </Box>
+
+                            {/* Search and Filter */}
+                            <Grid container spacing={2} sx={{ mb: 3 }}>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        placeholder="Search items..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        InputProps={{
+                                            startAdornment: <Search sx={{ color: '#ccc', mr: 1 }} />,
+                                            style: { color: 'white' }
+                                        }}
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': { borderColor: '#555' },
                                                 '&:hover fieldset': { borderColor: '#9333ea' },
                                                 '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                            },
-                                            '& .MuiSelect-select': { color: 'white' }
+                                            }
                                         }}
-                                    >
-                                        <MenuItem value="">All Categories</MenuItem>
-                                        <MenuItem value="Electronics">Electronics</MenuItem>
-                                        <MenuItem value="Vehicles">Vehicles</MenuItem>
-                                        <MenuItem value="Equipment">Equipment</MenuItem>
-                                        <MenuItem value="Sports">Sports</MenuItem>
-                                        <MenuItem value="Tools">Tools</MenuItem>
-                                        <MenuItem value="Other">Other</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={2}>
-                                <Button
-                                    fullWidth
-                                    variant="contained"
-                                    onClick={() => { setSearchTerm(''); setSelectedCategory(''); }}
-                                    sx={{ backgroundColor: '#9333ea', height: '56px' }}
-                                >
-                                    Clear
-                                </Button>
-                            </Grid>
-                        </Grid>
-
-                        {itemsLoading ? (
-                            <Box display="flex" justifyContent="center" py={4}>
-                                <CircularProgress sx={{ color: '#9333ea' }} />
-                            </Box>
-                        ) : items.length === 0 ? (
-                            <Alert severity="info">
-                                No items found. Try adjusting your search or filters.
-                            </Alert>
-                        ) : (
-                            <Grid container spacing={3}>
-                                {items.map((item) => (
-                                    <Grid item xs={12} sm={6} md={4} key={item._id}>
-                                        <Card sx={{ backgroundColor: '#2a2a2a', color: 'white', cursor: 'pointer' }}>
-                                            <CardMedia
-                                                component="img"
-                                                height="200"
-                                                image={item.image || 'https://via.placeholder.com/300x200'}
-                                                alt={item.title}
-                                            />
-                                            <CardContent>
-                                                <Typography variant="h6" gutterBottom>
-                                                    {item.title}
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1, color: '#ccc' }}>
-                                                    {item.description?.substring(0, 100)}...
-                                                </Typography>
-                                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                                                    <Typography variant="h6" color="primary" sx={{ color: '#9333ea' }}>
-                                                        ₹{item.price}/day
-                                                    </Typography>
-                                                    <Chip 
-                                                        label={item.category} 
-                                                        size="small" 
-                                                        sx={{ backgroundColor: '#9333ea', color: 'white' }}
-                                                    />
-                                                </Box>
-                                                <Box display="flex" gap={1} mb={2}>
-                                                    <Button
-                                                        size="small"
-                                                        variant="contained"
-                                                        startIcon={<ShoppingCart />}
-                                                        onClick={() => handleAddToCart(item)}
-                                                        sx={{ 
-                                                            backgroundColor: '#9333ea',
-                                                            flex: 1
-                                                        }}
-                                                    >
-                                                        Add to Cart
-                                                    </Button>
-                                                    <Button
-                                                        size="small"
-                                                        variant="outlined"
-                                                        startIcon={<Favorite />}
-                                                        onClick={() => handleAddToWishlist(item)}
-                                                        sx={{ 
-                                                            borderColor: '#9333ea',
-                                                            color: '#9333ea',
-                                                            flex: 1
-                                                        }}
-                                                    >
-                                                        Wishlist
-                                                    </Button>
-                                                </Box>
-                                                <Button
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    onClick={() => handleViewItem(item)}
-                                                    sx={{ 
-                                                        borderColor: '#9333ea',
-                                                        color: '#9333ea'
-                                                    }}
-                                                >
-                                                    View Details
-                                                </Button>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        )}
-                    </Box>
-                )}
-
-                {/* Wishlist Tab */}
-                {tabValue === 2 && (
-                    <Box sx={{ p: 3 }}>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                            <Typography variant="h6">My Wishlist ({wishlist.length})</Typography>
-                            <Box display="flex" gap={2}>
-                                <Button
-                                    variant="contained"
-                                    startIcon={<ShoppingCart />}
-                                    onClick={() => setCartDialog(true)}
-                                    sx={{ backgroundColor: '#9333ea' }}
-                                >
-                                    View Cart ({cart.length})
-                                </Button>
-                                <Button
-                                    variant="outlined"
-                                    startIcon={<Add />}
-                                    onClick={() => setTabValue(1)}
-                                    sx={{ borderColor: '#9333ea', color: '#9333ea' }}
-                                >
-                                    Browse More Items
-                                </Button>
-                            </Box>
-                        </Box>
-
-                        {wishlist.length === 0 ? (
-                            <Alert severity="info">
-                                Your wishlist is empty. Browse items and add them to your wishlist!
-                            </Alert>
-                        ) : (
-                            <Grid container spacing={3}>
-                                {wishlist.map((item) => (
-                                    <Grid item xs={12} sm={6} md={4} key={item._id}>
-                                        <Card sx={{ backgroundColor: '#333', color: 'white' }}>
-                                            <CardMedia
-                                                component="img"
-                                                height="150"
-                                                image={item.image || 'https://via.placeholder.com/300x150'}
-                                                alt={item.title}
-                                            />
-                                            <CardContent>
-                                                <Typography variant="h6" gutterBottom>
-                                                    {item.title}
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, color: '#ccc' }}>
-                                                    {item.description?.substring(0, 80)}...
-                                                </Typography>
-                                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                                                    <Typography variant="h6" color="primary" sx={{ color: '#9333ea' }}>
-                                                        ₹{item.price}/day
-                                                    </Typography>
-                                                    <Chip 
-                                                        label={item.category} 
-                                                        size="small" 
-                                                        sx={{ backgroundColor: '#9333ea', color: 'white' }}
-                                                    />
-                                                </Box>
-                                                <Box display="flex" gap={1}>
-                                                    <Button
-                                                        size="small"
-                                                        variant="contained"
-                                                        startIcon={<ShoppingCart />}
-                                                        onClick={() => handleMoveToCart(item)}
-                                                        sx={{ 
-                                                            backgroundColor: '#9333ea',
-                                                            flex: 1
-                                                        }}
-                                                    >
-                                                        Move to Cart
-                                                    </Button>
-                                                    <Button
-                                                        size="small"
-                                                        variant="outlined"
-                                                        startIcon={<DeleteOutline />}
-                                                        onClick={() => handleRemoveFromWishlist(item._id)}
-                                                        sx={{ 
-                                                            borderColor: '#f44336',
-                                                            color: '#f44336'
-                                                        }}
-                                                    >
-                                                        Remove
-                                                    </Button>
-                                                </Box>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        )}
-                    </Box>
-                )}
-
-                {/* Profile Tab */}
-                {tabValue === 3 && (
-                    <Box sx={{ p: 3 }}>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                            <Typography variant="h6">My Profile</Typography>
-                            <Button
-                                variant="contained"
-                                startIcon={<Edit />}
-                                onClick={handleEditProfile}
-                                sx={{ backgroundColor: '#9333ea' }}
-                            >
-                                Edit Profile
-                            </Button>
-                        </Box>
-
-                        {userProfile ? (
-                            <Grid container spacing={3}>
+                                    />
+                                </Grid>
                                 <Grid item xs={12} md={4}>
-                                    <Box sx={{ textAlign: 'center', mb: 3 }}>
-                                        <Avatar
-                                            sx={{ 
-                                                width: 120, 
-                                                height: 120, 
-                                                mx: 'auto', 
-                                                mb: 2,
-                                                bgcolor: '#9333ea',
-                                                fontSize: '3rem'
+                                    <FormControl fullWidth>
+                                        <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
+                                        <Select
+                                            value={selectedCategory}
+                                            onChange={(e) => setSelectedCategory(e.target.value)}
+                                            label="Category"
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    '& fieldset': { borderColor: '#555' },
+                                                    '&:hover fieldset': { borderColor: '#9333ea' },
+                                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                },
+                                                '& .MuiSelect-select': { color: 'white' }
                                             }}
                                         >
-                                            {userProfile.name?.charAt(0).toUpperCase() || 'U'}
-                                        </Avatar>
-                                        <Typography variant="h5" gutterBottom>
-                                            {userProfile.name || 'User Name'}
-                                        </Typography>
-                                        <Chip
-                                            label={userProfile.role || 'customer'}
-                                            color="primary"
-                                            size="small"
-                                            sx={{ mb: 2 }}
-                                        />
-                                    </Box>
+                                            <MenuItem value="">All Categories</MenuItem>
+                                            <MenuItem value="Electronics">Electronics</MenuItem>
+                                            <MenuItem value="Vehicles">Vehicles</MenuItem>
+                                            <MenuItem value="Equipment">Equipment</MenuItem>
+                                            <MenuItem value="Sports">Sports</MenuItem>
+                                            <MenuItem value="Tools">Tools</MenuItem>
+                                            <MenuItem value="Other">Other</MenuItem>
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
-
-                                <Grid item xs={12} md={8}>
-                                    <Grid container spacing={3}>
-                                        <Grid item xs={12} sm={6}>
-                                            <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
-                                                <Box display="flex" alignItems="center" mb={2}>
-                                                    <Email sx={{ mr: 2, color: '#9333ea' }} />
-                                                    <Typography variant="subtitle1">Contact Information</Typography>
-                                                </Box>
-                                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                                    <strong>Email:</strong> {userProfile.email || 'N/A'}
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                                    <strong>Phone:</strong> {userProfile.phone || 'Not provided'}
-                                                </Typography>
-                                                <Typography variant="body2">
-                                                    <strong>Address:</strong> {userProfile.address || 'Not provided'}
-                                                </Typography>
-                                            </Card>
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={6}>
-                                            <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
-                                                <Box display="flex" alignItems="center" mb={2}>
-                                                    <TrendingUp sx={{ mr: 2, color: '#9333ea' }} />
-                                                    <Typography variant="subtitle1">Account Statistics</Typography>
-                                                </Box>
-                                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                                    <strong>Total Bookings:</strong> {stats.totalBookings}
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                                    <strong>Active Rentals:</strong> {stats.activeRentals}
-                                                </Typography>
-                                                <Typography variant="body2">
-                                                    <strong>Total Spent:</strong> ${stats.totalSpent}
-                                                </Typography>
-                                            </Card>
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={6}>
-                                            <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
-                                                <Box display="flex" alignItems="center" mb={2}>
-                                                    <Event sx={{ mr: 2, color: '#9333ea' }} />
-                                                    <Typography variant="subtitle1">Account Information</Typography>
-                                                </Box>
-                                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                                    <strong>Member Since:</strong> {userProfile.createdAt ? new Date(userProfile.createdAt).toLocaleDateString() : 'N/A'}
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                                    <strong>Last Login:</strong> {userProfile.lastLogin ? new Date(userProfile.lastLogin).toLocaleDateString() : 'N/A'}
-                                                </Typography>
-                                                <Typography variant="body2">
-                                                    <strong>Account Status:</strong> 
-                                                    <Chip 
-                                                        label="Active" 
-                                                        color="success" 
-                                                        size="small" 
-                                                        sx={{ ml: 1 }}
-                                                    />
-                                                </Typography>
-                                            </Card>
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={6}>
-                                            <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
-                                                <Box display="flex" alignItems="center" mb={2}>
-                                                    <LocationOn sx={{ mr: 2, color: '#9333ea' }} />
-                                                    <Typography variant="subtitle1">Preferences</Typography>
-                                                </Box>
-                                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                                    <strong>Preferred Categories:</strong> Electronics, Tools
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                                    <strong>Notification Settings:</strong> Email & SMS
-                                                </Typography>
-                                                <Typography variant="body2">
-                                                    <strong>Language:</strong> English
-                                                </Typography>
-                                            </Card>
-                                        </Grid>
-                                    </Grid>
+                                <Grid item xs={12} md={2}>
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        onClick={() => { setSearchTerm(''); setSelectedCategory(''); }}
+                                        sx={{ backgroundColor: '#9333ea', height: '56px' }}
+                                    >
+                                        Clear
+                                    </Button>
                                 </Grid>
                             </Grid>
-                        ) : (
-                            <Box sx={{ textAlign: 'center', py: 4 }}>
-                                <Typography variant="h6" color="textSecondary">
-                                    Loading profile information...
-                                </Typography>
-                            </Box>
-                        )}
-                    </Box>
-                )}
 
-                {/* Item Details Tab */}
-                {tabValue === 6 && selectedItem && (
-                    <Box sx={{ p: 3 }}>
-                        <Box display="flex" alignItems="center" mb={3}>
-                            <Button
-                                variant="outlined"
-                                onClick={() => setTabValue(1)}
-                                sx={{ mr: 2, borderColor: '#9333ea', color: '#9333ea' }}
-                            >
-                                ← Back to Browse
-                            </Button>
-                            <Typography variant="h6">Item Details</Typography>
-                        </Box>
-
-                        <Grid container spacing={4}>
-                            <Grid item xs={12} md={6}>
-                                <Paper elevation={3} sx={{ backgroundColor: '#2a2a2a' }}>
-                                    <img
-                                        src={selectedItem.image || 'https://via.placeholder.com/400x300'}
-                                        alt={selectedItem.title}
-                                        style={{ width: '100%', height: 'auto', display: 'block' }}
-                                    />
-                                </Paper>
-                            </Grid>
-
-                            <Grid item xs={12} md={6}>
-                                <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
-                                    {selectedItem.title}
-                                </Typography>
-                                <Typography variant="body1" sx={{ mb: 2, color: '#ccc' }}>
-                                    {selectedItem.description}
-                                </Typography>
-                                <Box sx={{ mb: 2 }}>
-                                    <Chip 
-                                        label={selectedItem.category} 
-                                        size="small" 
-                                        sx={{ backgroundColor: '#9333ea', color: 'white' }}
-                                    />
+                            {itemsLoading ? (
+                                <Box display="flex" justifyContent="center" py={4}>
+                                    <CircularProgress sx={{ color: '#9333ea' }} />
                                 </Box>
-                                <Typography variant="h5" sx={{ mb: 2, color: '#9333ea' }}>
-                                    ₹{selectedItem.price} / day
-                                </Typography>
-                                {selectedItem.deposit > 0 && (
-                                    <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
-                                        Security Deposit: ₹{selectedItem.deposit}
-                                    </Typography>
-                                )}
-                                <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
-                                    <strong>Location:</strong> {selectedItem.location}
-                                </Typography>
-                                <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
-                                    <strong>Condition:</strong> {selectedItem.condition}
-                                </Typography>
-                                {selectedItem.features && selectedItem.features.length > 0 && (
-                                    <Box sx={{ mb: 2 }}>
-                                        <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
-                                            <strong>Features:</strong>
-                                        </Typography>
-                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                            {selectedItem.features.map((feature, index) => (
-                                                <Chip key={index} label={feature} variant="outlined" size="small" 
-                                                    sx={{ borderColor: '#9333ea', color: '#9333ea' }} />
-                                            ))}
-                                        </Box>
-                                    </Box>
-                                )}
+                            ) : items.length === 0 ? (
+                                <Alert severity="info">
+                                    No items found. Try adjusting your search or filters.
+                                </Alert>
+                            ) : (
+                                <Grid container spacing={3}>
+                                    {items.map((item) => (
+                                        <Grid item xs={12} sm={6} md={4} key={item._id}>
+                                            <Card sx={{ backgroundColor: '#2a2a2a', color: 'white', cursor: 'pointer' }}>
+                                                <CardMedia
+                                                    component="img"
+                                                    height="200"
+                                                    image={item.image || 'https://via.placeholder.com/300x200'}
+                                                    alt={item.title}
+                                                />
+                                                <CardContent>
+                                                    <Typography variant="h6" gutterBottom>
+                                                        {item.title}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1, color: '#ccc' }}>
+                                                        {item.description?.substring(0, 100)}...
+                                                    </Typography>
+                                                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                                                        <Typography variant="h6" color="primary" sx={{ color: '#9333ea' }}>
+                                                            ₹{item.price}/day
+                                                        </Typography>
+                                                        <Chip
+                                                            label={item.category}
+                                                            size="small"
+                                                            sx={{ backgroundColor: '#9333ea', color: 'white' }}
+                                                        />
+                                                    </Box>
+                                                    <Box display="flex" gap={1} mb={2}>
+                                                        <Button
+                                                            size="small"
+                                                            variant="contained"
+                                                            startIcon={<ShoppingCart />}
+                                                            onClick={() => handleAddToCart(item)}
+                                                            sx={{
+                                                                backgroundColor: '#9333ea',
+                                                                flex: 1
+                                                            }}
+                                                        >
+                                                            Add to Cart
+                                                        </Button>
+                                                        <Button
+                                                            size="small"
+                                                            variant="outlined"
+                                                            startIcon={<Favorite />}
+                                                            onClick={() => handleAddToWishlist(item)}
+                                                            sx={{
+                                                                borderColor: '#9333ea',
+                                                                color: '#9333ea',
+                                                                flex: 1
+                                                            }}
+                                                        >
+                                                            Wishlist
+                                                        </Button>
+                                                    </Box>
+                                                    <Button
+                                                        fullWidth
+                                                        variant="outlined"
+                                                        onClick={() => handleViewItem(item)}
+                                                        sx={{
+                                                            borderColor: '#9333ea',
+                                                            color: '#9333ea'
+                                                        }}
+                                                    >
+                                                        View Details
+                                                    </Button>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            )}
+                        </Box>
+                    )}
 
-                                <Paper elevation={2} sx={{ p: 2, mt: 3, bgcolor: '#333' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                        <Typography variant="h6" sx={{ color: 'white' }}>Vendor</Typography>
-                                    </Box>
-                                    <Typography variant="body1" sx={{ color: '#ccc' }}>
-                                        {selectedItem.vendor?.name || 'Vendor'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: '#888' }}>
-                                        {selectedItem.vendor?.email || 'vendor@example.com'}
-                                    </Typography>
-                                </Paper>
+                    {/* Wishlist Tab */}
+                    {tabValue === 2 && (
+                        <Box sx={{ p: 3 }}>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                                <Typography variant="h6">My Wishlist ({wishlist.length})</Typography>
+                                <Box display="flex" gap={2}>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<ShoppingCart />}
+                                        onClick={() => setCartDialog(true)}
+                                        sx={{ backgroundColor: '#9333ea' }}
+                                    >
+                                        View Cart ({cart.length})
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={<Add />}
+                                        onClick={() => setTabValue(1)}
+                                        sx={{ borderColor: '#9333ea', color: '#9333ea' }}
+                                    >
+                                        Browse More Items
+                                    </Button>
+                                </Box>
+                            </Box>
 
+                            {wishlist.length === 0 ? (
+                                <Alert severity="info">
+                                    Your wishlist is empty. Browse items and add them to your wishlist!
+                                </Alert>
+                            ) : (
+                                <Grid container spacing={3}>
+                                    {wishlist.map((item) => (
+                                        <Grid item xs={12} sm={6} md={4} key={item._id}>
+                                            <Card sx={{ backgroundColor: '#333', color: 'white' }}>
+                                                <CardMedia
+                                                    component="img"
+                                                    height="150"
+                                                    image={item.image || 'https://via.placeholder.com/300x150'}
+                                                    alt={item.title}
+                                                />
+                                                <CardContent>
+                                                    <Typography variant="h6" gutterBottom>
+                                                        {item.title}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2, color: '#ccc' }}>
+                                                        {item.description?.substring(0, 80)}...
+                                                    </Typography>
+                                                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                                                        <Typography variant="h6" color="primary" sx={{ color: '#9333ea' }}>
+                                                            ₹{item.price}/day
+                                                        </Typography>
+                                                        <Chip
+                                                            label={item.category}
+                                                            size="small"
+                                                            sx={{ backgroundColor: '#9333ea', color: 'white' }}
+                                                        />
+                                                    </Box>
+                                                    <Box display="flex" gap={1}>
+                                                        <Button
+                                                            size="small"
+                                                            variant="contained"
+                                                            startIcon={<ShoppingCart />}
+                                                            onClick={() => handleMoveToCart(item)}
+                                                            sx={{
+                                                                backgroundColor: '#9333ea',
+                                                                flex: 1
+                                                            }}
+                                                        >
+                                                            Move to Cart
+                                                        </Button>
+                                                        <Button
+                                                            size="small"
+                                                            variant="outlined"
+                                                            startIcon={<DeleteOutline />}
+                                                            onClick={() => handleRemoveFromWishlist(item._id)}
+                                                            sx={{
+                                                                borderColor: '#f44336',
+                                                                color: '#f44336'
+                                                            }}
+                                                        >
+                                                            Remove
+                                                        </Button>
+                                                    </Box>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            )}
+                        </Box>
+                    )}
+
+                    {/* Profile Tab */}
+                    {tabValue === 3 && (
+                        <Box sx={{ p: 3 }}>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                                <Typography variant="h6">My Profile</Typography>
                                 <Button
                                     variant="contained"
-                                    size="large"
-                                    fullWidth
-                                    sx={{ mt: 3, backgroundColor: '#9333ea' }}
-                                    onClick={handleBooking}
+                                    startIcon={<Edit />}
+                                    onClick={handleEditProfile}
+                                    sx={{ backgroundColor: '#9333ea' }}
                                 >
-                                    Book This Item
+                                    Edit Profile
                                 </Button>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                )}
-            </Paper>
+                            </Box>
 
-            {/* Booking Dialog */}
-            <Dialog open={bookingDialog} onClose={() => setBookingDialog(false)} maxWidth="sm" fullWidth>
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    Book Item: {selectedItem?.title}
-                </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a' }}>
-                    <Box sx={{ pt: 2 }}>
-                        <TextField
-                            fullWidth
-                            label="Start Date"
-                            type="date"
-                            value={bookingData.startDate}
-                            onChange={(e) => setBookingData({ ...bookingData, startDate: e.target.value })}
-                            InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
-                            InputProps={{ style: { color: 'white' } }}
-                            sx={{
-                                mb: 2,
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#555' },
-                                    '&:hover fieldset': { borderColor: '#9333ea' },
-                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                }
-                            }}
-                        />
-                        <TextField
-                            fullWidth
-                            label="End Date"
-                            type="date"
-                            value={bookingData.endDate}
-                            onChange={(e) => setBookingData({ ...bookingData, endDate: e.target.value })}
-                            InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
-                            InputProps={{ style: { color: 'white' } }}
-                            sx={{
-                                mb: 2,
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#555' },
-                                    '&:hover fieldset': { borderColor: '#9333ea' },
-                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                }
-                            }}
-                        />
-                        <TextField
-                            fullWidth
-                            label="Notes (Optional)"
-                            multiline
-                            rows={3}
-                            value={bookingData.notes}
-                            onChange={(e) => setBookingData({ ...bookingData, notes: e.target.value })}
-                            InputLabelProps={{ style: { color: '#ccc' } }}
-                            InputProps={{ style: { color: 'white' } }}
-                            sx={{
-                                mb: 2,
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#555' },
-                                    '&:hover fieldset': { borderColor: '#9333ea' },
-                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                }
-                            }}
-                        />
-                        {bookingData.startDate && bookingData.endDate && (
-                            <Paper sx={{ p: 2, backgroundColor: '#333', color: 'white' }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Booking Summary
-                                </Typography>
-                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                    <strong>Item:</strong> {selectedItem?.title}
-                                </Typography>
-                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                    <strong>Period:</strong> {bookingData.startDate} to {bookingData.endDate}
-                                </Typography>
-                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                    <strong>Daily Rate:</strong> ₹{selectedItem?.price}
-                                </Typography>
-                                <Typography variant="h6" sx={{ color: '#9333ea' }}>
-                                    <strong>Total Amount:</strong> ₹{calculateTotalAmount()}
-                                </Typography>
-                            </Paper>
-                        )}
-                    </Box>
-                </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                    <Button onClick={() => setBookingDialog(false)} sx={{ color: '#ccc' }}>
-                        Cancel
-                    </Button>
-                    <Button 
-                        onClick={handleBookingSubmit} 
-                        variant="contained"
-                        sx={{ backgroundColor: '#9333ea' }}
-                        disabled={!bookingData.startDate || !bookingData.endDate}
-                    >
-                        Confirm Booking
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Booking Details Dialog */}
-            <Dialog open={bookingDetailsDialog} onClose={() => setBookingDetailsDialog(false)} maxWidth="md" fullWidth>
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    Booking Details - #{selectedBooking?.id || selectedBooking?._id?.slice(-8)}
-                </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    {selectedBooking && (
-                        <Box sx={{ pt: 2 }}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={6}>
-                                    <Typography variant="h6" gutterBottom>
-                                        Order Information
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Order ID:</strong> #{selectedBooking.id || selectedBooking._id?.slice(-8)}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Status:</strong> {selectedBooking.status}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Total Amount:</strong> ${selectedBooking.totalAmount || 0}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Booking Date:</strong> {selectedBooking.createdAt ? new Date(selectedBooking.createdAt).toLocaleDateString() : 'N/A'}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
-                                    <Typography variant="h6" gutterBottom>
-                                        Item Details
-                                    </Typography>
-                                    <Box display="flex" alignItems="center" mb={2}>
-                                        <Avatar
-                                            src={selectedBooking.item?.image || 'https://via.placeholder.com/50x50'}
-                                            sx={{ mr: 2, width: 50, height: 50 }}
-                                        />
-                                        <Box>
-                                            <Typography variant="body1">
-                                                {selectedBooking.item?.title || 'Item'}
+                            {userProfile ? (
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} md={4}>
+                                        <Box sx={{ textAlign: 'center', mb: 3 }}>
+                                            <Avatar
+                                                sx={{
+                                                    width: 120,
+                                                    height: 120,
+                                                    mx: 'auto',
+                                                    mb: 2,
+                                                    bgcolor: '#9333ea',
+                                                    fontSize: '3rem'
+                                                }}
+                                            >
+                                                {userProfile.name?.charAt(0).toUpperCase() || 'U'}
+                                            </Avatar>
+                                            <Typography variant="h5" gutterBottom>
+                                                {userProfile.name || 'User Name'}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: '#ccc' }}>
-                                                {selectedBooking.item?.category}
-                                            </Typography>
+                                            <Chip
+                                                label={userProfile.role || 'customer'}
+                                                color="primary"
+                                                size="small"
+                                                sx={{ mb: 2 }}
+                                            />
                                         </Box>
+                                    </Grid>
+
+                                    <Grid item xs={12} md={8}>
+                                        <Grid container spacing={3}>
+                                            <Grid item xs={12} sm={6}>
+                                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
+                                                    <Box display="flex" alignItems="center" mb={2}>
+                                                        <Email sx={{ mr: 2, color: '#9333ea' }} />
+                                                        <Typography variant="subtitle1">Contact Information</Typography>
+                                                    </Box>
+                                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                                        <strong>Email:</strong> {userProfile.email || 'N/A'}
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                                        <strong>Phone:</strong> {userProfile.phone || 'Not provided'}
+                                                    </Typography>
+                                                    <Typography variant="body2">
+                                                        <strong>Address:</strong> {userProfile.address || 'Not provided'}
+                                                    </Typography>
+                                                </Card>
+                                            </Grid>
+
+                                            <Grid item xs={12} sm={6}>
+                                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
+                                                    <Box display="flex" alignItems="center" mb={2}>
+                                                        <TrendingUp sx={{ mr: 2, color: '#9333ea' }} />
+                                                        <Typography variant="subtitle1">Account Statistics</Typography>
+                                                    </Box>
+                                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                                        <strong>Total Bookings:</strong> {stats.totalBookings}
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                                        <strong>Active Rentals:</strong> {stats.activeRentals}
+                                                    </Typography>
+                                                    <Typography variant="body2">
+                                                        <strong>Total Spent:</strong> ${stats.totalSpent}
+                                                    </Typography>
+                                                </Card>
+                                            </Grid>
+
+                                            <Grid item xs={12} sm={6}>
+                                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
+                                                    <Box display="flex" alignItems="center" mb={2}>
+                                                        <Event sx={{ mr: 2, color: '#9333ea' }} />
+                                                        <Typography variant="subtitle1">Account Information</Typography>
+                                                    </Box>
+                                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                                        <strong>Member Since:</strong> {userProfile.createdAt ? new Date(userProfile.createdAt).toLocaleDateString() : 'N/A'}
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                                        <strong>Last Login:</strong> {userProfile.lastLogin ? new Date(userProfile.lastLogin).toLocaleDateString() : 'N/A'}
+                                                    </Typography>
+                                                    <Typography variant="body2">
+                                                        <strong>Account Status:</strong>
+                                                        <Chip
+                                                            label="Active"
+                                                            color="success"
+                                                            size="small"
+                                                            sx={{ ml: 1 }}
+                                                        />
+                                                    </Typography>
+                                                </Card>
+                                            </Grid>
+
+                                            <Grid item xs={12} sm={6}>
+                                                <Card sx={{ backgroundColor: '#333', color: 'white', p: 3, height: '100%' }}>
+                                                    <Box display="flex" alignItems="center" mb={2}>
+                                                        <LocationOn sx={{ mr: 2, color: '#9333ea' }} />
+                                                        <Typography variant="subtitle1">Preferences</Typography>
+                                                    </Box>
+                                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                                        <strong>Preferred Categories:</strong> Electronics, Tools
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                                        <strong>Notification Settings:</strong> Email & SMS
+                                                    </Typography>
+                                                    <Typography variant="body2">
+                                                        <strong>Language:</strong> English
+                                                    </Typography>
+                                                </Card>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            ) : (
+                                <Box sx={{ textAlign: 'center', py: 4 }}>
+                                    <Typography variant="h6" color="textSecondary">
+                                        Loading profile information...
+                                    </Typography>
+                                </Box>
+                            )}
+                        </Box>
+                    )}
+
+                    {/* Item Details Tab */}
+                    {tabValue === 6 && selectedItem && (
+                        <Box sx={{ p: 3 }}>
+                            <Box display="flex" alignItems="center" mb={3}>
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => setTabValue(1)}
+                                    sx={{ mr: 2, borderColor: '#9333ea', color: '#9333ea' }}
+                                >
+                                    ← Back to Browse
+                                </Button>
+                                <Typography variant="h6">Item Details</Typography>
+                            </Box>
+
+                            <Grid container spacing={4}>
+                                <Grid item xs={12} md={6}>
+                                    <Paper elevation={3} sx={{ backgroundColor: '#2a2a2a' }}>
+                                        <img
+                                            src={selectedItem.image || 'https://via.placeholder.com/400x300'}
+                                            alt={selectedItem.title}
+                                            style={{ width: '100%', height: 'auto', display: 'block' }}
+                                        />
+                                    </Paper>
+                                </Grid>
+
+                                <Grid item xs={12} md={6}>
+                                    <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
+                                        {selectedItem.title}
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ mb: 2, color: '#ccc' }}>
+                                        {selectedItem.description}
+                                    </Typography>
+                                    <Box sx={{ mb: 2 }}>
+                                        <Chip
+                                            label={selectedItem.category}
+                                            size="small"
+                                            sx={{ backgroundColor: '#9333ea', color: 'white' }}
+                                        />
                                     </Box>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Daily Rate:</strong> ${selectedBooking.item?.price || 0}
+                                    <Typography variant="h5" sx={{ mb: 2, color: '#9333ea' }}>
+                                        ₹{selectedItem.price} / day
                                     </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Location:</strong> {selectedBooking.item?.location || 'N/A'}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Typography variant="h6" gutterBottom>
-                                        Rental Period
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Start Date:</strong> {selectedBooking.startDate ? new Date(selectedBooking.startDate).toLocaleDateString() : 'N/A'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>End Date:</strong> {selectedBooking.endDate ? new Date(selectedBooking.endDate).toLocaleDateString() : 'N/A'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Duration:</strong> {selectedBooking.startDate && selectedBooking.endDate ? 
-                                            Math.ceil((new Date(selectedBooking.endDate) - new Date(selectedBooking.startDate)) / (1000 * 60 * 60 * 24)) + 1 : 0} days
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Typography variant="h6" gutterBottom>
-                                        Vendor Information
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Name:</strong> {selectedBooking.vendor?.name || 'Vendor'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Email:</strong> {selectedBooking.vendor?.email || 'vendor@example.com'}
-                                    </Typography>
-                                </Grid>
-                                {selectedBooking.notes && (
-                                    <Grid item xs={12}>
-                                        <Typography variant="h6" gutterBottom>
-                                            Notes
+                                    {selectedItem.deposit > 0 && (
+                                        <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                            Security Deposit: ₹{selectedItem.deposit}
                                         </Typography>
-                                        <Typography variant="body2" sx={{ color: '#ccc' }}>
-                                            {selectedBooking.notes}
+                                    )}
+                                    <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                        <strong>Location:</strong> {selectedItem.location}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                        <strong>Condition:</strong> {selectedItem.condition}
+                                    </Typography>
+                                    {selectedItem.features && selectedItem.features.length > 0 && (
+                                        <Box sx={{ mb: 2 }}>
+                                            <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
+                                                <strong>Features:</strong>
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                                {selectedItem.features.map((feature, index) => (
+                                                    <Chip key={index} label={feature} variant="outlined" size="small"
+                                                        sx={{ borderColor: '#9333ea', color: '#9333ea' }} />
+                                                ))}
+                                            </Box>
+                                        </Box>
+                                    )}
+
+                                    <Paper elevation={2} sx={{ p: 2, mt: 3, bgcolor: '#333' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                            <Typography variant="h6" sx={{ color: 'white' }}>Vendor</Typography>
+                                        </Box>
+                                        <Typography variant="body1" sx={{ color: '#ccc' }}>
+                                            {selectedItem.vendor?.name || 'Vendor'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: '#888' }}>
+                                            {selectedItem.vendor?.email || 'vendor@example.com'}
+                                        </Typography>
+                                    </Paper>
+
+                                    <Button
+                                        variant="contained"
+                                        size="large"
+                                        fullWidth
+                                        sx={{ mt: 3, backgroundColor: '#9333ea' }}
+                                        onClick={handleBooking}
+                                    >
+                                        Book This Item
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    )}
+                </Paper>
+
+                {/* Booking Dialog */}
+                <Dialog open={bookingDialog} onClose={() => setBookingDialog(false)} maxWidth="sm" fullWidth>
+                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        Book Item: {selectedItem?.title}
+                    </DialogTitle>
+                    <DialogContent sx={{ backgroundColor: '#2a2a2a' }}>
+                        <Box sx={{ pt: 2 }}>
+                            <TextField
+                                fullWidth
+                                label="Start Date"
+                                type="date"
+                                value={bookingData.startDate}
+                                onChange={(e) => setBookingData({ ...bookingData, startDate: e.target.value })}
+                                InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
+                                InputProps={{ style: { color: 'white' } }}
+                                sx={{
+                                    mb: 2,
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': { borderColor: '#555' },
+                                        '&:hover fieldset': { borderColor: '#9333ea' },
+                                        '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                    }
+                                }}
+                            />
+                            <TextField
+                                fullWidth
+                                label="End Date"
+                                type="date"
+                                value={bookingData.endDate}
+                                onChange={(e) => setBookingData({ ...bookingData, endDate: e.target.value })}
+                                InputLabelProps={{ shrink: true, style: { color: '#ccc' } }}
+                                InputProps={{ style: { color: 'white' } }}
+                                sx={{
+                                    mb: 2,
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': { borderColor: '#555' },
+                                        '&:hover fieldset': { borderColor: '#9333ea' },
+                                        '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                    }
+                                }}
+                            />
+                            <TextField
+                                fullWidth
+                                label="Notes (Optional)"
+                                multiline
+                                rows={3}
+                                value={bookingData.notes}
+                                onChange={(e) => setBookingData({ ...bookingData, notes: e.target.value })}
+                                InputLabelProps={{ style: { color: '#ccc' } }}
+                                InputProps={{ style: { color: 'white' } }}
+                                sx={{
+                                    mb: 2,
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': { borderColor: '#555' },
+                                        '&:hover fieldset': { borderColor: '#9333ea' },
+                                        '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                    }
+                                }}
+                            />
+                            {bookingData.startDate && bookingData.endDate && (
+                                <Paper sx={{ p: 2, backgroundColor: '#333', color: 'white' }}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Booking Summary
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Item:</strong> {selectedItem?.title}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Period:</strong> {bookingData.startDate} to {bookingData.endDate}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        <strong>Daily Rate:</strong> ₹{selectedItem?.price}
+                                    </Typography>
+                                    <Typography variant="h6" sx={{ color: '#9333ea' }}>
+                                        <strong>Total Amount:</strong> ₹{calculateTotalAmount()}
+                                    </Typography>
+                                </Paper>
+                            )}
+                        </Box>
+                    </DialogContent>
+                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                        <Button onClick={() => setBookingDialog(false)} sx={{ color: '#ccc' }}>
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleBookingSubmit}
+                            variant="contained"
+                            sx={{ backgroundColor: '#9333ea' }}
+                            disabled={!bookingData.startDate || !bookingData.endDate}
+                        >
+                            Confirm Booking
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Booking Details Dialog */}
+                <Dialog open={bookingDetailsDialog} onClose={() => setBookingDetailsDialog(false)} maxWidth="md" fullWidth>
+                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        Booking Details - #{selectedBooking?.id || selectedBooking?._id?.slice(-8)}
+                    </DialogTitle>
+                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        {selectedBooking && (
+                            <Box sx={{ pt: 2 }}>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} md={6}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Order Information
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Order ID:</strong> #{selectedBooking.id || selectedBooking._id?.slice(-8)}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Status:</strong> {selectedBooking.status}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Total Amount:</strong> ${selectedBooking.totalAmount || 0}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Booking Date:</strong> {selectedBooking.createdAt ? new Date(selectedBooking.createdAt).toLocaleDateString() : 'N/A'}
                                         </Typography>
                                     </Grid>
-                                )}
-                            </Grid>
-                        </Box>
-                    )}
-                </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                    <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#ccc' }}>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Edit Profile Dialog */}
-            <Dialog open={editProfileDialog} onClose={() => setEditProfileDialog(false)} maxWidth="sm" fullWidth>
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    Edit Profile
-                </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    <Box sx={{ mt: 2 }}>
-                        <TextField
-                            fullWidth
-                            label="Name"
-                            name="name"
-                            value={editProfileForm.name}
-                            onChange={handleProfileChange}
-                            margin="normal"
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
-                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' }
-                                },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
-                            }}
-                        />
-                        <TextField
-                            fullWidth
-                            label="Email"
-                            name="email"
-                            type="email"
-                            value={editProfileForm.email}
-                            onChange={handleProfileChange}
-                            margin="normal"
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
-                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' }
-                                },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
-                            }}
-                        />
-                        <TextField
-                            fullWidth
-                            label="Phone"
-                            name="phone"
-                            value={editProfileForm.phone}
-                            onChange={handleProfileChange}
-                            margin="normal"
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
-                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' }
-                                },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
-                            }}
-                        />
-                        <TextField
-                            fullWidth
-                            label="Address"
-                            name="address"
-                            value={editProfileForm.address}
-                            onChange={handleProfileChange}
-                            margin="normal"
-                            multiline
-                            rows={3}
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#444' },
-                                    '&:hover fieldset': { borderColor: '#666' },
-                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' }
-                                },
-                                '& .MuiInputLabel-root': { color: '#888' },
-                                '& .MuiInputBase-input': { color: 'white' }
-                            }}
-                        />
-                    </Box>
-                </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                    <Button onClick={() => setEditProfileDialog(false)} sx={{ color: '#ccc' }}>
-                        Cancel
-                    </Button>
-                    <Button onClick={handleSaveProfile} variant="contained" sx={{ backgroundColor: '#9333ea' }}>
-                        Save Changes
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Cart Dialog */}
-            <Dialog 
-                open={cartDialog} 
-                onClose={() => setCartDialog(false)} 
-                maxWidth="md" 
-                fullWidth
-            >
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    Shopping Cart ({cart.length} items)
-                </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    {cart.length === 0 ? (
-                        <Box sx={{ textAlign: 'center', py: 4 }}>
-                            <Typography variant="body1" sx={{ color: '#ccc' }}>
-                                Your cart is empty
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Box sx={{ pt: 2 }}>
-                            {cart.map((item) => (
-                                <Box key={item._id} sx={{ display: 'flex', alignItems: 'center', mb: 2, pb: 2, borderBottom: '1px solid #444' }}>
-                                    <Avatar
-                                        src={item.image}
-                                        sx={{ mr: 2, width: 60, height: 60 }}
-                                    />
-                                    <Box flexGrow={1}>
-                                        <Typography variant="h6">{item.title}</Typography>
-                                        <Typography variant="body2" sx={{ color: '#ccc' }}>
-                                            {item.category} • ₹{item.price}/day
+                                    <Grid item xs={12} md={6}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Item Details
                                         </Typography>
-                                    </Box>
-                                    <Box sx={{ textAlign: 'right' }}>
-                                        <Typography variant="h6" sx={{ color: '#9333ea' }}>
-                                            ₹{item.price * item.quantity}
+                                        <Box display="flex" alignItems="center" mb={2}>
+                                            <Avatar
+                                                src={selectedBooking.item?.image || 'https://via.placeholder.com/50x50'}
+                                                sx={{ mr: 2, width: 50, height: 50 }}
+                                            />
+                                            <Box>
+                                                <Typography variant="body1">
+                                                    {selectedBooking.item?.title || 'Item'}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                    {selectedBooking.item?.category}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Daily Rate:</strong> ${selectedBooking.item?.price || 0}
                                         </Typography>
-                                        <IconButton
-                                            onClick={() => handleRemoveFromCart(item._id)}
-                                            sx={{ color: '#f44336' }}
-                                        >
-                                            <RemoveShoppingCart />
-                                        </IconButton>
-                                    </Box>
-                                </Box>
-                            ))}
-                            <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid #444' }}>
-                                <Typography variant="h5" sx={{ color: '#9333ea' }}>
-                                    Total: ₹{calculateCartTotal()}
-                                </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Location:</strong> {selectedBooking.item?.location || 'N/A'}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Rental Period
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Start Date:</strong> {selectedBooking.startDate ? new Date(selectedBooking.startDate).toLocaleDateString() : 'N/A'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>End Date:</strong> {selectedBooking.endDate ? new Date(selectedBooking.endDate).toLocaleDateString() : 'N/A'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Duration:</strong> {selectedBooking.startDate && selectedBooking.endDate ?
+                                                Math.ceil((new Date(selectedBooking.endDate) - new Date(selectedBooking.startDate)) / (1000 * 60 * 60 * 24)) + 1 : 0} days
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Vendor Information
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Name:</strong> {selectedBooking.vendor?.name || 'Vendor'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Email:</strong> {selectedBooking.vendor?.email || 'vendor@example.com'}
+                                        </Typography>
+                                    </Grid>
+                                    {selectedBooking.notes && (
+                                        <Grid item xs={12}>
+                                            <Typography variant="h6" gutterBottom>
+                                                Notes
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                {selectedBooking.notes}
+                                            </Typography>
+                                        </Grid>
+                                    )}
+                                </Grid>
                             </Box>
-                        </Box>
-                    )}
-                </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                    <Button onClick={() => setCartDialog(false)} sx={{ color: '#ccc' }}>
-                        Continue Shopping
-                    </Button>
-                    {cart.length > 0 && (
-                        <Button 
-                            variant="contained" 
-                            sx={{ backgroundColor: '#9333ea' }}
-                            onClick={() => {
-                                alert('Proceeding to checkout...');
-                                setCartDialog(false);
-                            }}
-                        >
-                            Proceed to Checkout
+                        )}
+                    </DialogContent>
+                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                        <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#ccc' }}>
+                            Close
                         </Button>
-                    )}
-                </DialogActions>
-            </Dialog>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Edit Profile Dialog */}
+                <Dialog open={editProfileDialog} onClose={() => setEditProfileDialog(false)} maxWidth="sm" fullWidth>
+                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        Edit Profile
+                    </DialogTitle>
+                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        <Box sx={{ mt: 2 }}>
+                            <TextField
+                                fullWidth
+                                label="Name"
+                                name="name"
+                                value={editProfileForm.name}
+                                onChange={handleProfileChange}
+                                margin="normal"
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': { borderColor: '#444' },
+                                        '&:hover fieldset': { borderColor: '#666' },
+                                        '&.Mui-focused fieldset': { borderColor: '#9333ea' }
+                                    },
+                                    '& .MuiInputLabel-root': { color: '#888' },
+                                    '& .MuiInputBase-input': { color: 'white' }
+                                }}
+                            />
+                            <TextField
+                                fullWidth
+                                label="Email"
+                                name="email"
+                                type="email"
+                                value={editProfileForm.email}
+                                onChange={handleProfileChange}
+                                margin="normal"
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': { borderColor: '#444' },
+                                        '&:hover fieldset': { borderColor: '#666' },
+                                        '&.Mui-focused fieldset': { borderColor: '#9333ea' }
+                                    },
+                                    '& .MuiInputLabel-root': { color: '#888' },
+                                    '& .MuiInputBase-input': { color: 'white' }
+                                }}
+                            />
+                            <TextField
+                                fullWidth
+                                label="Phone"
+                                name="phone"
+                                value={editProfileForm.phone}
+                                onChange={handleProfileChange}
+                                margin="normal"
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': { borderColor: '#444' },
+                                        '&:hover fieldset': { borderColor: '#666' },
+                                        '&.Mui-focused fieldset': { borderColor: '#9333ea' }
+                                    },
+                                    '& .MuiInputLabel-root': { color: '#888' },
+                                    '& .MuiInputBase-input': { color: 'white' }
+                                }}
+                            />
+                            <TextField
+                                fullWidth
+                                label="Address"
+                                name="address"
+                                value={editProfileForm.address}
+                                onChange={handleProfileChange}
+                                margin="normal"
+                                multiline
+                                rows={3}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': { borderColor: '#444' },
+                                        '&:hover fieldset': { borderColor: '#666' },
+                                        '&.Mui-focused fieldset': { borderColor: '#9333ea' }
+                                    },
+                                    '& .MuiInputLabel-root': { color: '#888' },
+                                    '& .MuiInputBase-input': { color: 'white' }
+                                }}
+                            />
+                        </Box>
+                    </DialogContent>
+                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                        <Button onClick={() => setEditProfileDialog(false)} sx={{ color: '#ccc' }}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleSaveProfile} variant="contained" sx={{ backgroundColor: '#9333ea' }}>
+                            Save Changes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
             </Container>
         </>
     );

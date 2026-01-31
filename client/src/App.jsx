@@ -19,6 +19,7 @@ import CreateItem from './pages/CreateItem';
 import MyBookings from './pages/MyBookings';
 import MyItems from './pages/MyItems';
 import VendorCustomers from './pages/VendorCustomers';
+import CartPage from './pages/CartPage';
 
 const theme = createTheme({
     palette: {
@@ -234,6 +235,14 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <MyBookings />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/cart"
+                            element={
+                                <ProtectedRoute>
+                                    <CartPage />
                                 </ProtectedRoute>
                             }
                         />
