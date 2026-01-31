@@ -24,13 +24,13 @@ mongoose.connect(process.env.MONGODB_URI)
         process.exit(1);
     });
 
-// Import routes
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const quotationRoutes = require('./routes/quotations');
 const itemRoutes = require('./routes/items');
 const bookingRoutes = require('./routes/bookings');
 const adminRoutes = require('./routes/admin');
+const vendorRoutes = require('./routes/vendor');
 
 // Routes
 app.get('/', (req, res) => {
@@ -42,6 +42,7 @@ app.use('/api/quotations', quotationRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/vendor', vendorRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
