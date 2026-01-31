@@ -57,10 +57,14 @@ const VendorDashboard = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [tabValue, setTabValue] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedOrder, setSelectedOrder] = useState(null); // For menu functionality
     const [orderDetailsOpen, setOrderDetailsOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    
+    // Booking Details state (separate from menu state)
+    const [bookingDetailsDialog, setBookingDetailsDialog] = useState(false);
+    const [selectedBookingOrder, setSelectedBookingOrder] = useState(null);
     
     // Dynamic state
     const [stats, setStats] = useState({
@@ -73,9 +77,6 @@ const VendorDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [products, setProducts] = useState([]);
     const [quotations, setQuotations] = useState([]);
-    
-    // Booking Details state
-    const [bookingDetailsDialog, setBookingDetailsDialog] = useState(false);
     
     // Create Item state
     const [createItemDialog, setCreateItemDialog] = useState(false);
@@ -277,26 +278,69 @@ const VendorDashboard = () => {
 
     const handleBookingDetails = (order) => {
         console.log('handleBookingDetails called with order:', order);
-        setSelectedOrder(order);
-        setBookingDetailsDialog(true);
-        console.log('bookingDetailsDialog set to true');
+        
+        if (!order) {
+            console.error('No order provided to handleBookingDetails');
+            alert('Error: No booking data available');
+            return;
+        }
+        
+        try {
+            setSelectedBookingOrder(order);
+            setBookingDetailsDialog(true);
+            console.log('bookingDetailsDialog set to true');
+        } catch (error) {
+            console.error('Error in handleBookingDetails:', error);
+            alert('Error opening booking details. Please try again.');
+        }
     };
 
     const handleApproveBooking = async (orderId) => {
         console.log('handleApproveBooking called with orderId:', orderId);
+        console.log('Order ID type:', typeof orderId);
+        
+        if (!orderId) {
+            alert('Error: No booking ID provided');
+            return;
+        }
+        
         try {
+            console.log('Making API call to:', `/bookings/${orderId}/confirm`);
             const response = await bookingsAPI.confirm(orderId);
             console.log('Approve response:', response);
-            if (response.data.success) {
+            
+            if (response.data && response.data.success) {
                 alert('Booking approved successfully!');
                 setBookingDetailsDialog(false);
                 fetchDashboardData(); // Refresh orders
             } else {
-                alert('Failed to approve booking: ' + (response.data.message || 'Unknown error'));
+                alert('Failed to approve booking: ' + (response.data?.message || 'Unknown error'));
             }
         } catch (error) {
             console.error('Error approving booking:', error);
-            alert('Failed to approve booking. Please try again.');
+            console.error('Error response:', error.response);
+            
+            let errorMessage = 'Failed to approve booking. Please try again.';
+            
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.error('Error status:', error.response.status);
+                console.error('Error data:', error.response.data);
+                
+                if (error.response.status === 404) {
+                    errorMessage = 'Booking not found or endpoint not available';
+                } else if (error.response.status === 403) {
+                    errorMessage = 'You are not authorized to approve this booking';
+                } else if (error.response.data?.message) {
+                    errorMessage = error.response.data.message;
+                }
+            } else if (error.request) {
+                // The request was made but no response was received
+                errorMessage = 'No response from server. Please check your connection.';
+            }
+            
+            alert(errorMessage);
         }
     };
 
@@ -452,8 +496,8 @@ const VendorDashboard = () => {
                                         </TableHead>
                                         <TableBody>
                                             {orders.map((order) => (
-                                                <TableRow key={order.id}>
-                                                    <TableCell sx={{ color: '#ccc' }}>{order.id}</TableCell>
+                                                <TableRow key={order._id}>
+                                                    <TableCell sx={{ color: '#ccc' }}>#{order._id?.slice(-8) || 'N/A'}</TableCell>
                                                     <TableCell sx={{ color: '#ccc' }}>
                                                         <Box>
                                                             <Typography variant="body2">{order.renter?.name}</Typography>
@@ -494,8 +538,8 @@ const VendorDashboard = () => {
                                                             {order.status === 'pending' && (
                                                                 <IconButton
                                                                     onClick={() => {
-                                                                        console.log('Approve button clicked for order:', order.id);
-                                                                        handleApproveBooking(order.id);
+                                                                        console.log('Approve button clicked for order:', order._id);
+                                                                        handleApproveBooking(order._id);
                                                                     }}
                                                                     sx={{ color: '#4caf50' }}
                                                                     title="Approve Booking"
@@ -1289,13 +1333,13 @@ const VendorDashboard = () => {
                 setBookingDetailsDialog(false);
             }} maxWidth="md" fullWidth>
                 <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    Booking Details - #{selectedOrder?.id}
+                    Booking Details - #{selectedBookingOrder?._id?.slice(-8) || 'N/A'}
                 </DialogTitle>
                 <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    {selectedOrder && (
+                    {selectedBookingOrder ? (
                         <Box sx={{ pt: 2 }}>
                             <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
-                                Debug: Dialog is open, selectedOrder: {JSON.stringify(selectedOrder, null, 2)}
+                                Debug: Dialog is open, selectedBookingOrder ID: {selectedBookingOrder._id}
                             </Typography>
                             <Grid container spacing={3}>
                                 <Grid item xs={12} md={6}>
@@ -1303,16 +1347,16 @@ const VendorDashboard = () => {
                                         Order Information
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Order ID:</strong> #{selectedOrder.id}
+                                        <strong>Order ID:</strong> #{selectedBookingOrder._id?.slice(-8) || 'N/A'}
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Status:</strong> {selectedOrder.status}
+                                        <strong>Status:</strong> {selectedBookingOrder.status || 'N/A'}
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Total Amount:</strong> ${selectedOrder.totalAmount || 0}
+                                        <strong>Total Amount:</strong> ${selectedBookingOrder.totalAmount || 0}
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Booking Date:</strong> {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString() : 'N/A'}
+                                        <strong>Booking Date:</strong> {selectedBookingOrder.createdAt ? new Date(selectedBookingOrder.createdAt).toLocaleDateString() : 'N/A'}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
@@ -1320,13 +1364,13 @@ const VendorDashboard = () => {
                                         Customer Information
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Name:</strong> {selectedOrder.renter?.name || 'Customer'}
+                                        <strong>Name:</strong> {selectedBookingOrder.renter?.name || 'Customer'}
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Email:</strong> {selectedOrder.renter?.email || 'customer@example.com'}
+                                        <strong>Email:</strong> {selectedBookingOrder.renter?.email || 'customer@example.com'}
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Phone:</strong> {selectedOrder.renter?.phone || 'N/A'}
+                                        <strong>Phone:</strong> {selectedBookingOrder.renter?.phone || 'N/A'}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
@@ -1335,23 +1379,23 @@ const VendorDashboard = () => {
                                     </Typography>
                                     <Box display="flex" alignItems="center" mb={2}>
                                         <Avatar
-                                            src={selectedOrder.item?.image || 'https://via.placeholder.com/50x50'}
+                                            src={selectedBookingOrder.item?.image || 'https://via.placeholder.com/50x50'}
                                             sx={{ mr: 2, width: 50, height: 50 }}
                                         />
                                         <Box>
                                             <Typography variant="body1">
-                                                {selectedOrder.item?.title || 'Item'}
+                                                {selectedBookingOrder.item?.title || 'Item'}
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: '#ccc' }}>
-                                                {selectedOrder.item?.category}
+                                                {selectedBookingOrder.item?.category || 'N/A'}
                                             </Typography>
                                         </Box>
                                     </Box>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Daily Rate:</strong> ${selectedOrder.item?.price || 0}
+                                        <strong>Daily Rate:</strong> ${selectedBookingOrder.item?.price || 0}
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Location:</strong> {selectedOrder.item?.location || 'N/A'}
+                                        <strong>Location:</strong> {selectedBookingOrder.item?.location || 'N/A'}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
@@ -1359,27 +1403,33 @@ const VendorDashboard = () => {
                                         Rental Period
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Start Date:</strong> {selectedOrder.startDate ? new Date(selectedOrder.startDate).toLocaleDateString() : 'N/A'}
+                                        <strong>Start Date:</strong> {selectedBookingOrder.startDate ? new Date(selectedBookingOrder.startDate).toLocaleDateString() : 'N/A'}
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>End Date:</strong> {selectedOrder.endDate ? new Date(selectedOrder.endDate).toLocaleDateString() : 'N/A'}
+                                        <strong>End Date:</strong> {selectedBookingOrder.endDate ? new Date(selectedBookingOrder.endDate).toLocaleDateString() : 'N/A'}
                                     </Typography>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Duration:</strong> {selectedOrder.startDate && selectedOrder.endDate ? 
-                                            Math.ceil((new Date(selectedOrder.endDate) - new Date(selectedOrder.startDate)) / (1000 * 60 * 60 * 24)) + 1 : 0} days
+                                        <strong>Duration:</strong> {selectedBookingOrder.startDate && selectedBookingOrder.endDate ? 
+                                            Math.ceil((new Date(selectedBookingOrder.endDate) - new Date(selectedBookingOrder.startDate)) / (1000 * 60 * 60 * 24)) + 1 : 0} days
                                     </Typography>
                                 </Grid>
-                                {selectedOrder.notes && (
+                                {selectedBookingOrder.notes && (
                                     <Grid item xs={12}>
                                         <Typography variant="h6" gutterBottom>
                                             Customer Notes
                                         </Typography>
                                         <Typography variant="body2" sx={{ color: '#ccc' }}>
-                                            {selectedOrder.notes}
+                                            {selectedBookingOrder.notes}
                                         </Typography>
                                     </Grid>
                                 )}
                             </Grid>
+                        </Box>
+                    ) : (
+                        <Box sx={{ pt: 2 }}>
+                            <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                No booking data available
+                            </Typography>
                         </Box>
                     )}
                 </DialogContent>
@@ -1387,9 +1437,9 @@ const VendorDashboard = () => {
                     <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#ccc' }}>
                         Close
                     </Button>
-                    {selectedOrder?.status === 'pending' && (
+                    {selectedBookingOrder?.status === 'pending' && (
                         <Button 
-                            onClick={() => handleApproveBooking(selectedOrder.id)} 
+                            onClick={() => handleApproveBooking(selectedBookingOrder._id)} 
                             variant="contained"
                             sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#45a049' } }}
                         >
