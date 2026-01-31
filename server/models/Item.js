@@ -51,6 +51,21 @@ const itemSchema = new mongoose.Schema({
         enum: ['New', 'Like New', 'Good', 'Fair'],
         default: 'Good'
     },
+    approvalStatus: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending'
+    },
+    rejectionReason: {
+        type: String
+    },
+    approvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    approvedAt: {
+        type: Date
+    },
     terms: {
         type: String,
         default: 'Standard rental terms apply'
