@@ -153,6 +153,10 @@ router.post('/login', async (req, res) => {
             });
         }
 
+        // Update last login timestamp
+        user.lastLogin = new Date();
+        await user.save();
+
         // Generate token
         const token = generateToken(user._id);
 
