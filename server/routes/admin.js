@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Order = require('../models/Order');
-const Product = require('../models/Product');
+const Item = require('../models/Item');
 const Quotation = require('../models/Quotation');
 const SystemSettings = require('../models/SystemSettings');
 const { protect } = require('../middleware/auth');
@@ -45,6 +45,10 @@ router.get('/stats', async (req, res) => {
             .limit(5)
             .select('name email role createdAt');
 
+        // Get product statistics
+        const totalProducts = await Item.countDocuments({ approvalStatus: 'approved' });
+        const pendingProducts = await Item.countDocuments({ approvalStatus: 'pending' });
+
         res.json({
             success: true,
             stats: {
@@ -53,7 +57,9 @@ router.get('/stats', async (req, res) => {
                 totalOrders,
                 totalRevenue,
                 pendingVendors,
-                activeRentals
+                activeRentals,
+                totalProducts,
+                pendingProducts
             },
             recentActivity: {
                 orders: recentOrders,
@@ -108,7 +114,7 @@ router.get('/users', async (req, res) => {
                 userObj.totalOrders = orders.length;
                 userObj.totalSpent = orders.reduce((sum, order) => sum + order.pricing.paidAmount, 0);
             } else if (user.role === 'vendor') {
-                const products = await Product.countDocuments({ vendor: user._id });
+                const products = await Item.countDocuments({ vendor: user._id });
                 userObj.totalProducts = products;
             }
 
@@ -158,7 +164,7 @@ router.get('/users/:id', async (req, res) => {
             userObj.totalOrders = orders.length;
             userObj.totalSpent = orders.reduce((sum, order) => sum + order.pricing.paidAmount, 0);
         } else if (user.role === 'vendor') {
-            const products = await Product.find({ vendor: user._id });
+            const products = await Item.find({ vendor: user._id });
             const orders = await Order.find({ vendor: user._id });
             userObj.products = products;
             userObj.orders = orders;
@@ -314,7 +320,7 @@ router.get('/vendors', async (req, res) => {
         // Get product count for each vendor
         const vendorsWithStats = await Promise.all(vendors.map(async (vendor) => {
             const vendorObj = vendor.toObject();
-            const productCount = await Product.countDocuments({ vendor: vendor._id });
+            const productCount = await Item.countDocuments({ vendor: vendor._id });
             vendorObj.totalProducts = productCount;
             return vendorObj;
         }));
@@ -709,6 +715,184 @@ router.get('/export/orders', async (req, res) => {
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', 'attachment; filename=orders.csv');
         res.send(csv);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// @route   GET /api/admin/products
+// @desc    Get all products with filters
+// @access  Private/Admin
+router.get('/products', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        const search = req.query.search || '';
+        const approvalStatus = req.query.approvalStatus;
+
+        // Build query
+        const query = {};
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { sku: { $regex: search, $options: 'i' } }
+            ];
+        }
+        if (approvalStatus) query.approvalStatus = approvalStatus;
+
+        const products = await Item.find(query)
+            .populate('vendor', 'name email companyName')
+            .populate('approvedBy', 'name email')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const total = await Item.countDocuments(query);
+
+        res.json({
+            success: true,
+            products,
+            pagination: {
+                page,
+                limit,
+                total,
+                pages: Math.ceil(total / limit)
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// @route   GET /api/admin/products/pending
+// @desc    Get pending product approvals
+// @access  Private/Admin
+router.get('/products/pending', async (req, res) => {
+    try {
+        const pendingProducts = await Item.find({
+            approvalStatus: 'pending'
+        })
+            .populate('vendor', 'name email companyName')
+            .sort({ createdAt: -1 });
+
+        res.json({
+            success: true,
+            products: pendingProducts,
+            count: pendingProducts.length
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// @route   PUT /api/admin/products/:id/approve
+// @desc    Approve product
+// @access  Private/Admin
+router.put('/products/:id/approve', async (req, res) => {
+    try {
+        const product = await Item.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        product.approvalStatus = 'approved';
+        product.isPublished = true;
+        product.approvedBy = req.user.id;
+        product.approvedAt = new Date();
+        await product.save();
+
+        // TODO: Send approval notification to vendor
+
+        res.json({
+            success: true,
+            message: 'Product approved successfully',
+            product
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// @route   PUT /api/admin/products/:id/reject
+// @desc    Reject product
+// @access  Private/Admin
+router.put('/products/:id/reject', async (req, res) => {
+    try {
+        const { reason } = req.body;
+
+        if (!reason) {
+            return res.status(400).json({
+                success: false,
+                message: 'Rejection reason is required'
+            });
+        }
+
+        const product = await Item.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        product.approvalStatus = 'rejected';
+        product.isPublished = false;
+        product.rejectionReason = reason;
+        await product.save();
+
+        // TODO: Send rejection notification to vendor
+
+        res.json({
+            success: true,
+            message: 'Product rejected successfully',
+            product
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// @route   DELETE /api/admin/products/:id
+// @desc    Delete product
+// @access  Private/Admin
+router.delete('/products/:id', async (req, res) => {
+    try {
+        const product = await Item.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        await product.deleteOne();
+
+        res.json({
+            success: true,
+            message: 'Product deleted successfully'
+        });
     } catch (error) {
         res.status(500).json({
             success: false,

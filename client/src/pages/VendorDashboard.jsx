@@ -61,11 +61,11 @@ const VendorDashboard = () => {
     const [orderDetailsOpen, setOrderDetailsOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    
+
     // Booking Details state (separate from menu state)
     const [bookingDetailsDialog, setBookingDetailsDialog] = useState(false);
     const [selectedBookingOrder, setSelectedBookingOrder] = useState(null);
-    
+
     // Dynamic state
     const [stats, setStats] = useState({
         totalOrders: 0,
@@ -77,19 +77,19 @@ const VendorDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [products, setProducts] = useState([]);
     const [quotations, setQuotations] = useState([]);
-    
+
     // Create Item state
     const [createItemDialog, setCreateItemDialog] = useState(false);
     const [createItemLoading, setCreateItemLoading] = useState(false);
-    
+
     // Edit Item state
     const [editItemDialog, setEditItemDialog] = useState(false);
     const [editItemLoading, setEditItemLoading] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
-    
+
     // View Item state
     const [viewItemDialog, setViewItemDialog] = useState(false);
-    
+
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -120,7 +120,7 @@ const VendorDashboard = () => {
         try {
             setLoading(true);
             setError('');
-            
+
             // Fetch vendor's data
             const [ordersResponse, productsResponse] = await Promise.all([
                 bookingsAPI.getAll({ role: 'vendor' }),
@@ -131,7 +131,7 @@ const VendorDashboard = () => {
             setProducts(productsResponse.data.items || []);
 
             // Calculate stats
-            const activeRentals = ordersResponse.data.bookings?.filter(order => 
+            const activeRentals = ordersResponse.data.bookings?.filter(order =>
                 order.status === 'renting' || order.status === 'confirmed'
             ).length || 0;
 
@@ -185,7 +185,7 @@ const VendorDashboard = () => {
     const handleCreateItemSubmit = async () => {
         try {
             setCreateItemLoading(true);
-            
+
             const itemData = {
                 ...formData,
                 price: parseFloat(formData.price),
@@ -194,7 +194,7 @@ const VendorDashboard = () => {
             };
 
             const response = await itemsAPI.create(itemData);
-            
+
             if (response.data.success) {
                 alert('Item created successfully!');
                 setCreateItemDialog(false);
@@ -247,7 +247,7 @@ const VendorDashboard = () => {
     const handleEditItemSubmit = async () => {
         try {
             setEditItemLoading(true);
-            
+
             const itemData = {
                 ...formData,
                 price: parseFloat(formData.price),
@@ -256,7 +256,7 @@ const VendorDashboard = () => {
             };
 
             const response = await itemsAPI.update(selectedProduct._id, itemData);
-            
+
             if (response.data.success) {
                 alert('Product updated successfully!');
                 setEditItemDialog(false);
@@ -278,13 +278,13 @@ const VendorDashboard = () => {
 
     const handleBookingDetails = (order) => {
         console.log('handleBookingDetails called with order:', order);
-        
+
         if (!order) {
             console.error('No order provided to handleBookingDetails');
             alert('Error: No booking data available');
             return;
         }
-        
+
         try {
             setSelectedBookingOrder(order);
             setBookingDetailsDialog(true);
@@ -298,17 +298,17 @@ const VendorDashboard = () => {
     const handleApproveBooking = async (orderId) => {
         console.log('handleApproveBooking called with orderId:', orderId);
         console.log('Order ID type:', typeof orderId);
-        
+
         if (!orderId) {
             alert('Error: No booking ID provided');
             return;
         }
-        
+
         try {
             console.log('Making API call to:', `/bookings/${orderId}/confirm`);
             const response = await bookingsAPI.confirm(orderId);
             console.log('Approve response:', response);
-            
+
             if (response.data && response.data.success) {
                 alert('Booking approved successfully!');
                 setBookingDetailsDialog(false);
@@ -319,15 +319,15 @@ const VendorDashboard = () => {
         } catch (error) {
             console.error('Error approving booking:', error);
             console.error('Error response:', error.response);
-            
+
             let errorMessage = 'Failed to approve booking. Please try again.';
-            
+
             if (error.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
                 console.error('Error status:', error.response.status);
                 console.error('Error data:', error.response.data);
-                
+
                 if (error.response.status === 404) {
                     errorMessage = 'Booking not found or endpoint not available';
                 } else if (error.response.status === 403) {
@@ -339,7 +339,7 @@ const VendorDashboard = () => {
                 // The request was made but no response was received
                 errorMessage = 'No response from server. Please check your connection.';
             }
-            
+
             alert(errorMessage);
         }
     };
@@ -510,7 +510,7 @@ const VendorDashboard = () => {
                                                         {order.item?.title || 'Item'}
                                                     </TableCell>
                                                     <TableCell sx={{ color: '#ccc' }}>
-                                                        {order.startDate ? new Date(order.startDate).toLocaleDateString() : 'N/A'} - 
+                                                        {order.startDate ? new Date(order.startDate).toLocaleDateString() : 'N/A'} -
                                                         {order.endDate ? new Date(order.endDate).toLocaleDateString() : 'N/A'}
                                                     </TableCell>
                                                     <TableCell sx={{ color: '#ccc' }}>
@@ -593,9 +593,30 @@ const VendorDashboard = () => {
                                                     <Typography variant="h6" gutterBottom>
                                                         {product.title}
                                                     </Typography>
-                                                    <Typography color="textSecondary" gutterBottom>
-                                                        {product.category}
-                                                    </Typography>
+                                                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                                                        <Typography color="textSecondary">
+                                                            {product.category}
+                                                        </Typography>
+                                                        <Chip
+                                                            label={product.approvalStatus || 'pending'}
+                                                            color={
+                                                                product.approvalStatus === 'approved' ? 'success' :
+                                                                    product.approvalStatus === 'rejected' ? 'error' :
+                                                                        'warning'
+                                                            }
+                                                            size="small"
+                                                        />
+                                                    </Box>
+                                                    {product.approvalStatus === 'rejected' && product.rejectionReason && (
+                                                        <Alert severity="error" sx={{ mb: 2, fontSize: '0.75rem' }}>
+                                                            <strong>Rejected:</strong> {product.rejectionReason}
+                                                        </Alert>
+                                                    )}
+                                                    {product.approvalStatus === 'pending' && (
+                                                        <Alert severity="info" sx={{ mb: 2, fontSize: '0.75rem' }}>
+                                                            Awaiting admin approval
+                                                        </Alert>
+                                                    )}
                                                     <Box display="flex" justifyContent="space-between" mb={2}>
                                                         <Typography variant="body2">
                                                             ${product.price}/day
@@ -691,7 +712,7 @@ const VendorDashboard = () => {
                     <MenuItem onClick={handleOrderDetails}>
                         <Visibility sx={{ mr: 1 }} /> View Details
                     </MenuItem>
-                    <MenuItem onClick={() => {/* Generate invoice */}}>
+                    <MenuItem onClick={() => {/* Generate invoice */ }}>
                         <AttachMoney sx={{ mr: 1 }} /> Generate Invoice
                     </MenuItem>
                 </Menu>
@@ -730,14 +751,14 @@ const VendorDashboard = () => {
                                         />
                                     </Grid>
                                 </Grid>
-                                
+
                                 <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                                     Item
                                 </Typography>
                                 <Typography sx={{ mb: 1 }}>
                                     {selectedOrder.item?.title}
                                 </Typography>
-                                
+
                                 <Box mt={3}>
                                     <Typography variant="h6">
                                         Total: ${selectedOrder.totalAmount || 0}
@@ -756,698 +777,698 @@ const VendorDashboard = () => {
                     </DialogActions>
                 </Dialog>
 
-            {/* Create Item Dialog */}
-            <Dialog
-                open={createItemDialog}
-                onClose={() => setCreateItemDialog(false)}
-                maxWidth="md"
-                fullWidth
-            >
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    Add New Product
-                </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    <Box sx={{ pt: 2 }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Product Title"
-                                    name="title"
-                                    value={formData.title}
-                                    onChange={handleCreateItemChange}
-                                    required
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Description"
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleCreateItemChange}
-                                    multiline
-                                    rows={3}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
-                                    <Select
-                                        name="category"
-                                        value={formData.category}
-                                        onChange={handleCreateItemChange}
-                                        label="Category"
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                            },
-                                            '& .MuiSelect-select': { color: 'white' }
-                                        }}
-                                    >
-                                        <MenuItem value="Electronics">Electronics</MenuItem>
-                                        <MenuItem value="Vehicles">Vehicles</MenuItem>
-                                        <MenuItem value="Equipment">Equipment</MenuItem>
-                                        <MenuItem value="Sports">Sports</MenuItem>
-                                        <MenuItem value="Tools">Tools</MenuItem>
-                                        <MenuItem value="Other">Other</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Daily Price (₹)"
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleCreateItemChange}
-                                    type="number"
-                                    required
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Security Deposit (₹)"
-                                    name="deposit"
-                                    value={formData.deposit}
-                                    onChange={handleCreateItemChange}
-                                    type="number"
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Location"
-                                    name="location"
-                                    value={formData.location}
-                                    onChange={handleCreateItemChange}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ color: '#ccc' }}>Condition</InputLabel>
-                                    <Select
-                                        name="condition"
-                                        value={formData.condition}
-                                        onChange={handleCreateItemChange}
-                                        label="Condition"
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                            },
-                                            '& .MuiSelect-select': { color: 'white' }
-                                        }}
-                                    >
-                                        <MenuItem value="New">New</MenuItem>
-                                        <MenuItem value="Like New">Like New</MenuItem>
-                                        <MenuItem value="Good">Good</MenuItem>
-                                        <MenuItem value="Fair">Fair</MenuItem>
-                                        <MenuItem value="Poor">Poor</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Image URL"
-                                    name="image"
-                                    value={formData.image}
-                                    onChange={handleCreateItemChange}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Features (comma-separated)"
-                                    name="features"
-                                    value={formData.features}
-                                    onChange={handleCreateItemChange}
-                                    placeholder="e.g., Waterproof, Portable, High Quality"
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Terms & Conditions"
-                                    name="terms"
-                                    value={formData.terms}
-                                    onChange={handleCreateItemChange}
-                                    multiline
-                                    rows={2}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                    <Button onClick={() => setCreateItemDialog(false)} sx={{ color: '#ccc' }}>
-                        Cancel
-                    </Button>
-                    <Button 
-                        onClick={handleCreateItemSubmit} 
-                        variant="contained"
-                        sx={{ backgroundColor: '#9333ea' }}
-                        disabled={createItemLoading || !formData.title || !formData.price}
-                    >
-                        {createItemLoading ? 'Creating...' : 'Add Product'}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Edit Item Dialog */}
-            <Dialog
-                open={editItemDialog}
-                onClose={() => setEditItemDialog(false)}
-                maxWidth="md"
-                fullWidth
-            >
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    Edit Product - {selectedProduct?.title}
-                </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    <Box sx={{ pt: 2 }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Product Title"
-                                    name="title"
-                                    value={formData.title}
-                                    onChange={handleCreateItemChange}
-                                    required
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Description"
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleCreateItemChange}
-                                    multiline
-                                    rows={3}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
-                                    <Select
-                                        name="category"
-                                        value={formData.category}
-                                        onChange={handleCreateItemChange}
-                                        label="Category"
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                            },
-                                            '& .MuiSelect-select': { color: 'white' }
-                                        }}
-                                    >
-                                        <MenuItem value="Electronics">Electronics</MenuItem>
-                                        <MenuItem value="Vehicles">Vehicles</MenuItem>
-                                        <MenuItem value="Equipment">Equipment</MenuItem>
-                                        <MenuItem value="Sports">Sports</MenuItem>
-                                        <MenuItem value="Tools">Tools</MenuItem>
-                                        <MenuItem value="Other">Other</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Daily Price (₹)"
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleCreateItemChange}
-                                    type="number"
-                                    required
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Security Deposit (₹)"
-                                    name="deposit"
-                                    value={formData.deposit}
-                                    onChange={handleCreateItemChange}
-                                    type="number"
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Location"
-                                    name="location"
-                                    value={formData.location}
-                                    onChange={handleCreateItemChange}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ color: '#ccc' }}>Condition</InputLabel>
-                                    <Select
-                                        name="condition"
-                                        value={formData.condition}
-                                        onChange={handleCreateItemChange}
-                                        label="Condition"
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                '& fieldset': { borderColor: '#555' },
-                                                '&:hover fieldset': { borderColor: '#9333ea' },
-                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                            },
-                                            '& .MuiSelect-select': { color: 'white' }
-                                        }}
-                                    >
-                                        <MenuItem value="New">New</MenuItem>
-                                        <MenuItem value="Like New">Like New</MenuItem>
-                                        <MenuItem value="Good">Good</MenuItem>
-                                        <MenuItem value="Fair">Fair</MenuItem>
-                                        <MenuItem value="Poor">Poor</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Image URL"
-                                    name="image"
-                                    value={formData.image}
-                                    onChange={handleCreateItemChange}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Features (comma-separated)"
-                                    name="features"
-                                    value={formData.features}
-                                    onChange={handleCreateItemChange}
-                                    placeholder="e.g., Waterproof, Portable, High Quality"
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Terms & Conditions"
-                                    name="terms"
-                                    value={formData.terms}
-                                    onChange={handleCreateItemChange}
-                                    multiline
-                                    rows={2}
-                                    InputLabelProps={{ style: { color: '#ccc' } }}
-                                    InputProps={{ style: { color: 'white' } }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': { borderColor: '#555' },
-                                            '&:hover fieldset': { borderColor: '#9333ea' },
-                                            '&.Mui-focused fieldset': { borderColor: '#9333ea' },
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                    <Button onClick={() => setEditItemDialog(false)} sx={{ color: '#ccc' }}>
-                        Cancel
-                    </Button>
-                    <Button 
-                        onClick={handleEditItemSubmit} 
-                        variant="contained"
-                        sx={{ backgroundColor: '#9333ea' }}
-                        disabled={editItemLoading || !formData.title || !formData.price}
-                    >
-                        {editItemLoading ? 'Updating...' : 'Update Product'}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* View Item Dialog */}
-            <Dialog
-                open={viewItemDialog}
-                onClose={() => setViewItemDialog(false)}
-                maxWidth="md"
-                fullWidth
-            >
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    Product Details - {selectedProduct?.title}
-                </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    {selectedProduct && (
+                {/* Create Item Dialog */}
+                <Dialog
+                    open={createItemDialog}
+                    onClose={() => setCreateItemDialog(false)}
+                    maxWidth="md"
+                    fullWidth
+                >
+                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        Add New Product
+                    </DialogTitle>
+                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
                         <Box sx={{ pt: 2 }}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={6}>
-                                    {selectedProduct.image ? (
-                                        <img
-                                            src={selectedProduct.image}
-                                            alt={selectedProduct.title}
-                                            style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
-                                        />
-                                    ) : (
-                                        <Box sx={{ 
-                                            height: 200, 
-                                            backgroundColor: '#333', 
-                                            display: 'flex', 
-                                            alignItems: 'center', 
-                                            justifyContent: 'center',
-                                            borderRadius: '8px'
-                                        }}>
-                                            <Typography variant="body2" sx={{ color: '#888' }}>
-                                                No Image Available
-                                            </Typography>
-                                        </Box>
-                                    )}
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Product Title"
+                                        name="title"
+                                        value={formData.title}
+                                        onChange={handleCreateItemChange}
+                                        required
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Description"
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleCreateItemChange}
+                                        multiline
+                                        rows={3}
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <Typography variant="h5" gutterBottom sx={{ color: 'white' }}>
-                                        {selectedProduct.title}
-                                    </Typography>
-                                    <Typography variant="body1" sx={{ mb: 2, color: '#ccc' }}>
-                                        {selectedProduct.description}
-                                    </Typography>
-                                    <Box sx={{ mb: 2 }}>
-                                        <Chip 
-                                            label={selectedProduct.category} 
-                                            size="small" 
-                                            sx={{ backgroundColor: '#9333ea', color: 'white' }}
-                                        />
-                                        <Chip 
-                                            label={selectedProduct.condition} 
-                                            size="small" 
-                                            sx={{ ml: 1, backgroundColor: '#555', color: 'white' }}
-                                        />
-                                    </Box>
-                                    <Typography variant="h6" sx={{ mb: 2, color: '#9333ea' }}>
-                                        ₹{selectedProduct.price} / day
-                                    </Typography>
-                                    {selectedProduct.deposit > 0 && (
-                                        <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
-                                            Security Deposit: ₹{selectedProduct.deposit}
-                                        </Typography>
-                                    )}
-                                    <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
-                                        <strong>Location:</strong> {selectedProduct.location}
-                                    </Typography>
-                                    {selectedProduct.features && selectedProduct.features.length > 0 && (
-                                        <Box sx={{ mb: 2 }}>
-                                            <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
-                                                <strong>Features:</strong>
-                                            </Typography>
-                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                                {selectedProduct.features.map((feature, index) => (
-                                                    <Chip key={index} label={feature} variant="outlined" size="small" 
-                                                        sx={{ borderColor: '#9333ea', color: '#9333ea' }} />
-                                                ))}
-                                            </Box>
-                                        </Box>
-                                    )}
-                                    {selectedProduct.terms && (
-                                        <Box sx={{ mt: 2 }}>
-                                            <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
-                                                <strong>Terms & Conditions:</strong>
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: '#888' }}>
-                                                {selectedProduct.terms}
-                                            </Typography>
-                                        </Box>
-                                    )}
+                                    <FormControl fullWidth>
+                                        <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
+                                        <Select
+                                            name="category"
+                                            value={formData.category}
+                                            onChange={handleCreateItemChange}
+                                            label="Category"
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    '& fieldset': { borderColor: '#555' },
+                                                    '&:hover fieldset': { borderColor: '#9333ea' },
+                                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                },
+                                                '& .MuiSelect-select': { color: 'white' }
+                                            }}
+                                        >
+                                            <MenuItem value="Electronics">Electronics</MenuItem>
+                                            <MenuItem value="Vehicles">Vehicles</MenuItem>
+                                            <MenuItem value="Equipment">Equipment</MenuItem>
+                                            <MenuItem value="Sports">Sports</MenuItem>
+                                            <MenuItem value="Tools">Tools</MenuItem>
+                                            <MenuItem value="Other">Other</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Daily Price (₹)"
+                                        name="price"
+                                        value={formData.price}
+                                        onChange={handleCreateItemChange}
+                                        type="number"
+                                        required
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Security Deposit (₹)"
+                                        name="deposit"
+                                        value={formData.deposit}
+                                        onChange={handleCreateItemChange}
+                                        type="number"
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Location"
+                                        name="location"
+                                        value={formData.location}
+                                        onChange={handleCreateItemChange}
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <FormControl fullWidth>
+                                        <InputLabel sx={{ color: '#ccc' }}>Condition</InputLabel>
+                                        <Select
+                                            name="condition"
+                                            value={formData.condition}
+                                            onChange={handleCreateItemChange}
+                                            label="Condition"
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    '& fieldset': { borderColor: '#555' },
+                                                    '&:hover fieldset': { borderColor: '#9333ea' },
+                                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                },
+                                                '& .MuiSelect-select': { color: 'white' }
+                                            }}
+                                        >
+                                            <MenuItem value="New">New</MenuItem>
+                                            <MenuItem value="Like New">Like New</MenuItem>
+                                            <MenuItem value="Good">Good</MenuItem>
+                                            <MenuItem value="Fair">Fair</MenuItem>
+                                            <MenuItem value="Poor">Poor</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Image URL"
+                                        name="image"
+                                        value={formData.image}
+                                        onChange={handleCreateItemChange}
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Features (comma-separated)"
+                                        name="features"
+                                        value={formData.features}
+                                        onChange={handleCreateItemChange}
+                                        placeholder="e.g., Waterproof, Portable, High Quality"
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Terms & Conditions"
+                                        name="terms"
+                                        value={formData.terms}
+                                        onChange={handleCreateItemChange}
+                                        multiline
+                                        rows={2}
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
                                 </Grid>
                             </Grid>
                         </Box>
-                    )}
-                </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                    <Button onClick={() => setViewItemDialog(false)} sx={{ backgroundColor: '#9333ea' }}>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                    </DialogContent>
+                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                        <Button onClick={() => setCreateItemDialog(false)} sx={{ color: '#ccc' }}>
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleCreateItemSubmit}
+                            variant="contained"
+                            sx={{ backgroundColor: '#9333ea' }}
+                            disabled={createItemLoading || !formData.title || !formData.price}
+                        >
+                            {createItemLoading ? 'Creating...' : 'Add Product'}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
 
-            {/* Booking Details Dialog */}
-            <Dialog open={bookingDetailsDialog} onClose={() => {
-                console.log('Dialog closing');
-                setBookingDetailsDialog(false);
-            }} maxWidth="md" fullWidth>
-                <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    Booking Details - #{selectedBookingOrder?._id?.slice(-8) || 'N/A'}
-                </DialogTitle>
-                <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
-                    {selectedBookingOrder ? (
+                {/* Edit Item Dialog */}
+                <Dialog
+                    open={editItemDialog}
+                    onClose={() => setEditItemDialog(false)}
+                    maxWidth="md"
+                    fullWidth
+                >
+                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        Edit Product - {selectedProduct?.title}
+                    </DialogTitle>
+                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
                         <Box sx={{ pt: 2 }}>
-                            <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
-                                Debug: Dialog is open, selectedBookingOrder ID: {selectedBookingOrder._id}
-                            </Typography>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={6}>
-                                    <Typography variant="h6" gutterBottom>
-                                        Order Information
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Order ID:</strong> #{selectedBookingOrder._id?.slice(-8) || 'N/A'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Status:</strong> {selectedBookingOrder.status || 'N/A'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Total Amount:</strong> ${selectedBookingOrder.totalAmount || 0}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Booking Date:</strong> {selectedBookingOrder.createdAt ? new Date(selectedBookingOrder.createdAt).toLocaleDateString() : 'N/A'}
-                                    </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Product Title"
+                                        name="title"
+                                        value={formData.title}
+                                        onChange={handleCreateItemChange}
+                                        required
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Description"
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleCreateItemChange}
+                                        multiline
+                                        rows={3}
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <Typography variant="h6" gutterBottom>
-                                        Customer Information
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Name:</strong> {selectedBookingOrder.renter?.name || 'Customer'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Email:</strong> {selectedBookingOrder.renter?.email || 'customer@example.com'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Phone:</strong> {selectedBookingOrder.renter?.phone || 'N/A'}
-                                    </Typography>
+                                    <FormControl fullWidth>
+                                        <InputLabel sx={{ color: '#ccc' }}>Category</InputLabel>
+                                        <Select
+                                            name="category"
+                                            value={formData.category}
+                                            onChange={handleCreateItemChange}
+                                            label="Category"
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    '& fieldset': { borderColor: '#555' },
+                                                    '&:hover fieldset': { borderColor: '#9333ea' },
+                                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                },
+                                                '& .MuiSelect-select': { color: 'white' }
+                                            }}
+                                        >
+                                            <MenuItem value="Electronics">Electronics</MenuItem>
+                                            <MenuItem value="Vehicles">Vehicles</MenuItem>
+                                            <MenuItem value="Equipment">Equipment</MenuItem>
+                                            <MenuItem value="Sports">Sports</MenuItem>
+                                            <MenuItem value="Tools">Tools</MenuItem>
+                                            <MenuItem value="Other">Other</MenuItem>
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <Typography variant="h6" gutterBottom>
-                                        Item Details
-                                    </Typography>
-                                    <Box display="flex" alignItems="center" mb={2}>
-                                        <Avatar
-                                            src={selectedBookingOrder.item?.image || 'https://via.placeholder.com/50x50'}
-                                            sx={{ mr: 2, width: 50, height: 50 }}
-                                        />
-                                        <Box>
-                                            <Typography variant="body1">
-                                                {selectedBookingOrder.item?.title || 'Item'}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: '#ccc' }}>
-                                                {selectedBookingOrder.item?.category || 'N/A'}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Daily Rate:</strong> ${selectedBookingOrder.item?.price || 0}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Location:</strong> {selectedBookingOrder.item?.location || 'N/A'}
-                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        label="Daily Price (₹)"
+                                        name="price"
+                                        value={formData.price}
+                                        onChange={handleCreateItemChange}
+                                        type="number"
+                                        required
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <Typography variant="h6" gutterBottom>
-                                        Rental Period
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Start Date:</strong> {selectedBookingOrder.startDate ? new Date(selectedBookingOrder.startDate).toLocaleDateString() : 'N/A'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>End Date:</strong> {selectedBookingOrder.endDate ? new Date(selectedBookingOrder.endDate).toLocaleDateString() : 'N/A'}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 1 }}>
-                                        <strong>Duration:</strong> {selectedBookingOrder.startDate && selectedBookingOrder.endDate ? 
-                                            Math.ceil((new Date(selectedBookingOrder.endDate) - new Date(selectedBookingOrder.startDate)) / (1000 * 60 * 60 * 24)) + 1 : 0} days
-                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        label="Security Deposit (₹)"
+                                        name="deposit"
+                                        value={formData.deposit}
+                                        onChange={handleCreateItemChange}
+                                        type="number"
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
                                 </Grid>
-                                {selectedBookingOrder.notes && (
-                                    <Grid item xs={12}>
-                                        <Typography variant="h6" gutterBottom>
-                                            Customer Notes
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Location"
+                                        name="location"
+                                        value={formData.location}
+                                        onChange={handleCreateItemChange}
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <FormControl fullWidth>
+                                        <InputLabel sx={{ color: '#ccc' }}>Condition</InputLabel>
+                                        <Select
+                                            name="condition"
+                                            value={formData.condition}
+                                            onChange={handleCreateItemChange}
+                                            label="Condition"
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    '& fieldset': { borderColor: '#555' },
+                                                    '&:hover fieldset': { borderColor: '#9333ea' },
+                                                    '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                                },
+                                                '& .MuiSelect-select': { color: 'white' }
+                                            }}
+                                        >
+                                            <MenuItem value="New">New</MenuItem>
+                                            <MenuItem value="Like New">Like New</MenuItem>
+                                            <MenuItem value="Good">Good</MenuItem>
+                                            <MenuItem value="Fair">Fair</MenuItem>
+                                            <MenuItem value="Poor">Poor</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Image URL"
+                                        name="image"
+                                        value={formData.image}
+                                        onChange={handleCreateItemChange}
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Features (comma-separated)"
+                                        name="features"
+                                        value={formData.features}
+                                        onChange={handleCreateItemChange}
+                                        placeholder="e.g., Waterproof, Portable, High Quality"
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Terms & Conditions"
+                                        name="terms"
+                                        value={formData.terms}
+                                        onChange={handleCreateItemChange}
+                                        multiline
+                                        rows={2}
+                                        InputLabelProps={{ style: { color: '#ccc' } }}
+                                        InputProps={{ style: { color: 'white' } }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': { borderColor: '#555' },
+                                                '&:hover fieldset': { borderColor: '#9333ea' },
+                                                '&.Mui-focused fieldset': { borderColor: '#9333ea' },
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </DialogContent>
+                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                        <Button onClick={() => setEditItemDialog(false)} sx={{ color: '#ccc' }}>
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleEditItemSubmit}
+                            variant="contained"
+                            sx={{ backgroundColor: '#9333ea' }}
+                            disabled={editItemLoading || !formData.title || !formData.price}
+                        >
+                            {editItemLoading ? 'Updating...' : 'Update Product'}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* View Item Dialog */}
+                <Dialog
+                    open={viewItemDialog}
+                    onClose={() => setViewItemDialog(false)}
+                    maxWidth="md"
+                    fullWidth
+                >
+                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        Product Details - {selectedProduct?.title}
+                    </DialogTitle>
+                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        {selectedProduct && (
+                            <Box sx={{ pt: 2 }}>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} md={6}>
+                                        {selectedProduct.image ? (
+                                            <img
+                                                src={selectedProduct.image}
+                                                alt={selectedProduct.title}
+                                                style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+                                            />
+                                        ) : (
+                                            <Box sx={{
+                                                height: 200,
+                                                backgroundColor: '#333',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                borderRadius: '8px'
+                                            }}>
+                                                <Typography variant="body2" sx={{ color: '#888' }}>
+                                                    No Image Available
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                        <Typography variant="h5" gutterBottom sx={{ color: 'white' }}>
+                                            {selectedProduct.title}
                                         </Typography>
-                                        <Typography variant="body2" sx={{ color: '#ccc' }}>
-                                            {selectedBookingOrder.notes}
+                                        <Typography variant="body1" sx={{ mb: 2, color: '#ccc' }}>
+                                            {selectedProduct.description}
+                                        </Typography>
+                                        <Box sx={{ mb: 2 }}>
+                                            <Chip
+                                                label={selectedProduct.category}
+                                                size="small"
+                                                sx={{ backgroundColor: '#9333ea', color: 'white' }}
+                                            />
+                                            <Chip
+                                                label={selectedProduct.condition}
+                                                size="small"
+                                                sx={{ ml: 1, backgroundColor: '#555', color: 'white' }}
+                                            />
+                                        </Box>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#9333ea' }}>
+                                            ₹{selectedProduct.price} / day
+                                        </Typography>
+                                        {selectedProduct.deposit > 0 && (
+                                            <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                                Security Deposit: ₹{selectedProduct.deposit}
+                                            </Typography>
+                                        )}
+                                        <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                            <strong>Location:</strong> {selectedProduct.location}
+                                        </Typography>
+                                        {selectedProduct.features && selectedProduct.features.length > 0 && (
+                                            <Box sx={{ mb: 2 }}>
+                                                <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
+                                                    <strong>Features:</strong>
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                                    {selectedProduct.features.map((feature, index) => (
+                                                        <Chip key={index} label={feature} variant="outlined" size="small"
+                                                            sx={{ borderColor: '#9333ea', color: '#9333ea' }} />
+                                                    ))}
+                                                </Box>
+                                            </Box>
+                                        )}
+                                        {selectedProduct.terms && (
+                                            <Box sx={{ mt: 2 }}>
+                                                <Typography variant="body2" sx={{ mb: 1, color: '#ccc' }}>
+                                                    <strong>Terms & Conditions:</strong>
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#888' }}>
+                                                    {selectedProduct.terms}
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        )}
+                    </DialogContent>
+                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                        <Button onClick={() => setViewItemDialog(false)} sx={{ backgroundColor: '#9333ea' }}>
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Booking Details Dialog */}
+                <Dialog open={bookingDetailsDialog} onClose={() => {
+                    console.log('Dialog closing');
+                    setBookingDetailsDialog(false);
+                }} maxWidth="md" fullWidth>
+                    <DialogTitle sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        Booking Details - #{selectedBookingOrder?._id?.slice(-8) || 'N/A'}
+                    </DialogTitle>
+                    <DialogContent sx={{ backgroundColor: '#2a2a2a', color: 'white' }}>
+                        {selectedBookingOrder ? (
+                            <Box sx={{ pt: 2 }}>
+                                <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                                    Debug: Dialog is open, selectedBookingOrder ID: {selectedBookingOrder._id}
+                                </Typography>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} md={6}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Order Information
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Order ID:</strong> #{selectedBookingOrder._id?.slice(-8) || 'N/A'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Status:</strong> {selectedBookingOrder.status || 'N/A'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Total Amount:</strong> ${selectedBookingOrder.totalAmount || 0}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Booking Date:</strong> {selectedBookingOrder.createdAt ? new Date(selectedBookingOrder.createdAt).toLocaleDateString() : 'N/A'}
                                         </Typography>
                                     </Grid>
-                                )}
-                            </Grid>
-                        </Box>
-                    ) : (
-                        <Box sx={{ pt: 2 }}>
-                            <Typography variant="body2" sx={{ color: '#ccc' }}>
-                                No booking data available
-                            </Typography>
-                        </Box>
-                    )}
-                </DialogContent>
-                <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
-                    <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#ccc' }}>
-                        Close
-                    </Button>
-                    {selectedBookingOrder?.status === 'pending' && (
-                        <Button 
-                            onClick={() => handleApproveBooking(selectedBookingOrder._id)} 
-                            variant="contained"
-                            sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#45a049' } }}
-                        >
-                            Approve Booking
+                                    <Grid item xs={12} md={6}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Customer Information
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Name:</strong> {selectedBookingOrder.renter?.name || 'Customer'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Email:</strong> {selectedBookingOrder.renter?.email || 'customer@example.com'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Phone:</strong> {selectedBookingOrder.renter?.phone || 'N/A'}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Item Details
+                                        </Typography>
+                                        <Box display="flex" alignItems="center" mb={2}>
+                                            <Avatar
+                                                src={selectedBookingOrder.item?.image || 'https://via.placeholder.com/50x50'}
+                                                sx={{ mr: 2, width: 50, height: 50 }}
+                                            />
+                                            <Box>
+                                                <Typography variant="body1">
+                                                    {selectedBookingOrder.item?.title || 'Item'}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                    {selectedBookingOrder.item?.category || 'N/A'}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Daily Rate:</strong> ${selectedBookingOrder.item?.price || 0}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Location:</strong> {selectedBookingOrder.item?.location || 'N/A'}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Rental Period
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Start Date:</strong> {selectedBookingOrder.startDate ? new Date(selectedBookingOrder.startDate).toLocaleDateString() : 'N/A'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>End Date:</strong> {selectedBookingOrder.endDate ? new Date(selectedBookingOrder.endDate).toLocaleDateString() : 'N/A'}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ mb: 1 }}>
+                                            <strong>Duration:</strong> {selectedBookingOrder.startDate && selectedBookingOrder.endDate ?
+                                                Math.ceil((new Date(selectedBookingOrder.endDate) - new Date(selectedBookingOrder.startDate)) / (1000 * 60 * 60 * 24)) + 1 : 0} days
+                                        </Typography>
+                                    </Grid>
+                                    {selectedBookingOrder.notes && (
+                                        <Grid item xs={12}>
+                                            <Typography variant="h6" gutterBottom>
+                                                Customer Notes
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                {selectedBookingOrder.notes}
+                                            </Typography>
+                                        </Grid>
+                                    )}
+                                </Grid>
+                            </Box>
+                        ) : (
+                            <Box sx={{ pt: 2 }}>
+                                <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                    No booking data available
+                                </Typography>
+                            </Box>
+                        )}
+                    </DialogContent>
+                    <DialogActions sx={{ backgroundColor: '#2a2a2a', p: 3 }}>
+                        <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#ccc' }}>
+                            Close
                         </Button>
-                    )}
-                </DialogActions>
-            </Dialog>
+                        {selectedBookingOrder?.status === 'pending' && (
+                            <Button
+                                onClick={() => handleApproveBooking(selectedBookingOrder._id)}
+                                variant="contained"
+                                sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#45a049' } }}
+                            >
+                                Approve Booking
+                            </Button>
+                        )}
+                    </DialogActions>
+                </Dialog>
             </Container>
         </>
     );
