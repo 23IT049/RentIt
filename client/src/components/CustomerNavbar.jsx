@@ -32,7 +32,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
-const CustomerNavbar = () => {
+const CustomerNavbar = ({ cart = [], onCartClick }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, logout } = useAuth();
@@ -87,19 +87,9 @@ const CustomerNavbar = () => {
             action: () => handleDashboardTab(2)
         },
         { 
-            text: 'Rental History', 
-            icon: <History />, 
-            action: () => handleDashboardTab(3)
-        },
-        { 
-            text: 'Analytics', 
-            icon: <Assessment />, 
-            action: () => handleDashboardTab(4)
-        },
-        { 
             text: 'Profile', 
             icon: <Person />, 
-            action: () => handleDashboardTab(5)
+            action: () => handleDashboardTab(3)
         },
     ];
 
@@ -138,6 +128,22 @@ const CustomerNavbar = () => {
                         <ListItemText primary={item.text} />
                     </ListItem>
                 ))}
+                <ListItem
+                    button
+                    onClick={onCartClick}
+                    sx={{ 
+                        color: '#ccc', 
+                        '&:hover': { 
+                            backgroundColor: '#333',
+                            color: 'white'
+                        }
+                    }}
+                >
+                    <ListItemIcon sx={{ color: '#9333ea' }}>
+                        <ShoppingCart />
+                    </ListItemIcon>
+                    <ListItemText primary={`Shopping Cart (${cart.length})`} />
+                </ListItem>
             </List>
         </Box>
     );
@@ -215,36 +221,8 @@ const CustomerNavbar = () => {
                             </Button>
                             <Button
                                 color="inherit"
-                                startIcon={<History />}
-                                onClick={() => handleDashboardTab(3)}
-                                sx={{ 
-                                    color: '#ccc', 
-                                    '&:hover': { 
-                                        color: 'white',
-                                        backgroundColor: 'rgba(255,255,255,0.1)'
-                                    } 
-                                }}
-                            >
-                                Rental History
-                            </Button>
-                            <Button
-                                color="inherit"
-                                startIcon={<Assessment />}
-                                onClick={() => handleDashboardTab(4)}
-                                sx={{ 
-                                    color: '#ccc', 
-                                    '&:hover': { 
-                                        color: 'white',
-                                        backgroundColor: 'rgba(255,255,255,0.1)'
-                                    } 
-                                }}
-                            >
-                                Analytics
-                            </Button>
-                            <Button
-                                color="inherit"
                                 startIcon={<Person />}
-                                onClick={() => handleDashboardTab(5)}
+                                onClick={() => handleDashboardTab(3)}
                                 sx={{ 
                                     color: '#ccc', 
                                     '&:hover': { 
@@ -255,6 +233,39 @@ const CustomerNavbar = () => {
                             >
                                 Profile
                             </Button>
+                            <IconButton
+                                color="inherit"
+                                onClick={onCartClick}
+                                sx={{ 
+                                    color: '#ccc', 
+                                    '&:hover': { 
+                                        color: 'white',
+                                        backgroundColor: 'rgba(255,255,255,0.1)'
+                                    } 
+                                }}
+                            >
+                                <ShoppingCart />
+                                {cart.length > 0 && (
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            top: 8,
+                                            right: 8,
+                                            backgroundColor: '#f44336',
+                                            color: 'white',
+                                            borderRadius: '50%',
+                                            width: 16,
+                                            height: 16,
+                                            fontSize: '0.75rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}
+                                    >
+                                        {cart.length}
+                                    </Box>
+                                )}
+                            </IconButton>
                         </Box>
                     )}
 
