@@ -63,7 +63,7 @@ const QuotationPage = () => {
         rentalPeriod: { startDate: null, endDate: null },
         items: [],
         downpayment: { enabled: false, amount: 0, percentage: 0 },
-        pricing: { subtotal: 0, taxes: 0, discount: 0, total: 0 },
+        pricing: { subtotal: 0, taxAmount: 0, discount: 0, totalAmount: 0 },
         termsAndConditions: 'http://rentit.com/terms',
         notes: ''
     });
@@ -232,7 +232,7 @@ const QuotationPage = () => {
         const total = subtotal + taxAmount;
         setQuotation(prev => ({
             ...prev,
-            pricing: { ...prev.pricing, subtotal, taxes: taxAmount, total }
+            pricing: { ...prev.pricing, subtotal, taxAmount, totalAmount: total }
         }));
     };
 
@@ -266,13 +266,13 @@ const QuotationPage = () => {
                                         rentalPeriod: { startDate: null, endDate: null },
                                         items: [],
                                         downpayment: { enabled: false, amount: 0, percentage: 0 },
-                                        pricing: { subtotal: 0, taxes: 0, discount: 0, total: 0 },
+                                        pricing: { subtotal: 0, taxAmount: 0, discount: 0, totalAmount: 0 },
                                         termsAndConditions: 'http://rentit.com/terms',
                                         notes: ''
                                     });
                                     navigate('/quotations/new');
                                 }}
-                                sx={{ bgcolor: '#9333ea', '&:hover': { bgcolor: '#7928ca' } }}
+                                sx={{ bgcolor: '#0284C7', '&:hover': { bgcolor: '#0284C7' } }}
                             >
                                 New
                             </Button>
@@ -281,7 +281,7 @@ const QuotationPage = () => {
                                 startIcon={<SaveIcon />}
                                 onClick={handleSave}
                                 disabled={saving}
-                                sx={{ bgcolor: '#9333ea', '&:hover': { bgcolor: '#7928ca' } }}
+                                sx={{ bgcolor: '#0284C7', '&:hover': { bgcolor: '#0284C7' } }}
                             >
                                 Save
                             </Button>
@@ -291,7 +291,7 @@ const QuotationPage = () => {
                         </Box>
 
                         <Box sx={{ display: 'flex', gap: 1 }}>
-                            <Button variant="contained" startIcon={<SendIcon />} onClick={handleSend} disabled={!id} sx={{ bgcolor: '#9333ea', '&:hover': { bgcolor: '#7928ca' } }}>
+                            <Button variant="contained" startIcon={<SendIcon />} onClick={handleSend} disabled={!id} sx={{ bgcolor: '#0284C7', '&:hover': { bgcolor: '#0284C7' } }}>
                                 Send By Email
                             </Button>
                             <Button variant="outlined" onClick={handleConfirm} disabled={!id || quotation.status === 'sale_order'} sx={{ color: '#0284C7', borderColor: '#0284C7' }}>
@@ -300,7 +300,7 @@ const QuotationPage = () => {
                             <Button variant="outlined" startIcon={<PrintIcon />} sx={{ color: '#0284C7', borderColor: '#0284C7' }}>
                                 Print
                             </Button>
-                            <Button variant="contained" startIcon={<InvoiceIcon />} sx={{ bgcolor: '#9333ea', '&:hover': { bgcolor: '#7928ca' } }}>
+                            <Button variant="contained" startIcon={<InvoiceIcon />} sx={{ bgcolor: '#0284C7', '&:hover': { bgcolor: '#0284C7' } }}>
                                 Create Invoice
                             </Button>
                         </Box>
@@ -460,12 +460,12 @@ const QuotationPage = () => {
                                 </Box>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                                     <Typography>Taxes:</Typography>
-                                    <Typography>₹{quotation.pricing.taxes.toLocaleString()}</Typography>
+                                    <Typography>₹{(quotation.pricing.taxAmount || 0).toLocaleString()}</Typography>
                                 </Box>
                                 <Divider sx={{ my: 1 }} />
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                                     <Typography variant="h6">Total:</Typography>
-                                    <Typography variant="h6">₹{quotation.pricing.total.toLocaleString()}</Typography>
+                                    <Typography variant="h6">₹{(quotation.pricing.totalAmount || 0).toLocaleString()}</Typography>
                                 </Box>
                             </Box>
                         </Box>

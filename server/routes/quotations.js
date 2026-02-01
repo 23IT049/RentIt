@@ -180,12 +180,15 @@ router.get('/:id', authorize('customer', 'vendor', 'admin'), async (req, res) =>
         }
 
         if (req.user.role === 'vendor') {
-            // Check if quotation contains vendor's products
+            // Check if vendor owns this quotation
+            const isVendorOwner = quotation.vendor && quotation.vendor.toString() === req.user._id.toString();
+
+            // Check if quotation contains vendor's products (fallback)
             const hasVendorProduct = quotation.items.some(item =>
-                item.product.vendor && item.product.vendor.toString() === req.user._id.toString()
+                item.product && item.product.vendor && item.product.vendor.toString() === req.user._id.toString()
             );
 
-            if (!hasVendorProduct) {
+            if (!isVendorOwner && !hasVendorProduct) {
                 return res.status(403).json({
                     success: false,
                     message: 'Access denied'
@@ -270,14 +273,16 @@ router.post('/:id/confirm', authorize('customer', 'vendor', 'admin'), async (req
         await quotation.confirm();
 
         // Reserve stock for all items
-        for (let item of quotation.items) {
-            await item.product.reserveStock(
-                item.rentalStartDate,
-                item.rentalEndDate,
-                item.quantity,
-                quotation._id
-            );
-        }
+        // Reserve stock for all items
+        // NOTE: Stock reservation disabled as Item model doesn't support it yet
+        // for (let item of quotation.items) {
+        //     await item.product.reserveStock(
+        //         item.rentalStartDate,
+        //         item.rentalEndDate,
+        //         item.quantity,
+        //         quotation._id
+        //     );
+        // }
 
         // TODO: Create order from quotation
         // This would be implemented in the orders route
@@ -396,7 +401,7 @@ router.post('/:id/send', authorize('vendor', 'admin'), async (req, res) => {
         }
 
         // Check if vendor owns this quotation
-        if (req.user.role === 'vendor' && quotation.vendor.toString() !== req.user._id.toString()) {
+        if (req.user.role === 'vendor' && quotation.vendor._id.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
                 message: 'Access denied'
@@ -481,7 +486,7 @@ router.post('/:id/create-invoice', authorize('vendor', 'admin'), async (req, res
         }
 
         // Check if vendor owns this quotation
-        if (req.user.role === 'vendor' && quotation.vendor.toString() !== req.user._id.toString()) {
+        if (req.user.role === 'vendor' && quotation.vendor._id.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
                 message: 'Access denied'

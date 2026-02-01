@@ -53,6 +53,7 @@ import {
 } from '@mui/icons-material';
 import VendorNavbar from '../components/VendorNavbar';
 import { itemsAPI, bookingsAPI } from '../services/api';
+import quotationAPI from '../services/quotationApi';
 import InvoiceCard from '../components/InvoiceCard';
 
 const VendorDashboard = () => {
@@ -124,13 +125,15 @@ const VendorDashboard = () => {
             setError('');
 
             // Fetch vendor's data
-            const [ordersResponse, productsResponse] = await Promise.all([
+            const [ordersResponse, productsResponse, quotationsResponse] = await Promise.all([
                 bookingsAPI.getAll({ role: 'vendor' }),
-                itemsAPI.getMyItems()
+                itemsAPI.getMyItems(),
+                quotationAPI.getQuotations()
             ]);
 
             setOrders(ordersResponse.data.bookings || []);
             setProducts(productsResponse.data.items || []);
+            setQuotations(quotationsResponse.data || []);
 
             // Calculate stats
             const activeRentals = ordersResponse.data.bookings?.filter(order =>
@@ -158,6 +161,14 @@ const VendorDashboard = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const tab = searchParams.get('tab');
+        if (tab === 'products') setTabValue(1);
+        else if (tab === 'quotations') setTabValue(2);
+        else if (tab === 'analytics') setTabValue(3);
+        else setTabValue(0);
+    }, [searchParams]);
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
@@ -489,7 +500,6 @@ const VendorDashboard = () => {
                                                 <TableCell sx={{ color: '#0284C7' }}>Items</TableCell>
                                                 <TableCell sx={{ color: '#0284C7' }}>Rental Period</TableCell>
                                                 <TableCell sx={{ color: '#0284C7' }}>Total</TableCell>
-                                                <TableCell sx={{ color: '#0284C7' }}>Status</TableCell>
                                                 <TableCell sx={{ color: '#0284C7' }}>Actions</TableCell>
                                             </TableRow>
                                         </TableHead>
@@ -516,13 +526,6 @@ const VendorDashboard = () => {
                                                         ${order.totalAmount || 0}
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Chip
-                                                            label={order.status}
-                                                            color="primary"
-                                                            size="small"
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
                                                         <Box display="flex" gap={1}>
                                                             <IconButton
                                                                 onClick={() => {
@@ -534,25 +537,7 @@ const VendorDashboard = () => {
                                                             >
                                                                 <Visibility />
                                                             </IconButton>
-                                                            {order.status === 'pending' && (
-                                                                <IconButton
-                                                                    onClick={() => {
-                                                                        console.log('Approve button clicked for order:', order._id);
-                                                                        handleApproveBooking(order._id);
-                                                                    }}
-                                                                    sx={{ color: '#0284C7' }}
-                                                                    title="Approve Booking"
-                                                                >
-                                                                    <CheckCircle />
-                                                                </IconButton>
-                                                            )}
-                                                            <IconButton
-                                                                onClick={(e) => handleMenuClick(e, order)}
-                                                                sx={{ color: '#0284C7' }}
-                                                                title="More Options"
-                                                            >
-                                                                <MoreVert />
-                                                            </IconButton>
+
                                                         </Box>
                                                     </TableCell>
                                                 </TableRow>
@@ -653,12 +638,68 @@ const VendorDashboard = () => {
                     {/* Quotations Tab */}
                     {tabValue === 2 && (
                         <Box sx={{ p: 3 }}>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#0284C7' }}>
-                                Quotations
-                            </Typography>
-                            <Alert severity="info">
-                                Quotation management coming soon!
-                            </Alert>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                                <Typography variant="h6" sx={{ color: '#0284C7' }}>Quotations</Typography>
+                                <Button
+                                    variant="contained"
+                                    startIcon={<Add />}
+                                    onClick={() => navigate('/quotations/new')}
+                                    sx={{ backgroundColor: '#0284C7' }}
+                                >
+                                    Create Quotation
+                                </Button>
+                            </Box>
+
+                            {quotations.length === 0 ? (
+                                <Alert severity="info">
+                                    No quotations found. Create a new quotation to get started.
+                                </Alert>
+                            ) : (
+                                <TableContainer>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell sx={{ color: '#0284C7' }}>Quotation #</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Customer</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Date</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Total</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Status</TableCell>
+                                                <TableCell sx={{ color: '#0284C7' }}>Actions</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {quotations.map((quote) => (
+                                                <TableRow key={quote._id}>
+                                                    <TableCell sx={{ color: '#0284C7' }}>{quote.quotationNumber}</TableCell>
+                                                    <TableCell sx={{ color: '#0284C7' }}>{quote.customer?.name || 'Unknown'}</TableCell>
+                                                    <TableCell sx={{ color: '#0284C7' }}>
+                                                        {new Date(quote.createdAt).toLocaleDateString()}
+                                                    </TableCell>
+                                                    <TableCell sx={{ color: '#0284C7' }}>
+                                                        ${quote.pricing?.totalAmount?.toFixed(2) || 0}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Chip
+                                                            label={quote.status.replace('_', ' ')}
+                                                            size="small"
+                                                            color={quote.status === 'sale_order' ? 'success' : 'primary'}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Button
+                                                            size="small"
+                                                            onClick={() => navigate(`/quotations/${quote._id}`)}
+                                                            sx={{ color: '#0284C7' }}
+                                                        >
+                                                            View
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            )}
                         </Box>
                     )}
 
@@ -699,20 +740,7 @@ const VendorDashboard = () => {
                     )}
                 </Paper>
 
-                {/* Order Menu */}
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                    PaperProps={{ sx: { backgroundColor: '#FFFFFF', color: '#0284C7' } }}
-                >
-                    <MenuItem onClick={handleOrderDetails} sx={{ color: '#0284C7' }}>
-                        <Visibility sx={{ mr: 1, color: '#0284C7' }} /> View Details
-                    </MenuItem>
-                    <MenuItem onClick={() => {/* Generate invoice */ }} sx={{ color: '#0284C7' }}>
-                        <AttachMoney sx={{ mr: 1, color: '#0284C7' }} /> Generate Invoice
-                    </MenuItem>
-                </Menu>
+
 
                 {/* Create Item Dialog */}
                 <Dialog
@@ -1410,15 +1438,6 @@ const VendorDashboard = () => {
                         <Button onClick={() => setBookingDetailsDialog(false)} sx={{ color: '#0284C7' }}>
                             Close
                         </Button>
-                        {selectedBookingOrder?.status === 'pending' && (
-                            <Button
-                                onClick={() => handleApproveBooking(selectedBookingOrder._id)}
-                                variant="contained"
-                                sx={{ backgroundColor: '#0284C7', '&:hover': { backgroundColor: '#026aa1' } }}
-                            >
-                                Approve Booking
-                            </Button>
-                        )}
                     </DialogActions>
                 </Dialog>
             </Container>
