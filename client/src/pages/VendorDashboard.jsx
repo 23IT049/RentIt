@@ -32,7 +32,9 @@ import {
     FormControl,
     InputLabel,
     Select,
-    CardMedia
+    CardMedia,
+    Avatar,
+    Divider
 } from '@mui/material';
 import {
     Add,
@@ -51,6 +53,7 @@ import {
 } from '@mui/icons-material';
 import VendorNavbar from '../components/VendorNavbar';
 import { itemsAPI, bookingsAPI } from '../services/api';
+import InvoiceCard from '../components/InvoiceCard';
 
 const VendorDashboard = () => {
     const navigate = useNavigate();
@@ -58,7 +61,6 @@ const VendorDashboard = () => {
     const [tabValue, setTabValue] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null); // For menu functionality
-    const [orderDetailsOpen, setOrderDetailsOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -174,7 +176,11 @@ const VendorDashboard = () => {
     };
 
     const handleOrderDetails = () => {
-        setOrderDetailsOpen(true);
+        // Use the booking details dialog which has the InvoiceCard
+        if (selectedOrder) {
+            setSelectedBookingOrder(selectedOrder);
+            setBookingDetailsDialog(true);
+        }
         handleMenuClose();
     };
 
@@ -707,67 +713,6 @@ const VendorDashboard = () => {
                         <AttachMoney sx={{ mr: 1, color: '#0284C7' }} /> Generate Invoice
                     </MenuItem>
                 </Menu>
-
-                {/* Order Details Dialog */}
-                <Dialog
-                    open={orderDetailsOpen}
-                    onClose={() => setOrderDetailsOpen(false)}
-                    maxWidth="md"
-                    fullWidth
-                    PaperProps={{ sx: { backgroundColor: '#FFFFFF' } }}
-                >
-                    <DialogTitle sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
-                        Order Details - {selectedOrder?.id}
-                    </DialogTitle>
-                    <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
-                        {selectedOrder && (
-                            <Box>
-                                <Grid container spacing={2} sx={{ mb: 3 }}>
-                                    <Grid item xs={6}>
-                                        <Typography variant="subtitle2" sx={{ color: '#0284C7' }}>
-                                            Customer
-                                        </Typography>
-                                        <Typography>{selectedOrder.renter?.name}</Typography>
-                                        <Typography variant="body2" sx={{ color: '#0284C7' }}>
-                                            {selectedOrder.renter?.email}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography variant="subtitle2" sx={{ color: '#0284C7' }}>
-                                            Order Status
-                                        </Typography>
-                                        <Chip
-                                            label={selectedOrder.status}
-                                            color="primary"
-                                            size="small"
-                                        />
-                                    </Grid>
-                                </Grid>
-
-                                <Typography variant="subtitle2" sx={{ color: '#0284C7' }} gutterBottom>
-                                    Item
-                                </Typography>
-                                <Typography sx={{ mb: 1 }}>
-                                    {selectedOrder.item?.title}
-                                </Typography>
-
-                                <Box mt={3}>
-                                    <Typography variant="h6">
-                                        Total: ${selectedOrder.totalAmount || 0}
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        )}
-                    </DialogContent>
-                    <DialogActions sx={{ backgroundColor: '#FFFFFF' }}>
-                        <Button onClick={() => setOrderDetailsOpen(false)} sx={{ color: '#0284C7' }}>
-                            Close
-                        </Button>
-                        <Button variant="contained" sx={{ backgroundColor: '#0284C7' }}>
-                            Generate Invoice
-                        </Button>
-                    </DialogActions>
-                </Dialog>
 
                 {/* Create Item Dialog */}
                 <Dialog
@@ -1357,9 +1302,6 @@ const VendorDashboard = () => {
                     <DialogContent sx={{ backgroundColor: '#FFFFFF', color: '#0284C7' }}>
                         {selectedBookingOrder ? (
                             <Box sx={{ pt: 2 }}>
-                                <Typography variant="body2" sx={{ mb: 2, color: '#0284C7' }}>
-                                    Debug: Dialog is open, selectedBookingOrder ID: {selectedBookingOrder._id}
-                                </Typography>
                                 <Grid container spacing={3}>
                                     <Grid item xs={12} md={6}>
                                         <Typography variant="h6" gutterBottom>
@@ -1442,6 +1384,18 @@ const VendorDashboard = () => {
                                             </Typography>
                                         </Grid>
                                     )}
+
+                                    {/* Invoice Section */}
+                                    <Grid item xs={12}>
+                                        <Divider sx={{ my: 2 }} />
+                                        <InvoiceCard
+                                            order={selectedBookingOrder}
+                                            onInvoiceGenerated={() => {
+                                                // Refresh dashboard data after invoice generation
+                                                fetchDashboardData();
+                                            }}
+                                        />
+                                    </Grid>
                                 </Grid>
                             </Box>
                         ) : (

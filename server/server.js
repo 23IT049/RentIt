@@ -31,6 +31,7 @@ const itemRoutes = require('./routes/items');
 const bookingRoutes = require('./routes/bookings');
 const adminRoutes = require('./routes/admin');
 const vendorRoutes = require('./routes/vendor');
+const invoiceRoutes = require('./routes/invoices');
 
 // Routes
 app.get('/', (req, res) => {
@@ -43,6 +44,7 @@ app.use('/api/items', itemRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/vendor', vendorRoutes);
+app.use('/api/invoices', invoiceRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

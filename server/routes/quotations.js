@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Quotation = require('../models/Quotation');
-const Product = require('../models/Product');
+const Item = require('../models/Item');
 const { authorize, checkOwnership } = require('../middleware/roleAuth');
 
 // @route   POST /api/quotations
@@ -13,52 +13,70 @@ router.post('/', authorize('customer', 'vendor', 'admin'), async (req, res) => {
 
         // Validate items and check availability
         for (let item of items) {
-            const product = await Product.findById(item.product);
+            const product = await Item.findById(item.product);
             if (!product) {
                 return res.status(400).json({
                     success: false,
-                    message: `Product ${item.product} not found`
+                    message: `Item ${item.product} not found`
                 });
             }
 
-            if (!product.checkAvailability(
-                new Date(item.rentalStartDate),
-                new Date(item.rentalEndDate),
-                item.quantity
-            )) {
-                return res.status(400).json({
-                    success: false,
-                    message: `Product ${product.name} is not available for the requested period`
-                });
-            }
+            // if (!product.available) {
+            //     return res.status(400).json({
+            //         success: false,
+            //         message: `Item ${product.title} is not available`
+            //     });
+            // }
 
-            // Set unit price based on pricing type
-            switch (item.pricingType) {
-                case 'hourly':
-                    item.unitPrice = product.pricing.hourly;
-                    break;
-                case 'daily':
-                    item.unitPrice = product.pricing.daily;
-                    break;
-                case 'weekly':
-                    item.unitPrice = product.pricing.weekly;
-                    break;
-                case 'custom':
-                    item.unitPrice = product.pricing.custom;
-                    break;
+            if (req.user.role !== 'vendor') {
+                // Set unit price from item price (assuming daily rate)
+                item.unitPrice = product.price;
             }
         }
 
+
+
+        let vendorId;
+        let customerId;
+
+        // Determine vendor and customer based on role
+        if (req.user.role === 'vendor') {
+            vendorId = req.user._id;
+            customerId = req.body.customer; // Vendor selects customer
+            if (!customerId) {
+                return res.status(400).json({ success: false, message: 'Customer is required' });
+            }
+        } else {
+            // Customer creating quotation (e.g. request for quote)
+            customerId = req.user._id;
+            // Vendor must be derived from items (assuming single vendor per quote for now)
+            // This logic might need refinement for multi-vendor carts
+            const firstProduct = await Item.findById(items[0].product);
+            vendorId = firstProduct.vendor;
+        }
+
         const quotationData = {
-            customer: req.user._id,
-            items,
+            customer: customerId,
+            vendor: vendorId,
+            items: items.map(item => {
+                // If vendor is creating, respect their price. If customer, use system price.
+                let price = item.unitPrice;
+                if (req.user.role !== 'vendor') {
+                    // Logic to fetch price from product if needed, or validate it
+                }
+                return {
+                    ...item,
+                    unitPrice: price
+                };
+            }),
             delivery,
             notes,
-            specialInstructions
+            specialInstructions,
+            ...req.body // Spread other fields like rentalPeriod, orderDate, pricing, etc.
         };
 
         const quotation = await Quotation.create(quotationData);
-        
+
         // Calculate pricing
         await quotation.calculatePricing();
         await quotation.save();
@@ -93,13 +111,13 @@ router.get('/', authorize('customer', 'vendor', 'admin'), async (req, res) => {
         } = req.query;
 
         let filter = {};
-        
+
         // Filter by user role
         if (req.user.role === 'customer') {
             filter.customer = req.user._id;
         } else if (req.user.role === 'vendor') {
             // For vendors, get quotations for their products
-            const vendorProducts = await Product.find({ vendor: req.user._id }).select('_id');
+            const vendorProducts = await Item.find({ vendor: req.user._id }).select('_id');
             const productIds = vendorProducts.map(p => p._id);
             filter['items.product'] = { $in: productIds };
         }
@@ -144,7 +162,7 @@ router.get('/:id', authorize('customer', 'vendor', 'admin'), async (req, res) =>
     try {
         const quotation = await Quotation.findById(req.params.id)
             .populate('customer', 'name email phone')
-            .populate('items.product', 'name description images rentalSettings');
+            .populate('items.product', 'title description image');
 
         if (!quotation) {
             return res.status(404).json({
@@ -163,10 +181,10 @@ router.get('/:id', authorize('customer', 'vendor', 'admin'), async (req, res) =>
 
         if (req.user.role === 'vendor') {
             // Check if quotation contains vendor's products
-            const hasVendorProduct = quotation.items.some(item => 
+            const hasVendorProduct = quotation.items.some(item =>
                 item.product.vendor && item.product.vendor.toString() === req.user._id.toString()
             );
-            
+
             if (!hasVendorProduct) {
                 return res.status(403).json({
                     success: false,
@@ -193,7 +211,7 @@ router.get('/:id', authorize('customer', 'vendor', 'admin'), async (req, res) =>
 router.put('/:id', authorize('customer', 'vendor', 'admin'), checkOwnership(Quotation), async (req, res) => {
     try {
         const quotation = await Quotation.findById(req.params.id);
-        
+
         // Only allow editing if status is draft
         if (quotation.status !== 'draft') {
             return res.status(400).json({
@@ -283,7 +301,7 @@ router.post('/:id/confirm', authorize('customer', 'vendor', 'admin'), async (req
 router.delete('/:id', authorize('customer', 'vendor', 'admin'), checkOwnership(Quotation), async (req, res) => {
     try {
         const quotation = await Quotation.findById(req.params.id);
-        
+
         // Only allow deletion if status is draft
         if (quotation.status !== 'draft') {
             return res.status(400).json({
@@ -339,7 +357,7 @@ router.post('/from-cart', authorize('customer', 'vendor', 'admin'), async (req, 
         };
 
         const quotation = await Quotation.create(quotationData);
-        
+
         // Calculate pricing
         await quotation.calculatePricing();
         await quotation.save();
@@ -351,6 +369,132 @@ router.post('/from-cart', authorize('customer', 'vendor', 'admin'), async (req, 
             success: true,
             message: 'Quotation created from cart successfully',
             data: quotation
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// @route   POST /api/quotations/:id/send
+// @desc    Send quotation to customer via email
+// @access  Private (Vendor, Admin)
+router.post('/:id/send', authorize('vendor', 'admin'), async (req, res) => {
+    try {
+        const quotation = await Quotation.findById(req.params.id)
+            .populate('customer', 'name email')
+            .populate('vendor', 'name email')
+            .populate('items.product', 'name');
+
+        if (!quotation) {
+            return res.status(404).json({
+                success: false,
+                message: 'Quotation not found'
+            });
+        }
+
+        // Check if vendor owns this quotation
+        if (req.user.role === 'vendor' && quotation.vendor.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied'
+            });
+        }
+
+        // Update status to sent
+        quotation.status = 'quotation_sent';
+        await quotation.save();
+
+        // TODO: Send email to customer
+        // This would integrate with emailService
+
+        res.json({
+            success: true,
+            message: 'Quotation sent successfully',
+            data: quotation
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// @route   GET /api/quotations/:id/print
+// @desc    Generate and download quotation PDF
+// @access  Private
+router.get('/:id/print', authorize('customer', 'vendor', 'admin'), async (req, res) => {
+    try {
+        const quotation = await Quotation.findById(req.params.id)
+            .populate('customer', 'name email phone')
+            .populate('vendor', 'name email')
+            .populate('items.product', 'name');
+
+        if (!quotation) {
+            return res.status(404).json({
+                success: false,
+                message: 'Quotation not found'
+            });
+        }
+
+        // TODO: Generate PDF using PDFKit
+        // For now, return JSON
+        res.json({
+            success: true,
+            message: 'PDF generation not yet implemented',
+            data: quotation
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// @route   POST /api/quotations/:id/create-invoice
+// @desc    Create invoice from confirmed quotation
+// @access  Private (Vendor, Admin)
+router.post('/:id/create-invoice', authorize('vendor', 'admin'), async (req, res) => {
+    try {
+        const quotation = await Quotation.findById(req.params.id)
+            .populate('customer', 'name email')
+            .populate('vendor', 'name email')
+            .populate('items.product', 'name');
+
+        if (!quotation) {
+            return res.status(404).json({
+                success: false,
+                message: 'Quotation not found'
+            });
+        }
+
+        // Check if quotation is confirmed
+        if (quotation.status !== 'sale_order') {
+            return res.status(400).json({
+                success: false,
+                message: 'Quotation must be confirmed before creating invoice'
+            });
+        }
+
+        // Check if vendor owns this quotation
+        if (req.user.role === 'vendor' && quotation.vendor.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied'
+            });
+        }
+
+        // TODO: Create invoice from quotation
+        // This would integrate with the invoice generation system
+
+        res.json({
+            success: true,
+            message: 'Invoice creation from quotation not yet fully implemented',
+            quotationId: quotation._id
         });
     } catch (error) {
         res.status(500).json({
