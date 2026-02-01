@@ -40,6 +40,17 @@ export const itemsAPI = {
     getMyItems: () => api.get('/items/vendor/me')
 };
 
+// Products API
+export const productsAPI = {
+    getAll: (params) => api.get('/products', { params }),
+    getOne: (id) => api.get(`/products/${id}`),
+    create: (data) => api.post('/products', data),
+    update: (id, data) => api.put(`/products/${id}`, data),
+    delete: (id) => api.delete(`/products/${id}`),
+    getMyProducts: (params) => api.get('/products/vendor/my-products', { params }),
+    checkAvailability: (id, data) => api.post(`/products/${id}/check-availability`, data)
+};
+
 // Bookings API
 export const bookingsAPI = {
     create: (data) => api.post('/bookings', data),

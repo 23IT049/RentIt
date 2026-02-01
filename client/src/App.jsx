@@ -20,6 +20,9 @@ import MyBookings from './pages/MyBookings';
 import MyItems from './pages/MyItems';
 import VendorCustomers from './pages/VendorCustomers';
 import CartPage from './pages/CartPage';
+import QuotationPage from './pages/QuotationPage';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const theme = createTheme({
     palette: {
@@ -174,6 +177,7 @@ function App() {
             <CssBaseline />
             <AuthProvider>
                 <BrowserRouter>
+                    <ToastContainer position="top-right" autoClose={3000} />
                     <Routes>
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
@@ -227,6 +231,22 @@ function App() {
                             element={
                                 <RoleProtectedRoute requiredRole="vendor">
                                     <VendorCustomers />
+                                </RoleProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/quotations/new"
+                            element={
+                                <RoleProtectedRoute requiredRole="vendor">
+                                    <QuotationPage />
+                                </RoleProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/quotations/:id"
+                            element={
+                                <RoleProtectedRoute requiredRole="vendor">
+                                    <QuotationPage />
                                 </RoleProtectedRoute>
                             }
                         />

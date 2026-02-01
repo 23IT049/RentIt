@@ -63,6 +63,7 @@ import {
 } from '@mui/icons-material';
 import CustomerNavbar from '../components/CustomerNavbar';
 import { bookingsAPI, itemsAPI } from '../services/api';
+import InvoiceCard from '../components/InvoiceCard';
 
 const CustomerDashboard = () => {
     const navigate = useNavigate();
@@ -1217,6 +1218,18 @@ const CustomerDashboard = () => {
                                             </Typography>
                                         </Grid>
                                     )}
+
+                                    {/* Invoice Section */}
+                                    <Grid item xs={12}>
+                                        <Divider sx={{ my: 2 }} />
+                                        <InvoiceCard
+                                            order={selectedBooking}
+                                            onInvoiceGenerated={() => {
+                                                // Refresh booking data after invoice generation
+                                                fetchDashboardData();
+                                            }}
+                                        />
+                                    </Grid>
                                 </Grid>
                             </Box>
                         )}

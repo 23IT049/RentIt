@@ -56,6 +56,7 @@ const VendorNavbar = () => {
 
     const menuItems = [
         { text: 'Dashboard', icon: <Dashboard />, path: '/vendor-dashboard' },
+        { text: 'Quotations', icon: <Assessment />, path: '/quotations/new' },
         { text: 'Products', icon: <Store />, path: '/vendor-dashboard?tab=products' },
         { text: 'Orders', icon: <ShoppingCart />, path: '/vendor-dashboard?tab=orders' },
         { text: 'Customers', icon: <People />, path: '/vendor-customers' },
